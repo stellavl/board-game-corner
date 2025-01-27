@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import LoginButton from './LoginButton';
+import NavLinkItem from './NavLinkItem';
 
 function Header() {
   const [activeLink, setActiveLink] = useState('home');
@@ -14,27 +15,9 @@ function Header() {
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
           <Nav className="d-flex align-items-center ml-auto justify-content-end w-100">
-            <Nav.Link 
-              className={`px-4 fs-5 ${activeLink === 'home' ? 'text-decoration-underline' : ''}`} 
-              style={{ color: 'var(--color-soft-yellow)'}} 
-              onClick={() => setActiveLink('home')}
-            >
-              Αρχική
-            </Nav.Link>
-            <Nav.Link 
-              className={`px-4 fs-5 text-nowrap ${activeLink === 'games' ? 'text-decoration-underline' : ''}`} 
-              style={{ color: 'var(--color-soft-yellow)'}} 
-              onClick={() => setActiveLink('games')}
-            >
-              Επιτραπέζια Παιχνίδια
-            </Nav.Link>
-            <Nav.Link 
-              className={`fs-5 px-4 me-5 ${activeLink === 'cafe' ? 'text-decoration-underline' : ''}`} 
-              style={{ color: 'var(--color-soft-yellow)'}} 
-              onClick={() => setActiveLink('cafe')}
-            >
-              Παιχνιδοκαφέ
-            </Nav.Link>
+            <NavLinkItem label="Αρχική" link="home" activeLink={activeLink} setActiveLink={setActiveLink} />
+            <NavLinkItem label="Επιτραπέζια Παιχνίδια" link="games" activeLink={activeLink} setActiveLink={setActiveLink} />
+            <NavLinkItem label="Παιχνιδοκαφέ" link="cafe" activeLink={activeLink} setActiveLink={setActiveLink} />
             <LoginButton />
           </Nav>
         </Navbar.Collapse>

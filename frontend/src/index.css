@@ -3,6 +3,6 @@
   --color-soft-yellow: #FFF4B2;
   --color-orange: #E95C2F;
   --color-gray-purple: #49454F;
-  --font-primary: 'Roboto', Courier, monospace;
-  --font-calligraphic: 'Segoe Script', cursive;
+  --font-primary: 'Segoe UI';
+  --font-calligraphic: 'Segoe Script';
 }

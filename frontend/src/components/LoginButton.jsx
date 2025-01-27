@@ -18,9 +18,9 @@ const LoginButton = () => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Stack direction="horizontal" gap={3}>
+      <Stack direction="horizontal" gap={2}>
         <span>Σύνδεση</span>
-        <ChevronDown />
+        <ChevronDown className="mt-1" />
       </Stack>
     </Button>
   );

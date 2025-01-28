@@ -1,15 +1,20 @@
-import React from "react";
-import Home from "./pages/Home.jsx";
-import Header from "./components/Header.jsx";
-import 'bootstrap/dist/css/bootstrap.min.css';
+  import React from "react";
+  import Home from "./pages/Home.jsx";
+  import Header from "./components/Header.jsx";
+  import 'bootstrap/dist/css/bootstrap.min.css';
 
-const App = () => {
-  return (
-    <>
-      <Header />
-      <Home />
-    </>
-  );
-};
+  const appStyles = {
+    backgroundColor: 'var(--color-soft-yellow)', 
+    fontFamily: 'var(--font-primary)',
+  };
 
-export default App;
+  const App = () => {
+    return (
+      <div style={appStyles}>
+          <Header />
+          <Home />
+      </div>
+    );
+  };
+
+  export default App;

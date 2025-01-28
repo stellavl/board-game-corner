@@ -27,7 +27,7 @@ const Home = () => {
                         border: 'var(--color-orange)' 
                      }}
                     className="rounded-end">
-                    <FontAwesomeIcon icon={faSearch} size="lg" />
+                    <FontAwesomeIcon icon={faSearch} size="lg"  color='var(--color-soft-yellow)' />
                 </Button>                
                     </InputGroup>
                 </Col>      

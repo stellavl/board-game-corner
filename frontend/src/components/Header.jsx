@@ -9,7 +9,7 @@ function Header() {
   return (
     <Navbar className="py-4 px-5" style={{ backgroundColor: 'var(--color-blue)' }} expand="lg">
       <Container fluid>
-        <Navbar.Brand href="#home" className="fs-4 fs-sm-6" style={{ color: 'var(--color-soft-yellow)', fontFamily: 'var(--font-calligraphic)'}}>
+        <Navbar.Brand className="fs-4 fs-sm-6" style={{ color: 'var(--color-soft-yellow)', fontFamily: 'var(--font-calligraphic)'}}>
           Board Game Corner
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />

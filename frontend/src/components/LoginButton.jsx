@@ -8,7 +8,7 @@ const LoginButton = () => {
 
   return (
     <Button
-      className="py-2 px-3 ms-4 fs-5 border border-1"
+      className="py-2 px-3 ms-4 fs-5 border"
       style={{
         color: 'var(--color-soft-yellow)',
         border: isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)',

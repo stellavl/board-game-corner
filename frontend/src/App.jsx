@@ -1,6 +1,7 @@
   import React from "react";
   import Home from "./pages/Home.jsx";
   import Header from "./components/Header.jsx";
+  import Footer from "./components/Footer.jsx";
   import 'bootstrap/dist/css/bootstrap.min.css';
 
   const appStyles = {
@@ -12,7 +13,8 @@
     return (
       <div style={appStyles}>
           <Header />
-          <Home />
+            <Home />
+          <Footer/>
       </div>
     );
   };

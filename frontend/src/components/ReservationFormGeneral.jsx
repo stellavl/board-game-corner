@@ -14,7 +14,7 @@ const ReservationForm = () => {
         style={{ 
           backgroundColor: 'var(--color-soft-orange)', 
           border: '2px solid var(--color-orange)',
-          maxWidth: '900px', // Optimized width
+          maxWidth: '900px'// Optimized width so that all form fields are in one line
         }}
       >
         <Row className="g-3 row-cols-1 row-cols-lg-auto justify-content-center">

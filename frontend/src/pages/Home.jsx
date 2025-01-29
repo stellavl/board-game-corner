@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,16 @@ import ReservationForm from '../components/ReservationFormGeneral';
 import OrangeButton from '../components/OrangeButton'; 
 
 const Home = () => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => {
+        setIsHovered(true);
+    };
+
+    const handleMouseLeave = () => {
+        setIsHovered(false);
+    };
+
     return (
         <Container className='d-flex flex-column justify-content-center align-items-center mt-5'>
             <Row className='mb-4'>
@@ -22,12 +32,20 @@ const Home = () => {
                             className="rounded-start form-control-md"
                         />
                 <Button 
-                    style={{ 
-                        backgroundColor: 'var(--color-orange)', 
-                        border: 'var(--color-orange)' 
-                     }}
-                    className="rounded-end">
-                    <FontAwesomeIcon icon={faSearch} size="lg"  color='var(--color-soft-yellow)' />
+                    style={{
+                        backgroundColor: isHovered ? 'var(--color-soft-yellow)' : 'var(--color-orange)',
+                        border: isHovered ? '2px solid var(--color-orange)' : '2px solid var(--color-orange)',
+                    }}
+                    className="rounded-end"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    >
+                    <FontAwesomeIcon 
+                        icon={faSearch} 
+                        size="lg"  
+                        color={isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)'} 
+                    />
+
                 </Button>                
                     </InputGroup>
                 </Col>      

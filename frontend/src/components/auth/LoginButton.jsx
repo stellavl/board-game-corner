@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
-import AccountDropdown from './AccountDropdown';
+import AccountDropdown from '../header/AccountDropdown';
 
 const LoginButton = () => {
   const [isDropdownButtonHovered, setIsDropdownButtonHovered] = useState(false);

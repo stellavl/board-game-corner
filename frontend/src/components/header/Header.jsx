@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import LoginButton from './LoginButton';
+import LoginButton from '../auth/LoginButton';
 import NavLinkItem from './NavLinkItem';
 
 function Header() {

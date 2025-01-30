@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import ReservationForm from '../components/ReservationFormGeneral';
-import OrangeButton from '../components/OrangeButton'; 
+import ReservationForm from '../components/home/ReservationFormGeneral';
+import OrangeButton from '../components/common/OrangeButton'; 
 
 const Home = () => {
     const [isHovered, setIsHovered] = useState(false);

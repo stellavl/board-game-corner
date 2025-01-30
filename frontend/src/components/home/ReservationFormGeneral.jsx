@@ -1,7 +1,7 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Form } from "react-bootstrap";
-import OrangeButton from './OrangeButton'; 
+import OrangeButton from '../common/OrangeButton'; 
 
 const ReservationForm = () => {
   return (

@@ -1,5 +1,5 @@
 import { React, useState } from 'react';
-import { Modal, Button, Form, Alert, Spinner, Nav } from 'react-bootstrap';
+import { Modal, Button, Form, Alert, Spinner, Nav, Row, Col } from 'react-bootstrap';
 import useLoginForm from '../hooks/useLoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
@@ -55,27 +55,33 @@ const LoginModal = ({ showModal, setShowModal }) => {
           </Form.Group>
           <Button
               variant="link"
-              className="p-1 text-secondary text-decoration-none float-end"
+              className="pt-1 text-secondary text-decoration-none float-end"
             >
               Ξέχασα τον κωδικό μου
             </Button>
         </Form>
-      </Modal.Body>
-      <Modal.Footer style={{ backgroundColor: 'var(--color-soft-yellow)', justifyContent: 'center' }}>
-        <Button
-          onClick={() => handleSubmit(() => setShowModal(false))}
-          disabled={isSubmitting}
-          style={{ backgroundColor: 'var(--color-orange)', border: 'var(--color-orange)' }}
-        >
-          {isSubmitting ? <Spinner as="span" animation="border" size="sm" /> : 'Σύνδεση'}
-        </Button>
-        <div className="d-flex justify-content-center mt-2">
-          <span>Δεν έχετε λογαριασμό; </span>
-          <Nav.Link to="/signup" className="btn btn-link p-0" style={{ color: 'var(--color-orange)' }}>
-            Εγγραφή
-          </Nav.Link>
-        </div>
-      </Modal.Footer>
+        <Row className="mt-5 align-items-center">
+        <Col className="d-flex justify-content-center">
+          <Button
+            onClick={() => handleSubmit(() => setShowModal(false))}
+            disabled={isSubmitting}
+            style={{ backgroundColor: 'var(--color-orange)', border: 'var(--color-orange)' }}
+          >
+            {isSubmitting ? <Spinner as="span" animation="border" size="sm" /> : 'Σύνδεση'}
+          </Button>
+          </Col>
+        </Row>
+        <Row className="mb-2">
+          <Col>
+          <div className="d-flex justify-content-center mt-2">
+            <span>Δεν έχετε λογαριασμό;&nbsp;</span>
+            <Nav.Link to="/signup" className="btn btn-link p-0" style={{ color: 'var(--color-orange)' }}>
+              Εγγραφή
+            </Nav.Link>
+          </div>
+          </Col>
+        </Row>
+      </Modal.Body>    
     </Modal>
   );
 };

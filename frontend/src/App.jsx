@@ -1,5 +1,5 @@
   import React from "react";
-  import Home from "./pages/Home.jsx";
+  import Home from "./pages/HomePage.jsx";
   import Header from "./components/header/Header.jsx";
   import Footer from "./components/footer/Footer.jsx";
   import 'bootstrap/dist/css/bootstrap.min.css';

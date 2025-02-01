@@ -1,15 +1,17 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-const NavLinkItem = ({ label, link, activeLink, setActiveLink }) => {
+const NavLinkItem = ({ label, to, activeLink, setActiveLink }) => {
+  const location = useLocation(); // Get current route
+
   return (
     <Nav.Item>
       <Link
-        to={`/${link}`}
-        className={`nav-link px-4 fs-5 text-nowrap ${activeLink === link ? 'text-decoration-underline' : ''}`}
+        to={to} // Use the correct full route path
+        className={`nav-link px-4 fs-5 text-nowrap ${location.pathname === to ? 'text-decoration-underline' : ''}`}
         style={{ color: 'var(--color-soft-yellow)' }}
-        onClick={() => setActiveLink(link)}
+        onClick={() => setActiveLink(to)} // Store full route path in state
       >
         {label}
       </Link>

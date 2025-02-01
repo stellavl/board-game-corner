@@ -1,21 +1,10 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import ReservationForm from '../components/home/ReservationFormGeneral';
 import OrangeButton from '../components/common/OrangeButton'; 
+import SearchBar from '../components/common/SearchBar';
 
 const Home = () => {
-    const [isHovered, setIsHovered] = useState(false);
-
-    const handleMouseEnter = () => {
-        setIsHovered(true);
-    };
-
-    const handleMouseLeave = () => {
-        setIsHovered(false);
-    };
-
     return (
         <Container className='d-flex flex-column justify-content-center align-items-center mt-5'>
             <Row className='mb-4'>
@@ -25,29 +14,7 @@ const Home = () => {
             </Row>
             <Row>
                 <Col className="w-100">
-                    <InputGroup className="mb-3 mx-auto w-100">
-                        <FormControl
-                            placeholder="Αναζήτησε επιτραπέζια"
-                            aria-label="Search"
-                            className="rounded-start form-control-md"
-                        />
-                <Button 
-                    style={{
-                        backgroundColor: isHovered ? 'var(--color-soft-yellow)' : 'var(--color-orange)',
-                        border: isHovered ? '2px solid var(--color-orange)' : '2px solid var(--color-orange)',
-                    }}
-                    className="rounded-end"
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                    >
-                    <FontAwesomeIcon 
-                        icon={faSearch} 
-                        size="lg"  
-                        color={isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)'} 
-                    />
-
-                </Button>                
-                    </InputGroup>
+                    <SearchBar placeholder="Αναζήτησε επιτραπέζια" />                
                 </Col>      
             </Row>
 
@@ -67,8 +34,6 @@ const Home = () => {
                     <OrangeButton text="Παιχνιδοκαφέ" size="btn-lg" />
                 </Col>
             </Row>
-            
-            
         </Container>
     );
 };

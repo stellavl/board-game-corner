@@ -17,7 +17,7 @@ const OrangeButton = ({ text, size }) => {
             className={`btn ${size}`}
             style={{
                 color: isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)',
-                backgroundColor: isHovered ? 'var(--color-soft-yellow)' : 'var(--color-orange)',
+                backgroundColor: isHovered ? 'inherit' : 'var(--color-orange)',                
                 border: isHovered ? '2px solid var(--color-orange)' : '2px solid var(--color-orange)',
             }}
             onMouseEnter={handleMouseEnter}

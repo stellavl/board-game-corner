@@ -7,3 +7,7 @@
   --font-primary: 'Segoe UI';
   --font-calligraphic: 'Segoe Script';
 }
+
+body {
+  overflow-y: scroll;
+}

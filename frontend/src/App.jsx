@@ -1,7 +1,8 @@
   import React from "react";
-  import Home from "./pages/HomePage.jsx";
-  import Header from "./components/header/Header.jsx";
+  import Main from "./components/common/Main.jsx";
+  import Header from "./components/header/NavBar.jsx";
   import Footer from "./components/footer/Footer.jsx";
+  import { BrowserRouter as Router } from 'react-router-dom';
   import 'bootstrap/dist/css/bootstrap.min.css';
 
   const appStyles = {
@@ -11,11 +12,14 @@
 
   const App = () => {
     return (
+    <Router>
       <div style={appStyles}>
-          <Header />
-            <Home />
-          <Footer/>
+        <Header />
+        <Main />
+        <Footer/>
       </div>
+    </Router>
+      
     );
   };
 

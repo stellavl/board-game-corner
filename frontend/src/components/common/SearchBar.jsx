@@ -3,11 +3,16 @@ import { InputGroup, FormControl, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-const SearchBar = ({ placeholder }) => {
+const SearchBar = ({ placeholder, onSearch }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
+
+    const handleSearchClick = () => {
+        onSearch(searchValue); // Update the search term in the parent component
+    };
 
     return (
         <InputGroup className="mb-3 mx-auto w-100">
@@ -15,6 +20,8 @@ const SearchBar = ({ placeholder }) => {
                 placeholder={placeholder}
                 aria-label="Search"
                 className="rounded-start form-control-md"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)} // Handle input change
             />
             <Button
                 style={{
@@ -24,6 +31,7 @@ const SearchBar = ({ placeholder }) => {
                 className="rounded-end"
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                onClick={handleSearchClick} // Trigger search on button click
             >
                 <FontAwesomeIcon
                     icon={faSearch}

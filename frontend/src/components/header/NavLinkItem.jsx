@@ -2,7 +2,7 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 
-const NavLinkItem = ({ label, to, activeLink, setActiveLink }) => {
+const NavLinkItem = ({ label, to, setActiveLink }) => {
   const location = useLocation(); // Get current route
 
   return (

@@ -11,3 +11,7 @@
 body {
   overflow-y: scroll;
 }
+
+input[type="checkbox"]:checked {
+  accent-color: var(--color-orange);
+}

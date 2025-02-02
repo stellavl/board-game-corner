@@ -1,4 +1,3 @@
-// pages/SpecificBoardGamePage.js
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { Container } from "react-bootstrap";
@@ -18,12 +17,10 @@ const SpecificBoardGamePage = () => {
 
     return (
         <>
-            {/* Button to go back */}
             <BackButton />
 
             <BoardGameProvider>
                 <Container className="d-flex flex-column justify-content-center align-items-center">
-                    {/* BoardGameOverview will access the state from context */}
                     <BoardGameOverview boardGame={boardGame} />
                     <BoardGameDescription />
                 </Container>

@@ -15,6 +15,7 @@ const OrangeButton = ({ text, size, onClick }) => {
     return (
         <button 
             className={`btn ${size}`}
+            type='button'
             style={{
                 color: isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)',
                 backgroundColor: isHovered ? 'inherit' : 'var(--color-orange)',                

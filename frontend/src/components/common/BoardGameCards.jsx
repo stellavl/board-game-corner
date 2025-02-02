@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGamepad, faClock, faUsers, faChild } from '@fortawesome/free-solid-svg-icons';
+import { useNavigate } from 'react-router-dom';
 
 const boardGames = [
   { name: 'Catan', type: 'Στρατηγικής', duration: '60’', players: '3-4 παίκτες', age: '10+', image: '/boardgamephotos/catan.png' },
@@ -16,16 +17,27 @@ const boardGames = [
 ];
 
 const BoardGameCards = ({ header }) => {
+  const navigate = useNavigate(); // Initialize navigation
+
+  const handleCardClick = (game) => {
+    const formattedName = encodeURIComponent(game.name.replace(/\s+/g, "-").toLowerCase());
+    navigate(`/boardgames/${formattedName}`, { state: { game } }); // Pass full game object in state
+  };
+
   return (
     <div className="container-fluid">
-      <h5 className="mb-3 ms-4 text-decoration-underline" style={{ color: 'var(--color-gray-purple)' }}>
+      <h5 className="mb-3 ms-4 text-decoration-underline" style={{ color: "var(--color-gray-purple)" }}>
         {header}
       </h5>
-      <div className="overflow-auto" style={{ maxHeight: '500px' }}>
+      <div className="overflow-auto" style={{ maxHeight: "500px" }}>
       <Row className="gx-3 gy-3 flex-wrap">
       {boardGames.map((game, index) => (
         <Col key={index} xs={6} md={4} xl={3} className="mb-3">
-          <Card className="border-2 rounded-3 mx-auto" style={{ borderColor: '#E95C2F' }}>
+          <Card
+            className="border-2 rounded-3 mx-auto"
+            style={{ borderColor: "#E95C2F", cursor: "pointer" }}
+            onClick={() => handleCardClick(game)} // Pass entire game object
+          >
             <Card.Img
               variant="top"
               src={game.image}

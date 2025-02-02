@@ -26,25 +26,26 @@ const BoardGameOverview = ({ boardGame }) => {
 
             {/* Checkboxes for "Έχω παίξει" and "Θέλω να παίξω" */}
             <Row className="mb-3">
-                <Col className="d-flex justify-content-center align-items-center">
+                <Col className="d-flex justify-content-center align-items-center flex-column flex-sm-row">
                     <BoardGameCheckBox 
                         checkboxText="Θέλω να παίξω"
                         checked={boardGameState.wantToPlay}
                         onChange={() => handleCheckboxChange('wantToPlay')}
-                        className="me-4"
+                        className="me-4 text-nowrap"
                     />
                     <BoardGameCheckBox 
                         checkboxText="Έχω παίξει"
                         checked={boardGameState.hasPlayed}
                         onChange={() => handleCheckboxChange('hasPlayed')}
+                        className="text-nowrap"
                     />
                 </Col>
             </Row>
 
             {/* Display the number of board game cafes */}
-            <Row className="mb-4">
+            <Row className="mb-1">
                 <Col className="d-flex justify-content-center align-items-center">
-                    <p className="text-center" style={{ color: "var(--color-orange)" }}>
+                    <p className="text-center text-nowrap" style={{ color: "var(--color-orange)" }}>
                         Διαθέσιμο σε <span className="fw-bold fs-6 p-1 rounded" style={{ color: "var(--color-soft-yellow)", backgroundColor: "var(--color-orange)" }}>{boardGameState.boardGameCafesCount}</span> παιχνιδοκαφέ
                     </p>
                 </Col>

@@ -4,7 +4,7 @@ import { faGamepad, faClock, faUsers, faChild } from '@fortawesome/free-solid-sv
 import { Card } from 'react-bootstrap';
 
 const BoardGameDetails = ({ boardGame }) => (
-  <Card.Text>
+  <Card.Text className="text-nowrap">
     <FontAwesomeIcon icon={faGamepad} className="ms-1 me-2" />
     {boardGame.type} <br />
     <FontAwesomeIcon icon={faClock} className="ms-1 me-3" />

@@ -22,34 +22,34 @@ const BoardGameCards = ({ header }) => {
         {header}
       </h5>
       <div className="overflow-auto" style={{ maxHeight: '500px' }}>
-        <Row className="gx-3 gy-3 flex-wrap">
-          {boardGames.map((game, index) => (
-            <Col key={index} xs={12} md={4} className="mb-3">
-              <Card className="border-2 rounded-3 mx-auto" style={{ borderColor: '#E95C2F' }}>
-                <Card.Img
-                  variant="top"
-                  src={game.image}
-                  alt={game.name}
-                  className="card-img-top img-fluid mt-2"
-                  style={{ height: '120px', objectFit: 'contain' }}
-                />
-                <Card.Body style={{ color: 'var(--color-gray-purple)' }}>
-                  <Card.Title><strong>{game.name}</strong></Card.Title>
-                  <Card.Text>
-                    <FontAwesomeIcon icon={faGamepad} className="ms-1 me-2" />
-                    {game.type} <br />
-                    <FontAwesomeIcon icon={faClock} className="ms-1 me-3" />
-                    {game.duration} <br />
-                    <FontAwesomeIcon icon={faUsers} className="ms-1 me-2" />
-                    {game.players} <br />
-                    <FontAwesomeIcon icon={faChild} className="ms-2 me-3" />
-                    {game.age}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+      <Row className="gx-3 gy-3 flex-wrap">
+      {boardGames.map((game, index) => (
+        <Col key={index} xs={6} md={4} xl={3} className="mb-3">
+          <Card className="border-2 rounded-3 mx-auto" style={{ borderColor: '#E95C2F' }}>
+            <Card.Img
+              variant="top"
+              src={game.image}
+              alt={game.name}
+              className="card-img-top img-fluid mt-2"
+              style={{ height: '120px', objectFit: 'contain' }}
+            />
+            <Card.Body style={{ color: 'var(--color-gray-purple)' }}>
+              <Card.Title><strong>{game.name}</strong></Card.Title>
+              <Card.Text>
+                <FontAwesomeIcon icon={faGamepad} className="ms-1 me-2" />
+                {game.type} <br />
+                <FontAwesomeIcon icon={faClock} className="ms-1 me-3" />
+                {game.duration} <br />
+                <FontAwesomeIcon icon={faUsers} className="ms-1 me-2" />
+                {game.players} <br />
+                <FontAwesomeIcon icon={faChild} className="ms-2 me-3" />
+                {game.age}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
+    </Row>
       </div>
     </div>
   );

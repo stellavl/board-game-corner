@@ -5,12 +5,12 @@ import OrangeButton from '../common/OrangeButton';
 
 const ReservationForm = () => {
   return (
-    <Container className="p-3">
+    <Container className="p-3 text-center">
       <h6 className="mb-3" style={{ color: 'var(--color-gray-purple)' }}>
         Κάνε τώρα την κράτησή σου:
       </h6>
       <Container 
-        className="py-4 rounded mx-auto text-center" 
+        className="py-4 rounded mx-auto" 
         style={{ 
           backgroundColor: 'var(--color-soft-orange)', 
           border: '2px solid var(--color-orange)',

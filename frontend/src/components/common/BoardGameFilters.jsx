@@ -94,7 +94,7 @@ const BoardGameFilters = ({ onApplyFilters }) => {
           </div>
         )}
 
-        <Form>
+        <Form style={{ color: 'var(--color-gray-purple)' }}>
           {/* Κατηγορία (Category) */}
           <Form.Group className="mb-2">
             <Form.Label>

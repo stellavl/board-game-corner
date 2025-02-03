@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
-import ReservationForm from '../components/home/ReservationFormGeneral';
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import ReservationForm from '../components/homepage/ReservationFormGeneral';
 import OrangeButton from '../components/common/OrangeButton'; 
 import SearchBar from '../components/common/SearchBar';
 

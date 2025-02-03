@@ -2,22 +2,37 @@ import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { useBoardGame } from "../context/BoardGameContext";
 import BoardGameCheckBox from "./BoardGameCheckBox";
-import { FaStar, FaRegStar } from "react-icons/fa";  // Import the star icons
+import { FaStar, FaRegStar } from "react-icons/fa"; 
 
 const BoardGameOverview = ({ boardGame }) => {
-    const { boardGameState, handleCheckboxChange, toggleFavorite } = useBoardGame();  // Access the context
+    const { boardGameState, handleCheckboxChange, toggleFavorite } = useBoardGame();  
+    const score = 4.5; // Default score
 
     return (
         <>
-            {/* Display the board game name */}
             <Row className="mb-2">
                 <Col className="d-flex justify-content-center align-items-center">
+
+                    {/* Score Component */}
+                    <div
+                        className="d-flex justify-content-center align-items-center rounded-circle fw-bold fs-6 me-4"
+                        style={{
+                            minWidth: "60px",  
+                            minHeight: "30px", 
+                            backgroundColor: "var(--color-orange)",
+                            color: "var(--color-soft-yellow)",
+                        }}
+                        >
+                        {score}/5
+                    </div>
+
+                    {/* Board game name */}
                     <h1 className="text-center" style={{ color: "var(--color-orange)" }}>
                         {boardGame.name}
                     </h1>
 
                     {/* FavoriteStar component */}
-                    <div onClick={toggleFavorite} className="ms-3" style={{ cursor: "pointer" }}>
+                    <div onClick={toggleFavorite} className="ms-4 me-5" style={{ cursor: "pointer" }}>
                         {boardGameState.isFavorite ? (
                             <FaStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
                         ) : (

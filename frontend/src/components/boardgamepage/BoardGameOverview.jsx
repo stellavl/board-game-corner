@@ -1,7 +1,8 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { useBoardGame } from "../context/BoardGameContext";
-import BoardGameCheckBox from "./BoardGameCheckBox";  
+import BoardGameCheckBox from "./BoardGameCheckBox";
+import { FaStar, FaRegStar } from "react-icons/fa";  // Import the star icons
 
 const BoardGameOverview = ({ boardGame }) => {
     const { boardGameState, handleCheckboxChange, toggleFavorite } = useBoardGame();  // Access the context
@@ -16,11 +17,13 @@ const BoardGameOverview = ({ boardGame }) => {
                     </h1>
 
                     {/* FavoriteStar component */}
-                    <div onClick={toggleFavorite} className="ms-2" style={{ cursor: "pointer" }}>                    
-                        <span style={{ fontSize: "2rem", color: boardGameState.isFavorite ? "var(--color-orange)" : "var(--color-gray-purple)" }}>
-                            ★
-                        </span>
-                    </div>
+                    <div onClick={toggleFavorite} className="ms-3" style={{ cursor: "pointer" }}>
+                        {boardGameState.isFavorite ? (
+                            <FaStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
+                        ) : (
+                            <FaRegStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
+                        )}
+                    </div>  
                 </Col>
             </Row>
 

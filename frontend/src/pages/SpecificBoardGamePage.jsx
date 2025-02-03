@@ -19,8 +19,9 @@ const SpecificBoardGamePage = () => {
 
     return (
         <>
-            {/* Button to go back */}
-            <BackButton />
+            <div className="ms-3 mt-3">
+                <BackButton />
+            </div>
 
             <BoardGameProvider>
                 <Container className="d-flex flex-column justify-content-center align-items-center">

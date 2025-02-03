@@ -41,7 +41,7 @@ const Reviews = () => {
   return (
     <div className="p-3 border-1 rounded ms-5 text-center" style={{ backgroundColor: "var(--color-soft-yellow)", borderColor: "var(--color-orange)", maxWidth: "320px" }}>
       <h5 className="fw-bold mb-2" style={{ color: "var(--color-orange)" }}>Κριτικές</h5>
-      <div className="overflow-auto" style={{ maxHeight: "300px", paddingRight: "5px" }}>
+      <div className="overflow-auto" style={{ maxHeight: "400px" }}>
         {allReviews.map((review, index) => (
           <ReviewCard key={index} review={review} />
         ))}

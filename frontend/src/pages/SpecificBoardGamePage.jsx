@@ -1,12 +1,13 @@
 // pages/SpecificBoardGamePage.js
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";  // Import Col from react-bootstrap
+import { Container, Row, Col } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
 import BoardGameOverview from "../components/boardgamepage/BoardGameOverview";  
 import { BoardGameProvider } from "../components/context/BoardGameContext";  
 import BoardGameDescription from "../components/boardgamepage/BoardGameDescription";
-import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImageAndDetails";  // Import the new component
+import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImageAndDetails";  
+import Reviews from "../components/boardgamepage/Reviews";
 
 const SpecificBoardGamePage = () => {
     const location = useLocation();
@@ -41,7 +42,7 @@ const SpecificBoardGamePage = () => {
                             </Row>
                         </Col>
                         <Col md={4} xs={12}>
-                        {/* Add review component here */}
+                            <Reviews />
                         </Col>
                     </Row>
                     

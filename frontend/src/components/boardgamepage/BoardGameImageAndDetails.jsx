@@ -10,8 +10,7 @@ const BoardGameImageAndDetails = ({ boardGame }) => {
                 fluid 
                 className="mb-3 w-90" 
             />
-            <div className="justify-content-center align-items-center" style={{ color: "var(--color-gray-purple)" }}> 
-                {/* Apply the new class here */}
+            <div className="d-flex justify-content-center mb-3" style={{ color: "var(--color-gray-purple)" }}> 
                 <BoardGameDetails boardGame={boardGame} />
             </div>
         </Col>

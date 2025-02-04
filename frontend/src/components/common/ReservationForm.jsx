@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import OrangeButton from './OrangeButton';
+import boardGames from '../../data/boardGames';
+import gameCafes from '../../data/boardGameCafes';
+import timeSlots from '../../data/timeslots';
 
 const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameTitle }) => {
   const today = new Date().toISOString().split("T")[0];
@@ -26,7 +28,6 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
       setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
     }
   };
-  
 
   const validateForm = () => {
     let newErrors = {};
@@ -49,17 +50,16 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
     }
   };
 
-  // Calculate the number of active fields
+  // Calculate container width based on the number of active fields.
   const activeFields = [
     showGameCafe,
     showBoardGame,
-    true, // Players field is always visible
-    true, // Date field is always visible
-    true  // Time field is always visible
+    true,
+    true,
+    true
   ].filter(Boolean).length;
 
-  // Dynamically adjust max width based on active fields
-  const containerWidth = `${Math.min(200 * activeFields, 1000)}px`;
+  const containerWidth = `${Math.min(220 * activeFields, 1200)}px`;
 
   return (
     <div className="d-flex justify-content-center align-items-center">
@@ -68,32 +68,51 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
         style={{ 
           backgroundColor: 'var(--color-soft-orange)', 
           border: '2px solid var(--color-orange)',
-          maxWidth: containerWidth, // Dynamically adjust width
+          maxWidth: containerWidth, 
         }}
       >
         <Row className="g-3 row-cols-1 row-cols-lg-auto justify-content-center">
           {showGameCafe && (
-            <Col xs={12} sm={8} md={4}>
+            <Col xs={12} sm={8} md={4} lg={3}>
               <Form.Group>
-                <Form.Label className="fw-bold text-start w-100" style={{ color: 'var(--color-gray-purple)' }}>Παιχνιδοκαφέ:</Form.Label>
+                <Form.Label 
+                  className="fw-bold text-start w-100" 
+                  style={{ color: 'var(--color-gray-purple)' }}
+                >
+                  Παιχνιδοκαφέ:
+                </Form.Label>
                 <Form.Select 
                   name="gameCafe" 
                   className="form-control w-100" 
                   onChange={handleChange}
                   isInvalid={!!errors.gameCafe}
+                  style={{ maxWidth: "100%" }} 
                 >
                   <option value="">Παιχνιδοκαφέ</option>
-                  <option value="Cafe1">Καφέ 1</option>
-                  <option value="Cafe2">Καφέ 2</option>
+                  {gameCafes.map((cafe) => (
+                    <option 
+                      key={cafe.id} 
+                      value={cafe.name}
+                    >
+                      {`${cafe.name}(${cafe.city})`}
+                    </option>
+                  ))}
                 </Form.Select>
-                <div className="invalid-feedback">{errors.gameCafe}</div>
+                <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
+                  {errors.gameCafe}
+                </div>
               </Form.Group>
             </Col>
           )}
           {showBoardGame && (
             <Col xs={12} sm={8} md={4}>
               <Form.Group>
-                <Form.Label className="fw-bold text-start w-100" style={{ color: 'var(--color-gray-purple)' }}>Επιτραπέζιο:</Form.Label>
+                <Form.Label 
+                  className="fw-bold text-start w-100" 
+                  style={{ color: 'var(--color-gray-purple)' }}
+                >
+                  Επιτραπέζιο:
+                </Form.Label>
                 <Form.Select 
                   name="boardGame" 
                   className="form-control w-100" 
@@ -101,16 +120,24 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                   isInvalid={!!errors.boardGame}
                 >
                   <option value="">Επιτραπέζιο</option>
-                  <option value="Game1">Επιτραπέζιο 1</option>
-                  <option value="Game2">Επιτραπέζιο 2</option>
+                  {boardGames.map((game) => (
+                    <option key={game.id} value={game.name}>{game.name}</option>
+                  ))}
                 </Form.Select>
-                <div className="invalid-feedback">{errors.boardGame}</div>
+                <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
+                  {errors.boardGame}
+                </div>
               </Form.Group>
             </Col>
           )}
           <Col xs={12} sm={8} md={4}>
             <Form.Group>
-              <Form.Label className="fw-bold text-start w-100" style={{ color: 'var(--color-gray-purple)' }}>Πλήθος παικτών:</Form.Label>
+              <Form.Label 
+                className="fw-bold text-start w-100 text-nowrap" 
+                style={{ color: 'var(--color-gray-purple)' }}
+              >
+                Πλήθος παικτών:
+              </Form.Label>
               <Form.Control 
                 type="number" 
                 name="players" 
@@ -120,12 +147,19 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 isInvalid={!!errors.players}
                 min="1"
               />
-              <div className="invalid-feedback">{errors.players}</div>
+              <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
+                {errors.players}
+              </div>
             </Form.Group>
           </Col>
           <Col xs={12} sm={8} md={4}>
             <Form.Group>
-              <Form.Label className="fw-bold text-start w-100" style={{ color: 'var(--color-gray-purple)' }}>Ημερομηνία:</Form.Label>
+              <Form.Label 
+                className="fw-bold text-start w-100" 
+                style={{ color: 'var(--color-gray-purple)' }}
+              >
+                Ημερομηνία:
+              </Form.Label>
               <Form.Control 
                 type="date" 
                 name="date" 
@@ -134,23 +168,35 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 isInvalid={!!errors.date}
                 min={today}
               />
-              <div className="invalid-feedback">{errors.date}</div>
+              <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
+                {errors.date}
+              </div>
             </Form.Group>
           </Col>
           <Col xs={12} sm={8} md={4}>
             <Form.Group>
-              <Form.Label className="fw-bold text-start w-100" style={{ color: 'var(--color-gray-purple)' }}>Ώρα: </Form.Label>
+              <Form.Label 
+                className="fw-bold text-start w-100" 
+                style={{ color: 'var(--color-gray-purple)' }}
+              >
+                Ώρα: 
+              </Form.Label>
               <Form.Select 
-                name="time" 
-                className="form-control w-100" 
+                name="time"
+                className="form-control w-100"
                 onChange={handleChange}
                 isInvalid={!!errors.time}
               >
                 <option value="">Ώρα</option>
-                <option value="18:00">18:00</option>
-                <option value="19:00">19:00</option>
+                {timeSlots.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
               </Form.Select>
-              <div className="invalid-feedback">{errors.time}</div>
+              <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
+                {errors.time}
+              </div>
             </Form.Group>
           </Col>
         </Row>
@@ -162,4 +208,4 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
   );
 };
 
-export default ReservationForm; 
+export default ReservationForm;

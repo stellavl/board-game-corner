@@ -98,7 +98,7 @@ const SpecificBoardGamePage = () => {
                         <h6 className="mb-3" style={{ color: 'var(--color-gray-purple)' }}>
                             Κάνε τώρα την κράτησή σου:
                         </h6>
-                        <ReservationForm showGameCafe={true} showBoardGame={false} boardGameTitle={boardGame.name} />
+                        <ReservationForm showBoardGame={false} boardGameTitle={boardGame.name} />
                     </Container>
                 </Row>
             </Container>

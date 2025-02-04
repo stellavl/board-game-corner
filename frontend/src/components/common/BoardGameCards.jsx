@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import BoardGameDetails from './BoardGameDetails';
-import boardGames from '../../data/boardGamesData';
+import boardGames from '../../data/boardGames';
 
 const BoardGameCards = ({ header }) => {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
   import React from "react";
-  import Main from "./components/common/Main.jsx";
-  import Header from "./components/header/NavBar.jsx";
-  import Footer from "./components/footer/Footer.jsx";
+  import Main from "./components/layout/Main.jsx";
+  import Header from "./components/layout/header/NavBar.jsx";
+  import Footer from "./components/layout/footer/Footer.jsx";
   import { BrowserRouter as Router } from 'react-router-dom';
   import 'bootstrap/dist/css/bootstrap.min.css';
 

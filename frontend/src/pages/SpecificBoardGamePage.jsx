@@ -7,6 +7,7 @@ import { BoardGameProvider } from "../components/context/BoardGameContext";
 import BoardGameDescription from "../components/boardgamepage/BoardGameDescription";
 import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImageAndDetails";  
 import Reviews from "../components/boardgamepage/Reviews";
+import ReservationForm from "../components/common/ReservationForm";
 
 const SpecificBoardGamePage = () => {
     const location = useLocation();
@@ -89,7 +90,22 @@ const SpecificBoardGamePage = () => {
                         </Col>
                     </Row>
                 </Container>
+
+                <Container className="text-center">
+                {/* Reservation Form */}
+                <Row>
+                <Container className="p-3 text-center">
+                        <h6 className="mb-3" style={{ color: 'var(--color-gray-purple)' }}>
+                            Κάνε τώρα την κράτησή σου:
+                        </h6>
+                        <ReservationForm showGameCafe={true} showBoardGame={false} boardGameTitle={boardGame.name} />
+                    </Container>
+                </Row>
+            </Container>
+
             </BoardGameProvider>
+
+
         </>
     );
 };

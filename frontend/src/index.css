@@ -15,3 +15,30 @@ body {
 input[type="checkbox"]:checked {
   accent-color: var(--color-orange);
 }
+.pagination .page-item .page-link {
+  background-color: var(--color-soft-yellow);
+  border-color: var(--color-orange);
+  color: var(--color-orange);
+  transition: all 0.3s ease-in-out;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: var(--color-orange);
+  border-color: var(--color-orange);
+  color: var(--color-soft-yellow);
+  pointer-events: none; 
+}
+
+.pagination .page-item .page-link:hover {
+  background-color: var(--color-soft-orange); 
+  color: var(--color-orange); 
+  border-color: var(--color-orange);
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: var(--color-soft-yellow);
+  border-color: var(--color-orange);
+  color: var(--color-orange);
+  opacity: 0.6;
+  pointer-events: none;
+}

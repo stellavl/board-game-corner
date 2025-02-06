@@ -75,9 +75,9 @@ const BoardGameFilters = ({ onApplyFilters }) => {
   };
 
   return (
-    <Card className="p-3 rounded border-2" style={{ borderColor: "#E95C2F" }}>
+    <Card className="p-3 rounded border-2 " style={{ borderColor: "var(--color-orange)" }}>
       <Card.Body>
-        <h5 className="text-center text-decoration-underline " style={{ color: "#E95C2F" }}>
+        <h5 className="text-center text-decoration-underline " style={{ color: "var(--color-orange)" }}>
           Φίλτρα
         </h5>
 

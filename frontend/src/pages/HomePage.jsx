@@ -1,10 +1,21 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import ReservationForm from '../components/common/ReservationForm';
 import OrangeButton from '../components/common/OrangeButton'; 
 import SearchBar from '../components/common/SearchBar';
 
 const Home = () => {
+    const navigate = useNavigate();
+
+    const navigateToBoardGames = () => {
+        navigate('/boardgames');
+    };
+    
+    const navigateToBoardGameCafes = () => {
+        navigate('/boardgamecafes');
+    };
+
     return (
         <Container className='d-flex flex-column justify-content-center align-items-center mt-5'>
             <Row className='mb-4'>
@@ -33,10 +44,10 @@ const Home = () => {
             </Row>
             <Row className='mb-5 mt-2'>
                 <Col className="text-center">
-                    <OrangeButton text="Επιτραπέζια" size="btn-lg" />
+                    <OrangeButton text="Επιτραπέζια" size="btn-lg" onClick={navigateToBoardGames} />
                 </Col>
                 <Col className="text-center">
-                    <OrangeButton text="Παιχνιδοκαφέ" size="btn-lg" />
+                    <OrangeButton text="Παιχνιδοκαφέ" size="btn-lg" onClick={navigateToBoardGameCafes} />
                 </Col>
             </Row>
         </Container>

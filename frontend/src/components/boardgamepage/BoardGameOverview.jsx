@@ -27,7 +27,7 @@ const BoardGameOverview = ({ boardGame }) => {
                     </div>
 
                     {/* Board game name */}
-                    <h1 className="text-center" style={{ color: "var(--color-orange)" }}>
+                    <h1 className="text-center text-nowrap" style={{ color: "var(--color-orange)" }}>
                         {boardGame.name}
                     </h1>
 

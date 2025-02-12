@@ -4,12 +4,14 @@ import HomePage from "../../pages/HomePage";
 import BoardGamesPage from "../../pages/BoardGamesPage";
 import BoardGameCafesPage from "../../pages/BoardGameCafesPage";
 import SpecificBoardGamePage from "../../pages/SpecificBoardGamePage";
+import SpecificCityCafesPage from "../../pages/SpecificCityCafesPage";
 
 const validRoutePatterns = [
   "/home",
   "/boardgames",
   "/boardgamecafes",
   "/boardgames/:boardGameName", // Dynamic route
+  "/boardgamecafes/:cityName"  // Dynamic route for specific city cafes
 ];
 
 const isValidRoute = (pathname) => {
@@ -28,14 +30,14 @@ const Main = () => {
 
   return (
     <div style={{ minHeight: "400px" }}>
-
       <Routes>
         <Route path="/home" element={<HomePage />} />
         <Route path="/boardgames" element={<BoardGamesPage />} />
         <Route path="/boardgamecafes" element={<BoardGameCafesPage />} />
         <Route path="/boardgames/:boardGameName" element={<SpecificBoardGamePage />} />
+        <Route path="/boardgamecafes/:cityName" element={<SpecificCityCafesPage />} />
       </Routes>
-      </div>
+    </div>
   );
 };
 

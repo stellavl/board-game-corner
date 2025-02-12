@@ -12,7 +12,14 @@ const BoardGameCard = ({ boardGame, handleCardClick }) => {
   };
 
   const cardHoverStyle = {
-    transform: 'scale(1.05)'
+    transform: 'scale(1.05)',
+  };
+
+  const titleStyle = {
+    fontSize: '1.2rem',  
+    whiteSpace: 'nowrap', 
+    overflow: 'hidden',  
+    textOverflow: 'ellipsis',
   };
 
   return (
@@ -31,8 +38,10 @@ const BoardGameCard = ({ boardGame, handleCardClick }) => {
           className="card-img-top img-fluid mt-2"
           style={{ height: '120px', objectFit: 'contain' }}
         />
-        <Card.Body style={{ color: 'var(--color-gray-purple)' }}>
-          <Card.Title><strong>{boardGame.name}</strong></Card.Title>
+        <Card.Body style={{ color: 'var(--color-gray-purple)', flex: 1 }}>
+          <Card.Title style={titleStyle}>
+            <strong>{boardGame.name}</strong>
+          </Card.Title>
           <BoardGameDetails boardGame={boardGame} />
         </Card.Body>
       </Card>

@@ -1,65 +1,82 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { Pagination } from "react-bootstrap";
+import usePagination from "../../hooks/usePagination";
 import ReviewCard from "./ReviewCard";
-import ReviewModal from "./ReviewModal";
 import OrangeButton from "../common/OrangeButton";
-import reviews from "../../data/reviews"; 
+import ReviewModal from "./ReviewModal";
+import reviews from "../../data/reviews";
 
 const Reviews = () => {
   const [show, setShow] = useState(false);
-  const [allReviews, setAllReviews] = useState([...reviews].sort((a, b) => new Date(b.date) - new Date(a.date))); // Sort by newest
   const [newReview, setNewReview] = useState({ text: "", rating: 0 });
 
-  const handleShow = () => setShow(true);
-  const handleClose = () => setShow(false);
+  const [expandedState, setExpandedState] = useState({});
 
-  const handleRatingChange = (rating) => {
-    setNewReview({ ...newReview, rating });
-  };
+  const { currentPage, currentItems, totalPages, handlePageChange } = usePagination(
+    reviews, 2
+  );
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const loggedInUser = "Current User"; 
-    const newDate = new Date().toISOString();
-
-    const reviewToAdd = {
-      name: loggedInUser,
-      date: newDate,
-      text: newReview.text,
-      rating: newReview.rating,
-    };
-
-    const updatedReviews = [reviewToAdd, ...allReviews];
-    setAllReviews(updatedReviews);
-
-    reviews.unshift(reviewToAdd); 
-    setNewReview({ text: "", rating: 0 });
-    handleClose();
+  const handleReadMoreToggle = (reviewId) => {
+    setExpandedState((prevState) => ({
+      ...prevState,
+      [reviewId]: !prevState[reviewId], 
+    }));
   };
 
   return (
-    <div className="p-3 border-1 rounded ms-5 text-center" style={{ backgroundColor: "var(--color-soft-yellow)", borderColor: "var(--color-orange)", maxWidth: "320px" }}>
+    <div className="p-3 border-1 rounded ms-5 text-center">
       <h5 className="fw-bold mb-2" style={{ color: "var(--color-orange)" }}>Κριτικές</h5>
-      <div className="overflow-auto" style={{ maxHeight: "400px" }}>
-        {allReviews.map((review, index) => (
-          <ReviewCard key={index} review={review} />
-        ))}
-      </div>
+
+      {currentItems.map((review, index) => (
+        <ReviewCard
+          key={review.id || index} 
+          review={review}
+          isExpanded={expandedState[review.id]}
+          onReadMoreToggle={() => handleReadMoreToggle(review.id)} 
+        />
+      ))}
+
+      {/* Pagination Controls */}
+      <Pagination className="justify-content-center mt-3">
+        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+        {currentPage > 2 && (
+          <>
+            <Pagination.Item onClick={() => handlePageChange(1)}>1</Pagination.Item>
+            {currentPage > 3 && <Pagination.Ellipsis />}
+          </>
+        )}
+        {currentPage > 1 && (
+          <Pagination.Item onClick={() => handlePageChange(currentPage - 1)}>{currentPage - 1}</Pagination.Item>
+        )}
+        <Pagination.Item active>{currentPage}</Pagination.Item>
+        {currentPage < totalPages && (
+          <Pagination.Item onClick={() => handlePageChange(currentPage + 1)}>{currentPage + 1}</Pagination.Item>
+        )}
+        {currentPage < totalPages - 1 && (
+          <>
+            {currentPage < totalPages - 2 && <Pagination.Ellipsis />}
+            <Pagination.Item onClick={() => handlePageChange(totalPages)}>{totalPages}</Pagination.Item>
+          </>
+        )}
+        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+      </Pagination>
+
       <div className="mt-2">
-        <OrangeButton text="Πρόσθεσε κριτική" size="btn-md" onClick={handleShow} />
+        <OrangeButton text="Πρόσθεσε κριτική" size="btn-md" onClick={() => setShow(true)} />
       </div>
 
       <ReviewModal
         show={show}
-        handleClose={handleClose}
-        handleSubmit={handleSubmit}
+        handleClose={() => setShow(false)}
+        handleSubmit={() => {}}
         newReview={newReview}
         setNewReview={setNewReview}
-        handleRatingChange={handleRatingChange}
+        handleRatingChange={() => {}}
       />
     </div>
   );
 };
+
+
 
 export default Reviews;

@@ -27,7 +27,7 @@ const Main = () => {
   }, [location.pathname, navigate]);
 
   return (
-    <div style={{ minHeight: "350px" }}>
+    <div style={{ minHeight: "400px" }}>
 
       <Routes>
         <Route path="/home" element={<HomePage />} />

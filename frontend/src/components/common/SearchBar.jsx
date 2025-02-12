@@ -19,9 +19,10 @@ const SearchBar = ({ placeholder, onSearch }) => {
             <FormControl
                 placeholder={placeholder}
                 aria-label="Search"
-                className="rounded-start form-control-md"
+                className="rounded-start"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)} // Handle input change
+                style={{ width: '250px' }} 
             />
             <Button
                 style={{

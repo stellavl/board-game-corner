@@ -15,17 +15,17 @@ const BoardGameCafesPage = () => {
     };
 
     const cardHoverStyle = {
-        transform: 'scale(1.05)'
+        transform: 'scale(1.05)',
+        cursor: 'pointer'
     };
 
     const handleCardClick = (cityName) => {
         const translatedCityName = transliterateGreekToEnglish(cityName);
-        console.log(`Navigating to /boardgamecafes/city=${translatedCityName}`);
-        navigate(`/boardgamecafes/city=${translatedCityName}`);
+        navigate(`/boardgamecafes/city=${translatedCityName}`, { state: { city: cityName } });
     };
 
     return (
-        <Container className='d-flex flex-column justify-content-center align-items-center mt-5' style={{ maxWidth: '900px' }}>
+        <Container className='d-flex flex-column justify-content-center align-items-center mt-5 w-75'>
             <Row className='mb-4'>
                 <Col>
                     <h1 className='text-center' style={{ color: 'var(--color-orange)' }}>
@@ -48,19 +48,24 @@ const BoardGameCafesPage = () => {
                     </h5>  
                 </Col>      
             </Row>
-            <Row className='mt-2'>
+            <Row className='mt-2' >
                 {boardGameCities.map((cafe, index) => (
                     <Col key={`${cafe.city}-${index}`} md={4} xs={6} className='mb-4'>
                         <Card 
                             style={cardStyle} 
-                            onMouseEnter={e => e.currentTarget.style.transform = cardHoverStyle.transform}
-                            onMouseLeave={e => e.currentTarget.style.transform = 'none'}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.transform = cardHoverStyle.transform;
+                                e.currentTarget.style.cursor = cardHoverStyle.cursor;
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.transform = 'none';
+                                e.currentTarget.style.cursor = 'default';
+                            }}
                             onClick={() => handleCardClick(cafe.city)}
                         >
                             <Card.Body className="text-center">
                                 <Card.Title>{cafe.city}</Card.Title>
-                                <Card.Text>Εντοπίστηκαν {cafe.cafes} καταστήματα</Card.Text>
-                            </Card.Body>
+                                <Card.Text>Εντοπίστηκαν <strong>{cafe.cafes}</strong> καταστήματα</Card.Text>                            </Card.Body>
                         </Card>
                     </Col>
                 ))}

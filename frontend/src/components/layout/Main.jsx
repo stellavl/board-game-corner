@@ -5,6 +5,7 @@ import BoardGamesPage from "../../pages/BoardGamesPage";
 import BoardGameCafesPage from "../../pages/BoardGameCafesPage";
 import SpecificBoardGamePage from "../../pages/SpecificBoardGamePage";
 import SpecificCityCafesPage from "../../pages/SpecificCityCafesPage";
+import ScrollToTop from "../utils/ScrollToTop";
 
 const validRoutePatterns = [
   "/home",
@@ -30,6 +31,7 @@ const Main = () => {
 
   return (
     <div style={{ minHeight: "400px" }}>
+    <ScrollToTop />
       <Routes>
         <Route path="/home" element={<HomePage />} />
         <Route path="/boardgames" element={<BoardGamesPage />} />

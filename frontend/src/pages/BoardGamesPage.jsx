@@ -55,7 +55,7 @@ const BoardGamesPage = () => {
     <Container className='d-flex flex-column justify-content-center align-items-center mt-5'>
       <Row className='mb-3'>
         <Col>
-          <h2 className='text-center' style={{ color: 'var(--color-orange)', fontWeight: 'bold' }}>
+          <h2 className='text-center fw-bold' style={{ color: 'var(--color-orange)'}}>
             Επιτραπέζια Παιχνίδια
           </h2>
         </Col>

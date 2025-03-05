@@ -27,9 +27,9 @@ const BoardGameOverview = ({ boardGame }) => {
                     </div>
 
                     {/* Board game name */}
-                    <h1 className="text-center text-nowrap" style={{ color: "var(--color-orange)" }}>
+                    <h2 className="text-center text-nowrap" style={{ color: "var(--color-orange)", fontWeight: 'bold' }}>
                         {boardGame.name}
-                    </h1>
+                    </h2>
 
                     {/* FavoriteStar component */}
                     <div onClick={toggleFavorite} className="ms-4 me-5" style={{ cursor: "pointer" }}>

@@ -26,11 +26,11 @@ const BoardGameCafesPage = () => {
 
     return (
         <Container className='d-flex flex-column justify-content-center align-items-center mt-5 w-75'>
-            <Row className='mb-4'>
+            <Row className='mb-3'>
                 <Col>
-                    <h1 className='text-center' style={{ color: 'var(--color-orange)' }}>
+                    <h2 className='text-center' style={{ color: 'var(--color-orange)', fontWeight: 'bold' }}>
                     Παιχνιδοκαφέ
-                    </h1>
+                    </h2>
                 </Col>
             </Row>
             <Row>

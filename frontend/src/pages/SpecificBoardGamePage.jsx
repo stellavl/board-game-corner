@@ -27,8 +27,8 @@ const SpecificBoardGamePage = () => {
     return (
         <>
             {/* Button to go back */}
-            <div className="ms-3 mt-3">
-                <BackButton />
+            <div className="ms-5 mt-3">
+                <BackButton text="Επιστροφή στα επιτραπέζια"/>
             </div>
 
             <BoardGameProvider>

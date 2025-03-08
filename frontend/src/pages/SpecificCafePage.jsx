@@ -1,8 +1,11 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Image } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/common/BackButton';
 import boardGameCafes from '../data/boardGameCafes';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkerAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
+import ReservationForm from '../components/common/ReservationForm';
 
 const SpecificCafePage = () => {
     const { cityName, cafeName } = useParams();
@@ -18,21 +21,33 @@ const SpecificCafePage = () => {
                 <BackButton />
             </div>
             <Container className='d-flex flex-column align-items-center w-75'>
-                <Row>
-                    <Col>
-                        <h2 className='text-center fw-bold' style={{ color: 'var(--color-orange)' }}>
+                <Row className="d-flex align-items-center">
+                    <Col xs={12} md={6} className="text-center mb-4 mb-md-0">
+                        <h2 className='fw-bold' style={{ color: 'var(--color-orange)' }}>
                             {cafe.name}
                         </h2>
-                    </Col>
-                </Row>
-                <hr style={{ width: '50%', borderTop: '2px solid var(--color-orange)', margin: 'auto' }} />
-                <Row className='mt-1 mb-3'>
-                    <Col>
-                        <h3 className='text-center' style={{ color: 'var(--color-orange)' }}>
+                        <h3 style={{ color: 'var(--color-orange)' }}>
                             {cafe.city}
                         </h3>
+                        <div className='fw-semibold text-muted text-center pt-3'>
+                            <div className='d-inline-block text-start'>
+                                <FontAwesomeIcon icon={faMapMarkerAlt} /> <span className="ms-1">{cafe.address}</span>
+                                    <br />
+                                <FontAwesomeIcon icon={faPhone} /> <span className="ms-1">{cafe.phone}</span>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col xs={12} md={6} className="text-center">
+                        <Image 
+                            src={`/${cafe.image}`} 
+                            alt={cafe.name} 
+                            fluid 
+                        />
                     </Col>
                 </Row>
+            </Container>
+            <Container className='d-flex flex-column align-items-center w-75 mt-5'>
+                <ReservationForm showGameCafe={false} />
             </Container>
         </>
     );

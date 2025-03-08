@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Container, Row, Col, Offcanvas } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
 import BoardGameOverview from "../components/boardgamepage/BoardGameOverview";  
@@ -9,11 +9,11 @@ import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImage
 import Reviews from "../components/boardgamepage/Reviews";
 import ReservationForm from "../components/common/ReservationForm";
 import BoardGameCards from "../components/common/BoardGameCards";
+import boardGames from "../data/boardGames";
 
 const SpecificBoardGamePage = () => {
-    const location = useLocation();
-    const boardGame = location.state?.boardGame;
-
+    const { boardGameName } = useParams();
+    const boardGame = boardGames.find(boardGame => boardGame.name === boardGameName);
     const [showReviews, setShowReviews] = useState(false);
 
     if (!boardGame) {

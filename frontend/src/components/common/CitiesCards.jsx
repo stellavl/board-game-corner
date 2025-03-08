@@ -2,7 +2,6 @@ import React from 'react';
 import { Row, Col, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import boardGameCities from '../../data/boardGameCities.js';
-import { transliterate as transliterateGreekToEnglish } from 'transliteration';
 
 const CitiesCards = ({ text = "Διάλεξε πόλη:", currentCity }) => {
    const navigate = useNavigate();
@@ -20,8 +19,7 @@ const CitiesCards = ({ text = "Διάλεξε πόλη:", currentCity }) => {
     };
 
     const handleCardClick = (cityName) => {
-        const translatedCityName = transliterateGreekToEnglish(cityName);
-        navigate(`/boardgamecafes/city=${translatedCityName}`, { state: { city: cityName } });
+        navigate(`/boardgamecafes/${cityName}`, { state: { city: cityName } });
     };
 
     return (

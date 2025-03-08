@@ -25,7 +25,7 @@ const BoardGameCards = ({ itemsPerPage = 8, setNumberOfBoardGames, searchTerm, f
     if ((!searchTerm && filters.categories.length === 0) && location.pathname === '/boardgames') {
       return 'Προτεινόμενα:';
     }
-    return `Αποτελέσματα (${boardGames.length}):`;
+    return `Αποτελέσματα (${numberOfBoardGames}):`; 
   };
 
   return (

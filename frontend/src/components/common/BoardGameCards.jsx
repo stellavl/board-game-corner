@@ -1,27 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Row, Pagination } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import usePagination from "../../hooks/usePagination"; 
 import BoardGameCard from "./BoardGameCard";
 import boardGames from "../../data/boardGames";
 
-const BoardGameCards = ({ header, itemsPerPage = 8 }) => {
+const BoardGameCards = ({ itemsPerPage = 8, setNumberOfBoardGames, searchTerm, filters }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { currentPage, currentItems, totalPages, handlePageChange } = usePagination(
     boardGames, itemsPerPage
   );
 
+  useEffect(() => {
+    setNumberOfBoardGames(boardGames.length);
+  }, [setNumberOfBoardGames]);
+
   const navigateToSpecificBoardGamePage = (boardGame) => {
     navigate(`/boardgames/${boardGame.name}`);
   };
 
+  const getHeaderText = () => {
+    if ((!searchTerm && filters.categories.length === 0) && location.pathname === '/boardgames') {
+      return 'Προτεινόμενα:';
+    }
+    return `Αποτελέσματα (${boardGames.length}):`;
+  };
+
   return (
     <div className="container-fluid">
-      <h5 className="mb-3 ms-4 text-decoration-underline" style={{ color: "var(--color-gray-purple)" }}>
-        {header}
+      <h5 className="mb-3" style={{ color: "var(--color-gray-purple)" }}>
+        {getHeaderText()}
       </h5>
-      
       <Row className="gx-3 gy-3 flex-wrap">
         {currentItems.map((boardGame, index) => (
           <BoardGameCard key={index} boardGame={boardGame} handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)}/>))}

@@ -103,9 +103,6 @@ const SpecificBoardGamePage = () => {
                     {/* Suggested Board Games */}
                     <Row className="mt-4" >
                         <Col className="col-9 mx-auto">    
-                            <h5 className="mb-2 text-decoration-underline" style={{ color: 'var(--color-gray-purple)' }}> 
-                                Προτεινόμενα:
-                            </h5>
                             <BoardGameCards maxHeight="350px"/>
                         </Col>
                     </Row>

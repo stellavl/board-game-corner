@@ -12,9 +12,8 @@ const BoardGameCards = ({ header, itemsPerPage = 8 }) => {
     boardGames, itemsPerPage
   );
 
-  const handleCardClick = (boardGame) => {
-    const formattedName = encodeURIComponent(boardGame.name.replace(/\s+/g, "-").toLowerCase());
-    navigate(`/boardgames/${formattedName}`, { state: { boardGame } });
+  const navigateToSpecificBoardGamePage = (boardGame) => {
+    navigate(`/boardgames/${boardGame.name}`);
   };
 
   return (
@@ -25,8 +24,7 @@ const BoardGameCards = ({ header, itemsPerPage = 8 }) => {
       
       <Row className="gx-3 gy-3 flex-wrap">
         {currentItems.map((boardGame, index) => (
-          <BoardGameCard key={index} boardGame={boardGame} handleCardClick={handleCardClick} />
-        ))}
+          <BoardGameCard key={index} boardGame={boardGame} handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)}/>))}
       </Row>
       
       {/* Pagination Controls */}

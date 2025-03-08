@@ -6,6 +6,7 @@ import boardGameCafes from '../data/boardGameCafes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import ReservationForm from '../components/common/ReservationForm';
+import BoardGamesContent from '../components/common/BoardGamesContent';
 
 const SpecificCafePage = () => {
     const { cityName, cafeName } = useParams();
@@ -46,8 +47,15 @@ const SpecificCafePage = () => {
                     </Col>
                 </Row>
             </Container>
-            <Container className='d-flex flex-column align-items-center w-75 mt-5'>
+            <Container className='d-flex flex-column align-items-center w-75 pt-5'>
                 <ReservationForm showGameCafe={false} />
+            </Container>
+
+            <Container className='d-flex flex-column align-items-center w-75 mt-5'>
+                <h4 className="pb-3 fw-semibold text-decoration-underline" style={{ color: 'var( --color-gray-purple)' }}>
+                    Διαθέσιμα Επιτραπέζια
+                </h4>
+                <BoardGamesContent/>
             </Container>
         </>
     );

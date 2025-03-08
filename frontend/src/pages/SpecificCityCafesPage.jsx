@@ -47,14 +47,20 @@ const SpecificCityCafesPage = () => {
                     {cafes.map(cafe => (    
                         <Col key={cafe.id} lg={3} md={4} sm={6} xs={12} className="mb-3 d-flex">
                             <Card className="w-100 shadow-sm text-center"
-                                style={{ borderColor: 'var(--color-orange)', backgroundColor: '#fff8dc', minHeight: '100%' }}>
+                                style={{ borderColor: 'var(--color-orange)', minHeight: '100%' }}>
                                 
                                 <Card.Body className="d-flex flex-column">
                                     <Card.Title className="fw-bold">{cafe.name}</Card.Title>
                                     
-                                    <Card.Text className="text-muted small mb-1">{cafe.address}</Card.Text>
+                                    <Card.Text className="text-muted small mb-1 d-flex align-items-center justify-content-center" style={{ height: '3em' }}>
+                                        {cafe.address}
+                                    </Card.Text>
 
-                                    <Card.Text className="fw-semibold text-dark">{cafe.phone}</Card.Text>
+                                    <Card.Text className="text-muted">{cafe.phone}</Card.Text>
+
+                                    <Card.Text className="text-dark">
+                                        <span className="fw-semibold">{cafe.numberOfBoardGames}</span> διαθέσιμα επιτραπέζια
+                                    </Card.Text>
 
                                     <div className="mt-auto">
                                         <OrangeButton text="Επέλεξε" size="btn-md" onClick={() => navigateToSpecificCafePage(cafe.name)}/>

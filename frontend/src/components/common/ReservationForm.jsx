@@ -62,7 +62,11 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
   const containerWidth = `${Math.min(220 * activeFields, 1200)}px`;
 
   return (
-    <div className="d-flex justify-content-center align-items-center">
+    <>
+      <h5 className="mb-3 text-decoration-underline" style={{ color: 'var(--color-gray-purple)' }}>
+        Κάνε τώρα την κράτησή σου:
+      </h5>
+      <div className="d-flex justify-content-center align-items-center">
       <Container 
         className="py-4 rounded" 
         style={{ 
@@ -205,6 +209,8 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
         </div>
       </Container>
     </div>
+    </>
+
   );
 };
 

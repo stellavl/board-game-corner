@@ -30,9 +30,6 @@ const Home = () => {
             </Row>
 
             <Container className="p-3 text-center">
-                <h6 className="mb-3" style={{ color: 'var(--color-gray-purple)' }}>
-                    Κάνε τώρα την κράτησή σου:
-                </h6>
                 <ReservationForm />
             </Container>
 

@@ -15,8 +15,8 @@ const SpecificCityCafesPage = () => {
 
     const navigate = useNavigate();
 
-    const navigateToSpecificCafePage = () => {
-        // navigate('/boardgamecafes/{boardGameCafe}');
+    const navigateToSpecificCafePage = (cafeName) => {
+        navigate(`/boardgamecafes/${city}/${cafeName}`);
     };
 
     return (
@@ -59,7 +59,7 @@ const SpecificCityCafesPage = () => {
                                     <Card.Text className="fw-semibold text-dark">{cafe.phone}</Card.Text>
 
                                     <div className="mt-auto">
-                                        <OrangeButton text="Επέλεξε" size="btn-md" onClick={navigateToSpecificCafePage}/>
+                                        <OrangeButton text="Επέλεξε" size="btn-md" onClick={() => navigateToSpecificCafePage(cafe.name)}/>
                                     </div>
                                 </Card.Body>
                             </Card>

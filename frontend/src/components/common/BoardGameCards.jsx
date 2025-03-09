@@ -1,43 +1,31 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Row, Pagination } from "react-bootstrap";
-import { useNavigate, useLocation } from "react-router-dom";
-import usePagination from "../../hooks/usePagination"; 
+import { useNavigate } from "react-router-dom";
+import usePagination from "../../hooks/usePagination";
 import BoardGameCard from "./BoardGameCard";
-import boardGames from "../../data/boardGames";
 
-const BoardGameCards = ({ itemsPerPage = 8, setNumberOfBoardGames, searchTerm, filters }) => {
+const BoardGameCards = ({ headerText, itemsPerPage = 8, boardGames }) => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const { currentPage, currentItems, totalPages, handlePageChange } = usePagination(
     boardGames, itemsPerPage
   );
 
-  useEffect(() => {
-    setNumberOfBoardGames(boardGames.length);
-  }, [setNumberOfBoardGames]);
-
   const navigateToSpecificBoardGamePage = (boardGame) => {
     navigate(`/boardgames/${boardGame.name}`);
-  };
-
-  const getHeaderText = () => {
-    if ((!searchTerm && filters.categories.length === 0) && location.pathname === '/boardgames') {
-      return 'Προτεινόμενα:';
-    }
-    return `Αποτελέσματα (${numberOfBoardGames}):`; 
   };
 
   return (
     <div className="container-fluid">
       <h5 className="mb-3" style={{ color: "var(--color-gray-purple)" }}>
-        {getHeaderText()}
+        {headerText}
       </h5>
       <Row className="gx-3 gy-3 flex-wrap">
         {currentItems.map((boardGame, index) => (
-          <BoardGameCard key={index} boardGame={boardGame} handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)}/>))}
+          <BoardGameCard key={index} boardGame={boardGame} handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)} />
+        ))}
       </Row>
-      
+
       {/* Pagination Controls */}
       <Pagination className="justify-content-center mt-3">
         <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />

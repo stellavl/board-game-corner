@@ -103,7 +103,7 @@ const SpecificBoardGamePage = () => {
                     {/* Suggested Board Games */}
                     <Row className="mt-4" >
                         <Col className="col-9 mx-auto">    
-                            <BoardGameCards maxHeight="350px"/>
+                            <BoardGameCards maxHeight="350px" headerText="Αποτελέσματα" boardGames={boardGames}/>
                         </Col>
                     </Row>
                 </Container>

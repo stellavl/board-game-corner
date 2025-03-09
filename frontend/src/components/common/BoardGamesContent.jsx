@@ -1,13 +1,13 @@
-import { React, useState, useEffect }from 'react';
+import { React, useState, useEffect } from 'react';
 import { Row, Col, Offcanvas } from 'react-bootstrap';
 import SearchBar from './SearchBar';
 import BoardGameCards from './BoardGameCards';
 import BoardGameFilters from './BoardGameFilters';
 import OrangeButton from './OrangeButton';
 import { useLocation, useNavigate } from 'react-router-dom';
+import boardGames from "../../data/boardGames";
 
 const BoardGamesContent = () => {
-
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ const BoardGamesContent = () => {
     duration: 'Όλες',
     age: 'Όλες',
   });
-  const [numberOfBoardGames, setNumberOfBoardGames] = useState(0);
+  const [filteredBoardGames, setFilteredBoardGames] = useState(boardGames);
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
@@ -41,10 +41,58 @@ const BoardGamesContent = () => {
     setFilters(updatedFilters);
   }, [location.search]);
 
+  useEffect(() => {
+    let filteredGames = boardGames;
+
+    if (searchTerm) {
+      filteredGames = filteredGames.filter(game =>
+        game.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filters.categories.length > 0) {
+      filteredGames = filteredGames.filter(game =>
+        filters.categories.includes(game.category)
+      );
+    }
+
+    if (filters.minPlayers !== 'Όλοι') {
+      filteredGames = filteredGames.filter(game =>
+        game.minPlayers >= parseInt(filters.minPlayers)
+      );
+    }
+
+    if (filters.maxPlayers !== 'Όλοι') {
+      filteredGames = filteredGames.filter(game =>
+        game.maxPlayers <= parseInt(filters.maxPlayers)
+      );
+    }
+
+    if (filters.duration !== 'Όλες') {
+      filteredGames = filteredGames.filter(game =>
+        game.duration === filters.duration
+      );
+    }
+
+    if (filters.age !== 'Όλες') {
+      filteredGames = filteredGames.filter(game =>
+        game.age === filters.age
+      );
+    }
+
+    setFilteredBoardGames(filteredGames);
+  }, [searchTerm, filters]);
+
   const handleClose = () => setShowFilters(false);
   const handleShow = () => setShowFilters(true);
   const handleSearch = (term) => setSearchTerm(term);
 
+  const getHeaderText = () => {
+    if ((!searchTerm && filters.categories.length === 0)) {
+      return 'Προτεινόμενα:';
+    }
+    return `Αποτελέσματα (${filteredBoardGames.length}):`; 
+  };
   return (
     <>
       <Row className='mb-4'>
@@ -65,7 +113,7 @@ const BoardGamesContent = () => {
         </Col>
 
         <Col lg={9} xs={12} className="mt-4 mt-lg-0">
-          <BoardGameCards searchTerm={searchTerm} filters={filters} setNumberOfBoardGames={setNumberOfBoardGames} />
+          <BoardGameCards headerText={getHeaderText()} boardGames={filteredBoardGames} />
         </Col>
       </Row>
 

@@ -1,15 +1,26 @@
 import { React, useState } from 'react';
-import { Modal, Button, Form, Alert, Spinner, Nav, Row, Col } from 'react-bootstrap';
+import { Modal, Button, Form, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import useLoginForm from '../../hooks/useLoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
-const LoginModal = ({ showModal, setShowModal }) => {
-  const { formData, handleChange, isSubmitting, error, handleSubmit } = useLoginForm();
+const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowSignUpModal }) => {
+  const { formData, handleChange, isSubmitting, error } = useLoginForm();
+
   const [showPassword, setShowPassword] = useState(false);
 
+  const handleLoginSubmit = () => {
+    setIsLoggedIn(true);
+    setShowLoginModal(false);
+  };
+
+  const handleSignUpClick = () => {
+    setShowLoginModal(false);
+    setShowSignUpModal(true);
+  };
+
   return (
-    <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+    <Modal show={showLoginModal} onHide={() => setShowLoginModal(false)} centered>
       <Modal.Header closeButton style={{ backgroundColor: 'var(--color-soft-yellow)',  color: 'var(--color-gray-purple)' }}>
         <Modal.Title>Σύνδεση</Modal.Title>
       </Modal.Header>
@@ -63,7 +74,7 @@ const LoginModal = ({ showModal, setShowModal }) => {
         <Row className="mt-5 align-items-center">
         <Col className="d-flex justify-content-center">
           <Button
-            onClick={() => handleSubmit(() => setShowModal(false))}
+            onClick={handleLoginSubmit}
             disabled={isSubmitting}
             style={{ backgroundColor: 'var(--color-orange)', border: 'var(--color-orange)' }}
           >
@@ -75,9 +86,9 @@ const LoginModal = ({ showModal, setShowModal }) => {
           <Col>
           <div className="d-flex justify-content-center mt-2" style={{ color: 'var(--color-gray-purple)' }}>
             <span>Δεν έχετε λογαριασμό;&nbsp;</span>
-            <Nav.Link to="/signup" className="btn btn-link p-0" style={{ color: 'var(--color-orange)' }}>
+            <Button variant="link" className="p-0" style={{ color: 'var(--color-orange)' }} onClick={handleSignUpClick}>
               Εγγραφή
-            </Nav.Link>
+            </Button>
           </div>
           </Col>
         </Row>

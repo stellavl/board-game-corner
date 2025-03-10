@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
+import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
 
 const LoginButton = () => {
   const [isDropdownButtonHovered, setIsDropdownButtonHovered] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSignupModal, setShowSignupModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('Στέλλα');
   const [dropdownOpen, setDropdownOpen] = useState(false);
-
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-    setShowModal(false);
-  };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -42,9 +39,9 @@ const LoginButton = () => {
           onMouseLeave={() => setIsDropdownButtonHovered(false)}
           onClick={() => {
             if (!isLoggedIn) {
-              setShowModal(true);
+              setShowLoginModal(true);
             } else {
-              toggleDropdown(); // Toggle dropdown only if logged in
+              toggleDropdown(); 
             }
           }}
         >
@@ -58,7 +55,17 @@ const LoginButton = () => {
         {isLoggedIn && <AccountDropdown userName={userName} onLogout={handleLogout} />}
       </Dropdown>
 
-      <LoginModal showModal={showModal} setShowModal={handleLogin} />
+      <LoginModal
+        showLoginModal={showLoginModal}
+        setShowLoginModal={setShowLoginModal}
+        setIsLoggedIn={setIsLoggedIn}
+        setShowSignUpModal={setShowSignupModal}
+      />
+      <SignupModal
+        showModal={showSignupModal}
+        setShowModal={setShowSignupModal}
+        setShowLoginModal={setShowLoginModal}
+      />
     </>
   );
 };

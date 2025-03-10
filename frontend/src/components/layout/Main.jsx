@@ -7,6 +7,7 @@ import SpecificBoardGamePage from "../../pages/SpecificBoardGamePage";
 import SpecificCityCafesPage from "../../pages/SpecificCityCafesPage";
 import SpecificCafePage from "../../pages/SpecificCafePage";
 import ScrollToTop from "../utils/ScrollToTop";
+import ReservationDetailsPage from "../../pages/ReservationDetailsPage";
 
 const validRoutePatterns = [
   "/home",
@@ -14,7 +15,8 @@ const validRoutePatterns = [
   "/boardgamecafes",
   "/boardgames/:boardGameName", // Dynamic route
   "/boardgamecafes/:cityName",  // Dynamic route for specific city cafes
-  "/boardgamecafes/:cityName/:cafeName"  // Dynamic route for specific board game cafes
+  "/boardgamecafes/:cityName/:cafeName",  // Dynamic route for specific board game cafes
+  "/reservation-details"
 ];
 
 const isValidRoute = (pathname) => {
@@ -41,6 +43,7 @@ const Main = () => {
         <Route path="/boardgames/:boardGameName" element={<SpecificBoardGamePage />} />
         <Route path="/boardgamecafes/:cityName" element={<SpecificCityCafesPage />} />
         <Route path="/boardgamecafes/:cityName/:cafeName" element={<SpecificCafePage/>} />
+        <Route path="/reservation-details" element={<ReservationDetailsPage />} />
       </Routes>
     </div>
   );

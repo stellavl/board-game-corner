@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Card, Form, Row, Col } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const SignUpPersonal = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
 
     const validateForm = () => {
         let newErrors = {};
@@ -50,9 +52,11 @@ const SignUpPersonal = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         if (validateForm()) {
             console.log("Sign Up Data:", formData);
+            navigate('/home');
         }
     };
 

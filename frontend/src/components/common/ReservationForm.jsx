@@ -61,16 +61,10 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
     }
   };
 
-  // Calculate container width based on the number of active fields.
-  const activeFields = [
-    showGameCafe,
-    showBoardGame,
-    true,
-    true,
-    true
-  ].filter(Boolean).length;
-
-  const containerWidth = `${Math.min(220 * activeFields, 1200)}px`;
+  const boardGameOptions = [
+    { value: "Θα επιλέξω στο κατάστημα", label: "Θα επιλέξω στο κατάστημα" },
+    ...boardGames.map(game => ({ value: game.name, label: game.name }))
+  ];
 
   return (
     <>
@@ -83,10 +77,10 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
         style={{ 
           backgroundColor: 'var(--color-soft-orange)', 
           border: '2px solid var(--color-orange)',
-          maxWidth: containerWidth, 
+          maxWidth: '80rem'
         }}
       >
-        <Row className="g-3 row-cols-1 row-cols-lg-auto justify-content-center">
+        <Row className="g-3 row-cols-1 row-cols-lg-auto justify-content-center flex-nowrap">
           {showGameCafe && (
             <Col xs={12} sm={8} md={4} lg={3}>
               <Form.Group>
@@ -117,7 +111,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
             </Col>
           )}
           {showBoardGame && (
-            <Col xs={12} sm={8} md={4}>
+            <Col xs={12} sm={8} md={4}  lg={3}>
               <Form.Group>
                 <Form.Label 
                   className="fw-bold text-start w-100" 
@@ -127,7 +121,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 </Form.Label>
                 <Select 
                   name="boardGame" 
-                  options={boardGames.map(game => ({ value: game.name, label: game.name }))}
+                  options={boardGameOptions}
                   onChange={(selectedOption) => handleChange("boardGame", selectedOption ? selectedOption.value : "")}
                   isInvalid={!!errors.boardGame}
                   placeholder="Επιτραπέζιο"

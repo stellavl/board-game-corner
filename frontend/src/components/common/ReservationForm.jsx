@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
+import Select from 'react-select';
 import OrangeButton from './OrangeButton';
 import boardGames from '../../data/boardGames';
 import gameCafes from '../../data/boardGameCafes';
@@ -20,8 +21,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
 
   const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value
@@ -91,23 +91,20 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 >
                   Παιχνιδοκαφέ:
                 </Form.Label>
-                <Form.Select 
+                <Select 
                   name="gameCafe" 
-                  className="form-control w-100" 
-                  onChange={handleChange}
+                  options={gameCafes.map(cafe => ({ value: cafe.name, label: `${cafe.name}(${cafe.city})` }))}
+                  onChange={(selectedOption) => handleChange("gameCafe", selectedOption ? selectedOption.value : "")}
                   isInvalid={!!errors.gameCafe}
-                  style={{ maxWidth: "100%" }} 
-                >
-                  <option value="">Παιχνιδοκαφέ</option>
-                  {gameCafes.map((cafe) => (
-                    <option 
-                      key={cafe.id} 
-                      value={cafe.name}
-                    >
-                      {`${cafe.name}(${cafe.city})`}
-                    </option>
-                  ))}
-                </Form.Select>
+                  placeholder="Παιχνιδοκαφέ"
+                  styles={{ 
+                    container: (provided) => ({ ...provided, maxWidth: "100%" }),
+                    placeholder: (provided) => ({ ...provided, textAlign: 'left' }),
+                    singleValue: (provided) => ({ ...provided, textAlign: 'left' }),
+                    menu: (provided) => ({ ...provided, textAlign: 'left' }),
+                    option: (provided) => ({ ...provided, textAlign: 'left' })
+                  }}
+                />
                 <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
                   {errors.gameCafe}
                 </div>
@@ -123,17 +120,20 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 >
                   Επιτραπέζιο:
                 </Form.Label>
-                <Form.Select 
+                <Select 
                   name="boardGame" 
-                  className="form-control w-100" 
-                  onChange={handleChange}
+                  options={boardGames.map(game => ({ value: game.name, label: game.name }))}
+                  onChange={(selectedOption) => handleChange("boardGame", selectedOption ? selectedOption.value : "")}
                   isInvalid={!!errors.boardGame}
-                >
-                  <option value="">Επιτραπέζιο</option>
-                  {boardGames.map((game) => (
-                    <option key={game.id} value={game.name}>{game.name}</option>
-                  ))}
-                </Form.Select>
+                  placeholder="Επιτραπέζιο"
+                  styles={{ 
+                    container: (provided) => ({ ...provided, maxWidth: "100%" }),
+                    placeholder: (provided) => ({ ...provided, textAlign: 'left' }),
+                    singleValue: (provided) => ({ ...provided, textAlign: 'left' }),
+                    menu: (provided) => ({ ...provided, textAlign: 'left' }),
+                    option: (provided) => ({ ...provided, textAlign: 'left' })
+                  }}
+                />
                 <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
                   {errors.boardGame}
                 </div>
@@ -153,7 +153,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 name="players" 
                 placeholder="Πλήθος παικτών" 
                 className="form-control w-100" 
-                onChange={handleChange} 
+                onChange={(e) => handleChange("players", e.target.value)} 
                 isInvalid={!!errors.players}
                 min="1"
               />
@@ -174,7 +174,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 type="date" 
                 name="date" 
                 className="form-control w-100" 
-                onChange={handleChange} 
+                onChange={(e) => handleChange("date", e.target.value)} 
                 isInvalid={!!errors.date}
                 min={today}
               />
@@ -191,19 +191,20 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
               >
                 Ώρα: 
               </Form.Label>
-              <Form.Select 
+              <Select 
                 name="time"
-                className="form-control w-100"
-                onChange={handleChange}
+                options={timeSlots.map(time => ({ value: time, label: time }))}
+                onChange={(selectedOption) => handleChange("time", selectedOption ? selectedOption.value : "")}
                 isInvalid={!!errors.time}
-              >
-                <option value="">Ώρα</option>
-                {timeSlots.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </Form.Select>
+                placeholder="Ώρα"
+                styles={{ 
+                  container: (provided) => ({ ...provided, maxWidth: "100%" }),
+                  placeholder: (provided) => ({ ...provided, textAlign: 'left' }),
+                  singleValue: (provided) => ({ ...provided, textAlign: 'left' }),
+                  menu: (provided) => ({ ...provided, textAlign: 'left' }),
+                  option: (provided) => ({ ...provided, textAlign: 'left' })
+                }}
+              />
               <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
                 {errors.time}
               </div>
@@ -216,7 +217,6 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
       </Container>
     </div>
     </>
-
   );
 };
 

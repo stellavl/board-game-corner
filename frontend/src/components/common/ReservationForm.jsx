@@ -7,7 +7,7 @@ import gameCafes from '../../data/boardGameCafes';
 import timeSlots from '../../data/timeslots';
 import { useNavigate } from "react-router-dom";
 
-const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameTitle }) => {
+const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameTitle, cafeName }) => {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
 
@@ -49,7 +49,12 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
   const handleSubmit = () => {
     if (validateForm()) {
       const formattedDate = formData.date.split("-").reverse().join("-");
-      const formattedFormData = { ...formData, date: formattedDate };
+      const formattedFormData = { 
+        ...formData, 
+        date: formattedDate,
+        boardGame: showBoardGame ? formData.boardGame : boardGameTitle, 
+        gameCafe: showGameCafe ? formData.gameCafe : cafeName 
+      };
       const queryParams = new URLSearchParams(formattedFormData);
       console.log("Form Data:", formattedFormData);
       navigate(`/reservation-details?${queryParams}`);

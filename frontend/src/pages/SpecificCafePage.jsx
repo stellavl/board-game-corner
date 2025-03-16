@@ -54,7 +54,7 @@ const SpecificCafePage = () => {
                 </Row>
             </Container>
             <Container className='d-flex flex-column align-items-center w-75 pt-5'>
-                <ReservationForm showGameCafe={false} />
+                <ReservationForm showGameCafe={false} cafeName={cafe.name} />
             </Container>
 
             <Container className='d-flex flex-column align-items-center w-75 mt-5'>

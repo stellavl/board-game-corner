@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/common/BackButton';
@@ -7,10 +7,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import ReservationForm from '../components/common/ReservationForm';
 import BoardGamesContent from '../components/common/BoardGamesContent';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const SpecificCafePage = () => {
     const { cityName, cafeName } = useParams();
     const cafe = boardGameCafes.find(cafe => cafe.name === cafeName && cafe.city === cityName);
+    const [imageLoaded, setImageLoaded] = useState(false);
 
     if (!cafe) {
         return <h1 className="text-center mt-5">Cafe Not Found</h1>;
@@ -39,10 +42,13 @@ const SpecificCafePage = () => {
                         </div>
                     </Col>
                     <Col xs={12} md={6} className="text-center">
+                        {!imageLoaded && <Skeleton height={150} width={150} />}
                         <Image 
                             src={`/${cafe.image}`} 
                             alt={cafe.name} 
                             fluid 
+                            onLoad={() => setImageLoaded(true)}
+                            style={{ display: imageLoaded ? 'block' : 'none' }}
                         />
                     </Col>
                 </Row>

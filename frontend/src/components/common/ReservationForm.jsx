@@ -6,6 +6,7 @@ import boardGames from '../../data/boardGames';
 import gameCafes from '../../data/boardGameCafes';
 import timeSlots from '../../data/timeslots';
 import { useNavigate } from "react-router-dom";
+import classNames from 'classnames';
 
 const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameTitle, cafeName }) => {
   const navigate = useNavigate();
@@ -80,7 +81,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
           maxWidth: '80rem'
         }}
       >
-        <Row className="g-3 row-cols-1 row-cols-lg-auto justify-content-center flex-nowrap">
+        <Row className="g-3 row-cols-1 row-cols-lg-auto justify-content-center">
           {showGameCafe && (
             <Col xs={12} sm={8} md={4} lg={3}>
               <Form.Group>
@@ -94,7 +95,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                   name="gameCafe" 
                   options={gameCafes.map(cafe => ({ value: cafe.name, label: `${cafe.name}(${cafe.city})` }))}
                   onChange={(selectedOption) => handleChange("gameCafe", selectedOption ? selectedOption.value : "")}
-                  isInvalid={!!errors.gameCafe}
+                  className={classNames({ 'is-invalid': !!errors.gameCafe })}
                   placeholder="Παιχνιδοκαφέ"
                   styles={{ 
                     container: (provided) => ({ ...provided, maxWidth: "100%" }),
@@ -123,7 +124,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                   name="boardGame" 
                   options={boardGameOptions}
                   onChange={(selectedOption) => handleChange("boardGame", selectedOption ? selectedOption.value : "")}
-                  isInvalid={!!errors.boardGame}
+                  className={classNames({ 'is-invalid': !!errors.boardGame })}
                   placeholder="Επιτραπέζιο"
                   styles={{ 
                     container: (provided) => ({ ...provided, maxWidth: "100%" }),
@@ -194,7 +195,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 name="time"
                 options={timeSlots.map(time => ({ value: time, label: time }))}
                 onChange={(selectedOption) => handleChange("time", selectedOption ? selectedOption.value : "")}
-                isInvalid={!!errors.time}
+                className={classNames({ 'is-invalid': !!errors.time })}
                 placeholder="Ώρα"
                 styles={{ 
                   container: (provided) => ({ ...provided, maxWidth: "100%" }),

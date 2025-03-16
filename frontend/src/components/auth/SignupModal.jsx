@@ -21,7 +21,7 @@ const SignupModal = ({ showModal, setShowModal, setShowLoginModal }) => {
 
   function handleBusinessClick() {
     setShowModal(false);
-    navigate("/signup/business");
+    navigate("/signup/business/basic-info");
   }
 
   return (

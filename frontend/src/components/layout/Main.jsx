@@ -9,7 +9,8 @@ import SpecificCityCafesPage from "../../pages/SpecificCityCafesPage";
 import SpecificCafePage from "../../pages/SpecificCafePage";
 import ReservationDetailsPage from "../../pages/ReservationDetailsPage";
 import SignUpPersonal from "../../pages/SignUpPersonal";
-import SignUpBusiness from "../../pages/SignUpBusiness";
+import SignUpBusinessBasicInfo from "../../pages/SignUpBusinessBasicInfo";
+import SignUpBusinessBoardGames from "../../pages/SignUpBusinessBoardGames";
 
 const validRoutePatterns = [
   "/home",
@@ -20,7 +21,8 @@ const validRoutePatterns = [
   "/boardgamecafes/:cityName/:cafeName",  // Dynamic route for specific board game cafes
   "/reservation-details",
   "/signup/personal",
-  "/signup/business"
+  "/signup/business/basic-info",
+  "/signup/business/board-games",
 ];
 
 const isValidRoute = (pathname) => {
@@ -34,6 +36,8 @@ const Main = () => {
   useEffect(() => {
     if (!isValidRoute(location.pathname)) {
       navigate("/home", { replace: true }); // Redirect invalid routes
+    } else if (location.pathname === "/signup/business/board-games" && !sessionStorage.getItem("completedBasicInfo")) {
+      navigate("/signup/business/basic-info", { replace: true }); // Redirect to basic-info if board-games is accessed directly
     }
   }, [location.pathname, navigate]);
 
@@ -41,6 +45,7 @@ const Main = () => {
     <div style={{ minHeight: "400px" }}>
     <ScrollToTop />
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/boardgames" element={<BoardGamesPage />} />
         <Route path="/boardgamecafes" element={<BoardGameCafesPage />} />
@@ -49,7 +54,8 @@ const Main = () => {
         <Route path="/boardgamecafes/:cityName/:cafeName" element={<SpecificCafePage/>} />
         <Route path="/reservation-details" element={<ReservationDetailsPage />} />
         <Route path= "/signup/personal" element={<SignUpPersonal />} />
-        <Route path= "/signup/business" element={<SignUpBusiness />} />
+        <Route path= "/signup/business/basic-info" element={<SignUpBusinessBasicInfo />} />
+        <Route path= "/signup/business/board-games" element={<SignUpBusinessBoardGames />} />
       </Routes>
     </div>
   );

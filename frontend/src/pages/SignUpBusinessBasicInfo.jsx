@@ -3,7 +3,7 @@ import { Container, Card, Form, Row, Col, Image } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
 
-const SignUpBusiness = () => {
+const SignUpBusinessBasicInfo = () => {
     const [formData, setFormData] = useState({
         cafeName: "",
         city: "",
@@ -68,18 +68,24 @@ const SignUpBusiness = () => {
         e.preventDefault();
         if (validateForm()) {
             console.log("Sign Up Data:", formData);
-            // navigate('/home');
+            sessionStorage.setItem("completedBasicInfo", "true"); 
+            navigate('/signup/business/board-games');
         }
     };
 
     return (
         <>
          <Row>
-            <h3 className="text-center my-4" style={{ color: "var(--color-gray-purple)" }}>Δημιουργία Λογαριασμού</h3>
+                <Col md={2} className="ms-5 mt-3">
+                </Col>
+                <Col md={8}>
+                    <h3 className="text-center my-4" style={{ color: "var(--color-gray-purple)" }}>Δημιουργία Προφίλ Παιχνιδοκαφέ</h3>
+                </Col>
         </Row>
         <Container className="d-flex justify-content-center">
             <Card className="p-4 border-2" style={{ borderColor: "var(--color-orange)", backgroundColor: "var(--color-soft-yellow)", width: "55rem" }}>
-                <Form onSubmit={handleSubmit}>
+            <h4 className="mb-4 pb-3" style={{ color: "var(--color-orange)", borderBottom: "2px solid var(--color-orange)" }}>Βασικές Πληροφορίες:</h4>                
+            <Form onSubmit={handleSubmit}>
                     <Row className="mb-3">
                         <Col md={6}>
                             <Form.Group>
@@ -142,7 +148,7 @@ const SignUpBusiness = () => {
                                 <Form.Label>Ανέβασμα Φωτογραφίας:</Form.Label>
                                 <Form.Control type="file" name="photo" accept="image/*" onChange={handleChange} />
                                 {photoPreview && (
-                                    <div className="mt-2">
+                                    <div className="mt-4 d-flex justify-content-center">
                                         <Image src={photoPreview} alt="Uploaded" fluid style={{ maxHeight: "15rem" }} />
                                     </div>
                                 )}
@@ -161,4 +167,4 @@ const SignUpBusiness = () => {
     );
 };
 
-export default SignUpBusiness;
+export default SignUpBusinessBasicInfo;

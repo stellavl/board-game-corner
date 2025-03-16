@@ -4,11 +4,13 @@ import { Container, Card, Form, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import OrangeButton from "../components/common/OrangeButton";
 import BackButton from "../components/common/BackButton";
+import ConfirmationModal from "../components/common/ConfirmationModal";
 import boardGames from "../data/boardGames"; 
 
 const SignUpBusinessBoardGames = () => {
     const [selectedGame, setSelectedGame] = useState(null);
     const [addedGames, setAddedGames] = useState([]);
+    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
 
     const handleAddGame = () => {
@@ -24,6 +26,11 @@ const SignUpBusinessBoardGames = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setShowModal(true);
+    };
+
+    const handleConfirm = () => {
+        setShowModal(false);
         navigate('/home');
     };
 
@@ -88,6 +95,12 @@ const SignUpBusinessBoardGames = () => {
                     </Form>
                 </Card>
             </Container>
+            <ConfirmationModal 
+                show={showModal} 
+                handleClose={() => setShowModal(false)} 
+                handleConfirm={handleConfirm} 
+                message={`Έχετε προσθέσει ${addedGames.length} επιτραπέζια. Θέλετε να ολοκληρώσετε τη δημιουργία του λογαριασμού σας;`} 
+            />
         </>
     );
 };

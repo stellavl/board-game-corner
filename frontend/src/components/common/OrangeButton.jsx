@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const OrangeButton = ({ text, size, onClick }) => {
+const OrangeButton = ({ text, size, onClick, disabled=false }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
@@ -24,6 +24,7 @@ const OrangeButton = ({ text, size, onClick }) => {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={onClick}
+            disabled={disabled}
         >
             {text}
         </button>

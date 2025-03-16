@@ -66,7 +66,9 @@ const ReservationDetailsPage = () => {
                     <Card className="text-center text-white p-2" style={{ backgroundColor: 'var(--color-orange)' }}>
                         <Card.Body>
                             <Card.Title className="fw-bold mb-1">{gameCafe} | Αθήνα</Card.Title>
-                            <Card.Text className="fst-italic">{boardGame}</Card.Text>
+                            <Card.Text className="fst-italic">
+                                {boardGame === "Θα επιλέξω στο κατάστημα" ? "Δεν έχει επιλεγεί επιτραπέζιο" : boardGame}
+                            </Card.Text>
                             <Row className="justify-content-center">
                                 <Col xs="auto">{date}</Col>
                                 <Col xs="auto">{time}</Col>

@@ -3,15 +3,29 @@ import { Modal, Button, Form, Alert, Spinner, Row, Col } from 'react-bootstrap';
 import useLoginForm from '../../hooks/useLoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import users from '../../data/users';
 
-const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowSignUpModal }) => {
-  const { formData, handleChange, isSubmitting, error } = useLoginForm();
+const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowSignUpModal, setUserId }) => {
+  const { formData, handleChange, isSubmitting, error, handleSubmit } = useLoginForm();
 
   const [showPassword, setShowPassword] = useState(false);
 
   const handleLoginSubmit = () => {
-    setIsLoggedIn(true);
-    setShowLoginModal(false);
+    const user = users.find(
+      (user) => user.email === formData.email && user.password === formData.password
+    );
+
+    if (user) {
+      handleSubmit(() => {
+        setIsLoggedIn(true);
+        setUserId(user.id); 
+        setShowLoginModal(false);
+      });
+    } else {
+      handleSubmit(() => {
+        throw new Error('Λάθος στοιχεία');
+      });
+    }
   };
 
   const handleSignUpClick = () => {

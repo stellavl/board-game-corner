@@ -3,27 +3,31 @@ import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
+import users from '../../data/users';
 
 const LoginButton = () => {
   const [isDropdownButtonHovered, setIsDropdownButtonHovered] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignupModal, setShowSignupModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('Στέλλα');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const handleLogout = () => {
     setIsLoggedIn(false);
     setDropdownOpen(false); 
+    setUserId(null);
   };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen); 
   };
 
+  const userName = userId ? users.find(user => user.id === userId).firstName : '';
+
   return (
     <>
-      <Dropdown show={dropdownOpen} onToggle={toggleDropdown}> {}
+      <Dropdown show={dropdownOpen} onToggle={toggleDropdown}>
         <Dropdown.Toggle
           as={Button}
           variant="link"
@@ -52,7 +56,7 @@ const LoginButton = () => {
           </Stack>
         </Dropdown.Toggle>
 
-        {isLoggedIn && <AccountDropdown userName={userName} onLogout={handleLogout} />}
+        {isLoggedIn && <AccountDropdown userId={userId} onLogout={handleLogout} />}
       </Dropdown>
 
       <LoginModal
@@ -60,6 +64,7 @@ const LoginButton = () => {
         setShowLoginModal={setShowLoginModal}
         setIsLoggedIn={setIsLoggedIn}
         setShowSignUpModal={setShowSignupModal}
+        setUserId={setUserId}
       />
       <SignupModal
         showModal={showSignupModal}

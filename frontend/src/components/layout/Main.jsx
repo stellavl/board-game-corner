@@ -11,6 +11,7 @@ import ReservationDetailsPage from "../../pages/ReservationDetailsPage";
 import SignUpPersonal from "../../pages/SignUpPersonal";
 import SignUpBusinessBasicInfo from "../../pages/SignUpBusinessBasicInfo";
 import SignUpBusinessBoardGames from "../../pages/SignUpBusinessBoardGames";
+import ProfileMain from "../../pages/ProfileMain";
 
 const validRoutePatterns = [
   "/home",
@@ -23,6 +24,7 @@ const validRoutePatterns = [
   "/signup/personal",
   "/signup/business/basic-info",
   "/signup/business/board-games",
+  "/profile"
 ];
 
 const isValidRoute = (pathname) => {
@@ -56,6 +58,7 @@ const Main = () => {
         <Route path= "/signup/personal" element={<SignUpPersonal />} />
         <Route path= "/signup/business/basic-info" element={<SignUpBusinessBasicInfo />} />
         <Route path= "/signup/business/board-games" element={<SignUpBusinessBoardGames />} />
+        <Route path= "/profile" element={<ProfileMain />} />
       </Routes>
     </div>
   );

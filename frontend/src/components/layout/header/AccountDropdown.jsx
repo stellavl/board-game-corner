@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import users from '../../../data/users';
 
-const AccountDropdown = ({ userName, onLogout }) => {
+const AccountDropdown = ({ userId, onLogout }) => {
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
+  const navigate = useNavigate();
+
+  const handleProfileClick = () => {
+    navigate('/profile', { state: { userId } });
+  };
+
+  const user = users.find(user => user.id === userId);
+  const userName = user ? user.firstName : '';
 
   return (
     <Dropdown.Menu style={{ backgroundColor: 'var(--color-orange)' }}>
@@ -12,7 +22,7 @@ const AccountDropdown = ({ userName, onLogout }) => {
           color: 'var(--color-soft-yellow)',
           backgroundColor: isProfileHovered ? '#EFA77A' : 'transparent',
         }}
-        href="/profile"
+        onClick={handleProfileClick}
         onMouseEnter={() => setIsProfileHovered(true)}
         onMouseLeave={() => setIsProfileHovered(false)}
       >

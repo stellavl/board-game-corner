@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Card } from 'react-bootstrap';
+import { Modal, Card } from 'react-bootstrap';
 import OrangeButton from './OrangeButton';
 
 const ConfirmationModal = ({ show, handleClose, handleConfirm, message }) => {

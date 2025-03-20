@@ -3,26 +3,39 @@ import { useState } from 'react';
 const useLoginForm = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({});
 
-  // Handles input change dynamically
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  // Handles form submission
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.email) {
+      newErrors.email = 'Το email είναι υποχρεωτικό.';
+    }
+    if (!formData.password) {
+      newErrors.password = 'Ο κωδικός είναι υποχρεωτικός.';
+    }
+    return newErrors;
+  };
+
   const handleSubmit = async (onSuccess) => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
     setIsSubmitting(true);
-    setError(null);
+    setErrors({});
 
     try {
-      // Simulate API request (replace with actual API call)
       await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log('Login successful:', formData);
-      onSuccess(); // Close modal on success
-    } catch (err) {
-      setError('Invalid email or password.');
+      onSuccess();
+    } catch {
+      setErrors({ form: 'Λανθασμένο email ή κωδικός πρόσβασης. Δοκίμασε ξανά.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -31,7 +44,7 @@ const useLoginForm = () => {
   return {
     formData,
     isSubmitting,
-    error,
+    errors,
     handleChange,
     handleSubmit,
   };

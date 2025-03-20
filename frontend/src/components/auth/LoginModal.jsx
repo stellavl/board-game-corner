@@ -4,9 +4,10 @@ import useLoginForm from '../../hooks/useLoginForm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import users from '../../data/users';
+import OrangeButton from '../common/OrangeButton';
 
 const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowSignUpModal, setUserId }) => {
-  const { formData, handleChange, isSubmitting, error, handleSubmit } = useLoginForm();
+  const { formData, handleChange, isSubmitting, errors, handleSubmit } = useLoginForm();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,61 +40,69 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowS
         <Modal.Title>Σύνδεση</Modal.Title>
       </Modal.Header>
       <Modal.Body style={{ backgroundColor: 'var(--color-soft-yellow)' }}>
-        {error && <Alert variant="danger">{error}</Alert>}
-        <Form>
-          <Form.Group className="mb-3" controlId="formEmail">
-            <Form.Label style={{ color: 'var(--color-gray-purple)' }}>Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              placeholder="Εισάγετε το email σας"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={isSubmitting}
-            />
-          </Form.Group>
-          <Form.Group>
-            <Form.Label style={{ color: 'var(--color-gray-purple)' }}>Κωδικός πρόσβασης</Form.Label>
-            <div style={{ position: 'relative' }}>
-              <Form.Control
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Εισάγετε τον κωδικό σας"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={isSubmitting}
-                style={{ paddingRight: '40px' }}
-              />
-              <FontAwesomeIcon
-                icon={showPassword ? faEyeSlash : faEye}
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  cursor: 'pointer',
-                  color: '#555'
-                }}
-              />
-            </div>
-          </Form.Group>
+        {errors.form && <Alert variant="danger">{errors.form}</Alert>}
+        <Form.Group className="mb-3" controlId="formEmail">
+          <Form.Label style={{ color: 'var(--color-gray-purple)' }}>Email</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            placeholder="Εισάγετε το email σας"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            isInvalid={!!errors.email}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.email}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group>
+        <Form.Label style={{ color: 'var(--color-gray-purple)' }}>Κωδικός πρόσβασης</Form.Label>
+        <div style={{ position: 'relative' }}>
+          <Form.Control
+            type={showPassword ? "text" : "password"}
+            name="password"
+            placeholder="Εισάγετε τον κωδικό σας"
+            value={formData.password}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            isInvalid={!!errors.password}
+          />
+          <FontAwesomeIcon
+            icon={showPassword ? faEyeSlash : faEye}
+            onClick={() => setShowPassword(!showPassword)}
+            style={{
+              position: 'absolute',
+              right: '35px', 
+              top: '50%',
+              transform: 'translateY(-50%)',
+              cursor: 'pointer',
+              color: '#555',
+              zIndex: 1, 
+            }}
+          />
+          <Form.Control.Feedback type="invalid">
+            {errors.password}
+          </Form.Control.Feedback>
+        </div>
+      </Form.Group>
+
+
           <Button
               variant="link"
               className="pt-1 text-secondary text-decoration-none float-end"
             >
               Ξέχασα τον κωδικό μου
             </Button>
-        </Form>
         <Row className="mt-5 align-items-center">
         <Col className="d-flex justify-content-center">
-          <Button
+          <OrangeButton
+            text= {isSubmitting ? <Spinner as="span" animation="border" size="sm" /> : 'Σύνδεση'}
+            size="btn-md"
             onClick={handleLoginSubmit}
             disabled={isSubmitting}
-            style={{ backgroundColor: 'var(--color-orange)', border: 'var(--color-orange)' }}
           >
-            {isSubmitting ? <Spinner as="span" animation="border" size="sm" /> : 'Σύνδεση'}
-          </Button>
+          </OrangeButton>
           </Col>
         </Row>
         <Row className="mb-2">

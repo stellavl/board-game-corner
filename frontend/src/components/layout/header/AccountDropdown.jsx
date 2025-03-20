@@ -8,12 +8,13 @@ const AccountDropdown = ({ userId, onLogout }) => {
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
   const navigate = useNavigate();
 
-  const handleProfileClick = () => {
-    navigate('/profile', { state: { userId } });
-  };
-
   const user = users.find(user => user.id === userId);
-  const userName = user ? user.firstName : '';
+
+  const handleProfileClick = () => {
+    if (user) {
+      navigate(`/profile/${user.firstName}-${user.lastName}`);
+    }
+  };  
 
   return (
     <Dropdown.Menu style={{ backgroundColor: 'var(--color-orange)' }}>

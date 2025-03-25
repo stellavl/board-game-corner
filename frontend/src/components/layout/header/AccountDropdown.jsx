@@ -12,7 +12,7 @@ const AccountDropdown = ({ userId, onLogout }) => {
 
   const handleProfileClick = () => {
     if (user) {
-      navigate(`/profile/${user.firstName}-${user.lastName}`);
+      navigate(`/profile/${user.firstName}-${user.lastName}`, { state: { userId } });
     }
   };  
 

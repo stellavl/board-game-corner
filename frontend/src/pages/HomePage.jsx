@@ -29,7 +29,7 @@ const HomePage = () => {
 
             <BoardGameSelectBar />
 
-            <Container className="p-3 text-center">
+            <Container className="p-5 text-center">
                 <ReservationForm />
             </Container>
 

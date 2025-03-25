@@ -51,43 +51,46 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowS
             onChange={handleChange}
             disabled={isSubmitting}
             isInvalid={!!errors.email}
+            style={{ backgroundColor: "transparent", borderColor: 'var(--color-orange)' }}
           />
           <Form.Control.Feedback type="invalid">
             {errors.email}
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group>
-        <Form.Label style={{ color: 'var(--color-gray-purple)' }}>Κωδικός πρόσβασης</Form.Label>
-        <div style={{ position: 'relative' }}>
-          <Form.Control
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Εισάγετε τον κωδικό σας"
-            value={formData.password}
-            onChange={handleChange}
-            disabled={isSubmitting}
-            isInvalid={!!errors.password}
-          />
-          <FontAwesomeIcon
-            icon={showPassword ? faEyeSlash : faEye}
-            onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: 'absolute',
-              right: '35px', 
-              top: '50%',
-              transform: 'translateY(-50%)',
-              cursor: 'pointer',
-              color: '#555',
-              zIndex: 1, 
-            }}
-          />
-          <Form.Control.Feedback type="invalid">
-            {errors.password}
-          </Form.Control.Feedback>
-        </div>
-      </Form.Group>
-
-
+        <Form.Group className="position-relative">
+          <Form.Label style={{ color: 'var(--color-gray-purple)' }}>Κωδικός πρόσβασης</Form.Label>
+          <div style={{ position: 'relative' }}>
+            <Form.Control
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Εισάγετε τον κωδικό σας"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={isSubmitting}
+              isInvalid={!!errors.password}
+              style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)", paddingRight: '3.5rem' }}
+            />
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: '2rem',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                color: '#555',
+              }}
+            />
+            <Form.Control.Feedback 
+              type="invalid"
+              className="position-absolute"
+              style={{ bottom: '-1.5rem' }} 
+            >
+              {errors.password}
+            </Form.Control.Feedback>
+          </div>
+        </Form.Group>
           <Button
               variant="link"
               className="pt-1 text-secondary text-decoration-none float-end"

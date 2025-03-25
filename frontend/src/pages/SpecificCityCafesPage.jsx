@@ -1,11 +1,11 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import SearchBar from '../components/common/SearchBar';
 import boardGameCafes from '../data/boardGameCafes';
 import OrangeButton from '../components/common/OrangeButton';
 import BackButton from "../components/common/BackButton";
 import { useNavigate, useParams } from 'react-router-dom';
 import CitiesCards from  '../components/common/CitiesCards'
+import CafeSelectBar from '../components/common/CafeSelectBar';
 
 const SpecificCityCafesPage = () => {
     const { cityName } = useParams();
@@ -40,7 +40,7 @@ const SpecificCityCafesPage = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <SearchBar placeholder="Αναζήτησε παιχνιδοκαφέ" onSearch={() => {}} />    
+                        <CafeSelectBar boardGameCafes={cafes}/>
                     </Col>      
                 </Row>
                 <Row className="my-5 d-flex  w-100">

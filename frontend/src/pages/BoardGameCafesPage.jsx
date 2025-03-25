@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import SearchBar from '../components/common/SearchBar';
 import CitiesCards from  '../components/common/CitiesCards'
+import CafeSelectBar from '../components/common/CafeSelectBar';
 
 const BoardGameCafesPage = () => {
     return (
@@ -15,7 +15,7 @@ const BoardGameCafesPage = () => {
             </Row>
             <Row>
                 <Col>
-                    <SearchBar placeholder="Αναζήτησε παιχνιδοκαφέ" onSearch={() => {}} />    
+                    <CafeSelectBar/>
                 </Col>      
             </Row>
 

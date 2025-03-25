@@ -1,11 +1,11 @@
 import { React, useState, useEffect } from 'react';
 import { Row, Col, Offcanvas } from 'react-bootstrap';
-import SearchBar from './SearchBar';
 import BoardGameCards from './BoardGameCards';
 import BoardGameFilters from './BoardGameFilters';
 import OrangeButton from './OrangeButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import boardGames from "../../data/boardGames";
+import BoardGameSelectBar from './BoardGameSelectBar';
 
 const BoardGamesContent = () => {
   const location = useLocation();
@@ -85,7 +85,6 @@ const BoardGamesContent = () => {
 
   const handleClose = () => setShowFilters(false);
   const handleShow = () => setShowFilters(true);
-  const handleSearch = (term) => setSearchTerm(term);
 
   const getHeaderText = () => {
     if ((!searchTerm && filters.categories.length === 0)) {
@@ -97,7 +96,7 @@ const BoardGamesContent = () => {
     <>
       <Row className='mb-4'>
         <Col md={12} xs={12}>
-          <SearchBar placeholder="Αναζήτησε επιτραπέζια" onSearch={handleSearch} />                 
+          <BoardGameSelectBar/>
         </Col>    
       </Row>
 

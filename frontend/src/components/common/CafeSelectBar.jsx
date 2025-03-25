@@ -44,7 +44,7 @@ const CafeSelectBar = ({ boardGameCafes= allBoardGameCafes }) => {
         <div className="d-flex justify-content-center mb-3">
             <Select
                 options={searchText.length >= 2 ? cafeOptions : []} 
-                placeholder="Αναζήτησε παιχνιδοκαφέ"
+                placeholder="Αναζήτηση παιχνιδοκαφέ"
                 onChange={handleCafeSelect}
                 onInputChange={handleInputChange}
                 isSearchable

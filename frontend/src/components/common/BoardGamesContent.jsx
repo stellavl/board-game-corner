@@ -94,7 +94,7 @@ const BoardGamesContent = () => {
   };
   return (
     <>
-      <Row className='mb-4'>
+      <Row className='mb-5'>
         <Col md={12} xs={12}>
           <BoardGameSelectBar/>
         </Col>    

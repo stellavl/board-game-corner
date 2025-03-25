@@ -6,11 +6,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom'; 
 
-const BoardGameSelectBar = () => {
+const BoardGameSelectBar = ({ isSearchButtonVisible = true, onGameSelect }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [selectedGame, setSelectedGame] = useState(null);
     const [searchText, setSearchText] = useState('');
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const boardGameOptions = boardGames
         .filter(game => game.name.toLowerCase().includes(searchText.toLowerCase()))
@@ -30,6 +30,9 @@ const BoardGameSelectBar = () => {
 
     const handleGameSelect = (selectedOption) => {
         setSelectedGame(selectedOption);
+        if (onGameSelect) {
+            onGameSelect(selectedOption);
+        }
     };
 
     const handleInputChange = (newValue) => {
@@ -37,10 +40,10 @@ const BoardGameSelectBar = () => {
     };
 
     return (
-        <div className="d-flex justify-content-center mb-3">
+        <div className="d-flex justify-content-center">
             <Select
-                options={searchText.length >= 2 ? boardGameOptions : []} 
-                placeholder="Αναζήτησε επιτραπέζια"
+                options={searchText.length >= 2 ? boardGameOptions : []}
+                placeholder="Αναζήτηση επιτραπεζίων"
                 onChange={handleGameSelect}
                 onInputChange={handleInputChange}
                 isSearchable
@@ -48,7 +51,7 @@ const BoardGameSelectBar = () => {
                 styles={{
                     container: (provided) => ({
                         ...provided,
-                        width: '15rem',
+                        width: '18rem',
                     }),
                     control: (provided, state) => ({
                         ...provided,
@@ -84,36 +87,37 @@ const BoardGameSelectBar = () => {
                         backgroundColor: state.isSelected ? "var(--color-soft-orange)" : "var(--color-soft-yellow)",
                         color: "var(--color-orange)",
                         cursor: 'pointer',
-                        "&:hover": { 
-                            backgroundColor: "var(--color-orange)", 
-                            color: "var(--color-soft-yellow)" 
+                        "&:hover": {
+                            backgroundColor: "var(--color-orange)",
+                            color: "var(--color-soft-yellow)"
                         }
                     })
                 }}
                 isDisabled={false}
             />
-            <Button
-                style={{
+            {isSearchButtonVisible ? (
+                <Button style={{
                     backgroundColor: selectedGame
-                        ? isHovered 
-                            ? 'var(--color-soft-yellow)' 
-                            : 'var(--color-orange)' 
-                        : 'var(--color-gray-purple)', 
-                    border: selectedGame ? '1px solid var(--color-orange)': '1px solid var(--color-gray-purple)',
-                    cursor: selectedGame ? 'pointer' : 'not-allowed', 
+                        ? isHovered
+                            ? 'var(--color-soft-yellow)'
+                            : 'var(--color-orange)'
+                        : 'var(--color-gray-purple)',
+                    border: selectedGame ? '1px solid var(--color-orange)' : '1px solid var(--color-gray-purple)',
+                    cursor: selectedGame ? 'pointer' : 'not-allowed',
                 }}
-                className="rounded-end ms-2"
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                onClick={handleSearchClick}
-                disabled={!selectedGame}
-            >
-                <FontAwesomeIcon
-                    icon={faSearch}
-                    size="lg"
-                    color={selectedGame ? (isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)') : 'var(--color-soft-yellow)'}
-                />
-            </Button>
+                    className="rounded-end ms-2"
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    onClick={handleSearchClick}
+                    disabled={!selectedGame}
+                >
+                    <FontAwesomeIcon
+                        icon={faSearch}
+                        size="lg"
+                        color={selectedGame ? (isHovered ? 'var(--color-orange)' : 'var(--color-soft-yellow)') : 'var(--color-soft-yellow)'}
+                    />
+                </Button>
+            ) : null}
         </div>
     );
 };

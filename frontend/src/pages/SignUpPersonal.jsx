@@ -3,6 +3,7 @@ import { Container, Card, Form, Row, Col } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { validatePersonalData } from "../components/utils/validations";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -17,45 +18,15 @@ const SignUpPersonal = () => {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
-    const validateForm = () => {
-        let newErrors = {};
-
-        if (!formData.firstName) newErrors.firstName = "Το όνομα είναι υποχρεωτικό.";
-        if (!formData.lastName) newErrors.lastName = "Το επίθετο είναι υποχρεωτικό.";
-
-        if (!formData.email) {
-            newErrors.email = "Το email είναι υποχρεωτικό.";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = "Το email δεν είναι έγκυρο.";
-        }
-
-        if (!formData.phone) {
-            newErrors.phone = "Το τηλέφωνο είναι υποχρεωτικό.";
-        } else if (!/^\d{10}$/.test(formData.phone)) {
-            newErrors.phone = "Το τηλέφωνο πρέπει να αποτελείται από 10 ψηφία.";
-        }
-
-        if (!formData.password) {
-            newErrors.password = "Ο κωδικός πρόσβασης είναι υποχρεωτικός.";
-        } else if (formData.password.length < 6) {
-            newErrors.password = "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.";
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = "Οι κωδικοί δεν ταιριάζουν.";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validateForm()) {
+        const validationErrors = validatePersonalData(formData);  
+        setErrors(validationErrors);
+        if (Object.keys(validationErrors).length === 0) {
             console.log("Sign Up Data:", formData);
             navigate('/home');
         }

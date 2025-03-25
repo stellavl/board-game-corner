@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import Select from "react-select";
 import { Container, Card, Form, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import OrangeButton from "../components/common/OrangeButton";
 import BackButton from "../components/common/BackButton";
 import ConfirmationModal from "../components/common/ConfirmationModal";
-import boardGames from "../data/boardGames"; 
+import BoardGameSelectBar from "../components/common/BoardGameSelectBar";
 
 const SignUpBusinessBoardGames = () => {
     const [selectedGame, setSelectedGame] = useState(null);
@@ -52,22 +51,18 @@ const SignUpBusinessBoardGames = () => {
                         Πληροφορίες για επιτραπέζια:
                     </h4>
                     <Form onSubmit={handleSubmit}>
-                        <Row className="mb-3 align-items-center">
-                            <Col md={6} className="d-flex flex-column">
+                        <Row className="mb-4 align-items-center">
+                            <Col md={6}>
                                 <Form.Label>Προσθέστε τα επιτραπέζια που διαθέτετε:</Form.Label>
-                                <Select
-                                    options={boardGames.map(game => ({ label: game.name, value: game.name }))}
-                                    value={selectedGame}
-                                    onChange={setSelectedGame}
-                                    isSearchable
-                                    placeholder="Επιλέξτε ή πληκτρολογήστε..."
-                                />
-                                <div className="mt-2 d-flex justify-content-center">
-                                    <OrangeButton
-                                        onClick={handleAddGame}
-                                        text="Προσθήκη"
-                                        disabled={!selectedGame}
-                                    />
+                                <div className="d-flex align-items-center">
+                                    <BoardGameSelectBar isSearchButtonVisible={false} onGameSelect={setSelectedGame} />
+                                    <div className="ms-2">
+                                        <OrangeButton
+                                            onClick={handleAddGame}
+                                            text="Προσθήκη"
+                                            disabled={!selectedGame}
+                                        />
+                                    </div>
                                 </div>
                             </Col>
                         </Row>

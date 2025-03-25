@@ -90,14 +90,14 @@ const SignUpBusinessBasicInfo = () => {
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Όνομα Καταστήματος:</Form.Label>
-                                <Form.Control type="text" name="cafeName" value={formData.cafeName} onChange={handleChange} />
+                                <Form.Control type="text" name="cafeName" value={formData.cafeName} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.cafeName && <div className="text-danger">{errors.cafeName}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Πόλη:</Form.Label>
-                                <Form.Control type="text" name="city" value={formData.city} onChange={handleChange} />
+                                <Form.Control type="text" name="city" value={formData.city} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.city && <div className="text-danger">{errors.city}</div>}
                             </Form.Group>
                         </Col>
@@ -107,14 +107,14 @@ const SignUpBusinessBasicInfo = () => {
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Διεύθυνση:</Form.Label>
-                                <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} />
+                                <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.address && <div className="text-danger">{errors.address}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Τηλέφωνο Επικοινωνίας:</Form.Label>
-                                <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
+                                <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.phone && <div className="text-danger">{errors.phone}</div>}
                             </Form.Group>
                         </Col>
@@ -123,14 +123,14 @@ const SignUpBusinessBasicInfo = () => {
                        <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Email:</Form.Label>
-                                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
+                                <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.email && <div className="text-danger">{errors.email}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Κωδικός Πρόσβασης:</Form.Label>
-                                <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} />
+                                <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.password && <div className="text-danger">{errors.password}</div>}
                             </Form.Group>
                         </Col>
@@ -139,14 +139,14 @@ const SignUpBusinessBasicInfo = () => {
                       <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Επανάληψη Κωδικού Πρόσβασης:</Form.Label>
-                                <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
+                                <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.confirmPassword && <div className="text-danger">{errors.confirmPassword}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6} className="d-flex align-items-end">
                             <Form.Group>
                                 <Form.Label>Ανέβασμα Φωτογραφίας:</Form.Label>
-                                <Form.Control type="file" name="photo" accept="image/*" onChange={handleChange} />
+                                <Form.Control type="file" name="photo" accept="image/*" onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {photoPreview && (
                                     <div className="mt-4 d-flex justify-content-center">
                                         <Image src={photoPreview} alt="Uploaded" fluid style={{ maxHeight: "15rem" }} />

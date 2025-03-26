@@ -12,9 +12,9 @@ const AccountDropdown = ({ userId, onLogout }) => {
 
   const handleProfileClick = () => {
     if (user) {
-      navigate(`/profile/${user.firstName}-${user.lastName}`, { state: { userId } });
+      navigate(`/profile/${user.firstName}/${user.lastName}`);
     }
-  };  
+  };
 
   return (
     <Dropdown.Menu style={{ backgroundColor: 'var(--color-orange)' }}>

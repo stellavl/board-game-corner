@@ -12,6 +12,7 @@ import SignUpPersonal from "../../pages/SignUpPersonal";
 import SignUpBusinessBasicInfo from "../../pages/SignUpBusinessBasicInfo";
 import SignUpBusinessBoardGames from "../../pages/SignUpBusinessBoardGames";
 import Profile from "../../pages/Profile";
+import Admin from "../../pages/Admin";
 
 const validRoutePatterns = [
   "/home",
@@ -24,7 +25,8 @@ const validRoutePatterns = [
   "/signup/personal",
   "/signup/business/basic-info",
   "/signup/business/board-games",
-  "/profile/:firstName/:lastName" // Dynamic route for user profile
+  "/profile/:firstName/:lastName", // Dynamic route for user profile
+  "/admin/:id"
 ];
 
 const isValidRoute = (pathname) => {
@@ -59,6 +61,7 @@ const Main = () => {
         <Route path= "/signup/business/basic-info" element={<SignUpBusinessBasicInfo />} />
         <Route path= "/signup/business/board-games" element={<SignUpBusinessBoardGames />} />
         <Route path="/profile/:firstName/:lastName" element={<Profile />} />
+        <Route path="/admin/:id" element={<Admin />} />
       </Routes>
     </div>
   );

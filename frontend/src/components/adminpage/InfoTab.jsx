@@ -3,7 +3,6 @@ import { Container, Card, Form, Row, Col, Image } from "react-bootstrap";
 import OrangeButton from "../common/OrangeButton";
 
 const InfoTab = ({ cafeData }) => {
-console.log(cafeData.image)
     const [formData, setFormData] = useState({
         cafeName: "",
         city: "",

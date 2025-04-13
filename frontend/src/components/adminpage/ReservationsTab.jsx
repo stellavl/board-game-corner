@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import reservationsData from "../../data/reservationsData";
 import { Table, Container, Button } from "react-bootstrap";
 import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { formatDateRangeForFilter } from "../utils/formatDateRangeForFilter";
 
 const ReservationsTab = () => {
     const today = new Date();
@@ -33,30 +34,6 @@ const ReservationsTab = () => {
         setCurrentDate(newDate);
     };
 
-    const getDateRangeText = () => {
-        const monthNames = [
-            "Ιανουάριος", "Φεβρουάριος", "Μάρτιος", "Απρίλιος", "Μάιος", "Ιούνιος",
-            "Ιούλιος", "Αύγουστος", "Σεπτέμβριος", "Οκτώβριος", "Νοέμβριος", "Δεκέμβριος"
-        ];
-
-        switch (filter) {
-            case "year":
-                return `${currentDate.getFullYear()}`;
-            case "month":
-                return `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-            case "week":
-                const weekStart = new Date(currentDate);
-                weekStart.setDate(currentDate.getDate() - ((currentDate.getDay() + 6) % 7));
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekStart.getDate() + 6);
-                return `${weekStart.toLocaleDateString("el-GR")} - ${weekEnd.toLocaleDateString("el-GR")}`;
-            case "day":
-                return `${currentDate.toLocaleDateString("el-GR")}`;
-            default:
-                return "";
-        }
-    };
-
     const filterReservations = (reservations) => {
         return reservations.filter(reservation => {
             const reservationDate = new Date(`${reservation.date.split('/')[1]}/${reservation.date.split('/')[0]}/${reservation.date.split('/')[2]}`);
@@ -80,7 +57,7 @@ const ReservationsTab = () => {
             }
         });
     };
-
+    
     const pendingReservations = reservationsData.filter(reservation => {
         const reservationDate = new Date(reservation.date);
         return reservation.status === 'Αναμονή για επιβεβαίωση' && reservationDate >= today;
@@ -173,7 +150,7 @@ const ReservationsTab = () => {
                     >
                         <BsChevronLeft />
                     </Button>
-                    <BsCalendar className="me-2" /> {getDateRangeText()}
+                    <BsCalendar className="me-2" /> {formatDateRangeForFilter(filter, currentDate)}
                     <Button 
                         variant="outline-secondary" 
                         size="sm" 

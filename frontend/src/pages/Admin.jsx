@@ -65,7 +65,7 @@ const Admin = () => {
                     <hr className="mx-auto mt-2" style={{ width: "25%", border: "1px solid var(--color-orange" }} />
                         {/* Render the active tab */}
                         {activeTab === "reservations" && <ReservationsTab />}
-                        {activeTab === "info" && <InfoTab />}
+                        {activeTab === "info" && <InfoTab cafeData={cafe} />}
                         {activeTab === "boardGames" && <BoardGamesTab />}
                     {activeTab === "statistics" && <StatisticsTab />}
                 </>

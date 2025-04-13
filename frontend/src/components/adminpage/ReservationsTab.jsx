@@ -3,6 +3,7 @@ import reservationsData from "../../data/reservationsData";
 import { Table, Container, Button } from "react-bootstrap";
 import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { formatDateRangeForFilter } from "../utils/formatDateRangeForFilter";
+import { handleDateNavigation } from "../utils/handleDateNavigation";
 
 const ReservationsTab = () => {
     const today = new Date();
@@ -10,27 +11,8 @@ const ReservationsTab = () => {
     const [filter, setFilter] = useState("all");
     const [currentDate, setCurrentDate] = useState(new Date());
 
-    const handleDateNavigation = (direction) => {
-        const newDate = new Date(currentDate);
-
-        switch (filter) {
-            case "year":
-                newDate.setFullYear(newDate.getFullYear() + direction);
-                break;
-            case "month":
-                newDate.setMonth(newDate.getMonth() + direction);
-                break;
-            case "week":
-                newDate.setDate(newDate.getDate() + direction * 7);
-                break;
-            case "day":
-                newDate.setDate(newDate.getDate() + direction);
-                break;
-            default:
-                return;
-        }
-
-        if (newDate > new Date()) return;
+    const handleDateChange = (direction) => {
+        const newDate = handleDateNavigation(currentDate, filter, direction);
         setCurrentDate(newDate);
     };
 
@@ -146,7 +128,8 @@ const ReservationsTab = () => {
                         variant="outline-secondary" 
                         size="sm" 
                         className="me-2"
-                        onClick={() => handleDateNavigation(-1)}
+                        onClick={() => handleDateChange(-1)}
+                        disabled={currentDate <= new Date()}
                     >
                         <BsChevronLeft />
                     </Button>
@@ -155,8 +138,7 @@ const ReservationsTab = () => {
                         variant="outline-secondary" 
                         size="sm" 
                         className="ms-2"
-                        onClick={() => handleDateNavigation(1)}
-                        disabled={currentDate >= new Date()}
+                        onClick={() => handleDateChange(1)}
                     >
                         <BsChevronRight />
                     </Button>

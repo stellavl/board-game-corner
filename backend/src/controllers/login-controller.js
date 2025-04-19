@@ -4,7 +4,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required.' });
+    return res.status(400).json({ error: 'Το email και ο κωδικός πρόσβασης είναι υποχρεωτικά.' });
   }
 
   try {
@@ -13,14 +13,13 @@ export const login = async (req, res) => {
       message: 'Login successful',
       user: {
         id: user.id,
-        email: user.email,
       },
       // token: '...JWT...' (add this later)
     });
   } catch (error) {
-    if (error.message === 'Invalid email or password') {
+    if (error.code === 'INVALID_CREDENTIALS') {
       return res.status(401).json({ error: error.message });
     }
-    return res.status(500).json({ error: 'Internal server error.' });
+    return res.status(500).json({ error: 'Ο διακομιστής απέτυχε.' });
   }
 };

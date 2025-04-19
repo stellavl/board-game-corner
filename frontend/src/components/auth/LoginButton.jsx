@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
-import users from '../../data/users';
+import axiosInstance from '../../config/axiosConfig';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginButton = () => {
   const [isDropdownButtonHovered, setIsDropdownButtonHovered] = useState(false);
@@ -12,6 +14,7 @@ const LoginButton = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [userFirstName, setUserFirstName] = useState('');
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -23,8 +26,27 @@ const LoginButton = () => {
     setDropdownOpen(!dropdownOpen); 
   };
 
-  const userName = userId ? users.find(user => user.id === userId).firstName : '';
+  useEffect(() => {
+    const fetchUserFirstName = async () => {
+      if (userId) {
+        try {          
+          const response = await axiosInstance.get(`api/users/${userId}`);
+          if (!response.status === 200) {
+            toast.error('Σφάλμα κατά την ανάκτηση των στοιχείων.', { position: 'top-center' }); 
+          }
+          const user = response.data;          
+          setUserFirstName(user.first_name);
+        } catch (error) {
+          setUserFirstName('');
+        }
+      } else {
+        setUserFirstName('');
+      }
+    };
 
+    fetchUserFirstName();
+  }, [userId]);
+  
   return (
     <>
       <Dropdown show={dropdownOpen} onToggle={toggleDropdown}>
@@ -51,7 +73,7 @@ const LoginButton = () => {
         >
           <Stack direction="horizontal" gap={2} className="w-100 justify-content-center">
             <span className="text-truncate" style={{ maxWidth: '100px' }}>
-              {isLoggedIn ? userName : 'Σύνδεση'}
+              {isLoggedIn ? userFirstName : 'Σύνδεση'}
             </span>
           </Stack>
         </Dropdown.Toggle>

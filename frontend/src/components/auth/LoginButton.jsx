@@ -31,7 +31,7 @@ const LoginButton = () => {
       if (userId) {
         try {          
           const response = await axiosInstance.get(`api/users/${userId}`);
-          if (!response.status === 200) {
+          if (response.status !== 200) { 
             toast.error('Σφάλμα κατά την ανάκτηση των στοιχείων.', { position: 'top-center' }); 
           }
           const user = response.data;          

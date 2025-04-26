@@ -2,33 +2,33 @@ import { useState } from "react";
 import { Pencil, CheckCircle, XCircle } from "react-bootstrap-icons";
 import { validatePersonalData } from "../../components/utils/validations";
 
-const EditableField = ({ label, fieldKey, editedUser, setEditedUser }) => {
+const EditableField = ({ label, fieldKey, user, setUser }) => {
     const [isEditing, setIsEditing] = useState(false);
-    const [tempValue, setTempValue] = useState(editedUser[fieldKey]);
+    const [tempValue, setTempValue] = useState(user[fieldKey]);
     const [error, setError] = useState("");
 
     const handleEditClick = () => {
-        setIsEditing(true);
-        setTempValue(editedUser[fieldKey]);
+        // setIsEditing(true);
+        // setTempValue(editedUser[fieldKey]);
     };
 
     const handleSaveClick = () => {
-        const updatedUser = { ...editedUser, [fieldKey]: tempValue };
-        const fieldErrors = validatePersonalData(updatedUser, fieldKey);
+        // const updatedUser = { ...editedUser, [fieldKey]: tempValue };
+        // const fieldErrors = validatePersonalData(updatedUser, fieldKey);
 
-        if (!fieldErrors[fieldKey]) {
-            setEditedUser(updatedUser);
-            setIsEditing(false);
-            setError("");
-        } else {
-            setError(fieldErrors[fieldKey]);
-        }
+        // if (!fieldErrors[fieldKey]) {
+        //     setEditedUser(updatedUser);
+        //     setIsEditing(false);
+        //     setError("");
+        // } else {
+        //     setError(fieldErrors[fieldKey]);
+        // }
     };
 
     const handleCancelClick = () => {
-        setIsEditing(false);
-        setTempValue(editedUser[fieldKey]);
-        setError("");
+        // setIsEditing(false);
+        // setTempValue(editedUser[fieldKey]);
+        // setError("");
     };
 
     return (
@@ -42,7 +42,7 @@ const EditableField = ({ label, fieldKey, editedUser, setEditedUser }) => {
                 <input
                     type="text"
                     className={`form-control border-1 ${isEditing ? "editable" : ""}`}
-                    value={isEditing ? tempValue : editedUser[fieldKey]}
+                    value={isEditing ? tempValue : user[fieldKey]}
                     onChange={(e) => setTempValue(e.target.value)}
                     disabled={!isEditing}
                     style={{
@@ -51,7 +51,7 @@ const EditableField = ({ label, fieldKey, editedUser, setEditedUser }) => {
                         paddingRight: "5rem",
                     }}
                 />
-                {isEditing ? (
+                {/* {isEditing ? (
                     <>
                         <CheckCircle
                             className="position-absolute"
@@ -88,7 +88,7 @@ const EditableField = ({ label, fieldKey, editedUser, setEditedUser }) => {
                         }}
                         onClick={handleEditClick}
                     />
-                )}
+                )} */}
                 {/* Error message */}
                 {error && (
                     <div

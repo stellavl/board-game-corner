@@ -7,19 +7,7 @@ import { toast } from 'react-toastify';
 const AccountDropdown = ({ userId, onLogout }) => {
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
-  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const loadUser = async () => {
-      const userData = await fetchUser(userId);
-      if (userData) {
-        setUser(userData);
-      }
-    };
-
-    loadUser();
-  }, [userId]);
 
   const handleProfileClick = () => {
     if (userId) {

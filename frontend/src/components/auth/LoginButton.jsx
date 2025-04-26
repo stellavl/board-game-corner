@@ -3,8 +3,7 @@ import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
-import axiosInstance from '../../config/axiosConfig';
-import { toast } from 'react-toastify';
+import { fetchUser } from '../utils/fetchUser';
 import 'react-toastify/dist/ReactToastify.css';
 
 const LoginButton = () => {
@@ -30,19 +29,10 @@ const LoginButton = () => {
   useEffect(() => {
     const fetchUserFirstName = async () => {
       if (userId) {
-        try {          
-          const token = localStorage.getItem('authToken');
-          const response = await axiosInstance.get(`api/users/${userId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.status !== 200) { 
-            toast.error('Σφάλμα κατά την ανάκτηση των στοιχείων.', { position: 'top-center' }); 
-          }
-          const user = response.data;          
+        const user = await fetchUser(userId);
+        if (user) {
           setUserFirstName(user.first_name);
-        } catch (error) {
+        } else {
           setUserFirstName('');
         }
       } else {

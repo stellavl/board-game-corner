@@ -24,6 +24,7 @@ const LoginButton = () => {
     setDropdownOpen(false);
     setUserId(null);
     localStorage.removeItem('authToken'); 
+    localStorage.removeItem('userId'); 
 
     if (location.pathname.startsWith('/profile')) {
       navigate('/home');

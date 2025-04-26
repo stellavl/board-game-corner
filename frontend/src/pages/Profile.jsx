@@ -3,9 +3,11 @@ import { useParams } from "react-router-dom";
 import { fetchUser } from "../components/utils/fetchUser";
 import MainTab from "../components/profilepage/MainTab";
 import ReservationsTab from "../components/profilepage/ReservationsTab";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
+
   const { userId } = useParams(); 
   const [user, setUser] = useState(null);
 
@@ -19,7 +21,7 @@ const Profile = () => {
       if (userData) {
         setUser(userData);
       } else {
-        toast.error("User not found.", { position: "top-center" });
+        navigate("/home");
       }
       setLoading(false);
     };
@@ -27,7 +29,7 @@ const Profile = () => {
     loadUser();
   }, [userId]);
 
-  if (loading) {
+  if (loading || !user) {
     return null;
   }
 

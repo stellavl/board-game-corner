@@ -1,11 +1,9 @@
 import { React, useState } from 'react';
 import { Modal, Button, Form, Alert, Spinner, Row, Col } from 'react-bootstrap';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import OrangeButton from '../common/OrangeButton';
-import axiosInstance from '../../config/axiosConfig';
+import { handleLogin } from '../utils/loginUser';
 
 const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowSignUpModal, setUserId }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -42,45 +40,22 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowS
       setValidationErrors(validationErrors);
       return;
     }
-
+  
     setIsSubmitting(true);
     setValidationErrors({});
     setBackendError(null);
-
-    try {
-      const response = await axiosInstance.post('/api/login', {
-        email: formData.email,
-        password: formData.password,
-      });
-
-      const { user, token } = response.data;
-
+  
+    const result = await handleLogin(formData);
+  
+    if (result.success) {
       setIsLoggedIn(true);
-      setUserId(user.id);
-      localStorage.setItem('authToken', token);
+      setUserId(result.userId);
       setShowLoginModal(false);
-    } catch (error) {
-      let errorMessage = 'Σφάλμα κατά τη σύνδεση. Προσπαθήστε ξανά.'; // database is down 
-      if (error.code === 'ERR_NETWORK') {
-        errorMessage = 'Ο διακομιστής δεν αποκρίνεται. Προσπαθήστε ξανά αργότερα.'; // backend is down
-        setShowLoginModal(false);
-        toast.error(errorMessage, { position: 'top-center' });
-      } else if (
-        error.response &&
-        error.response.status >= 400 &&
-        error.response.status < 500 &&
-        error.response.data &&
-        error.response.data.error
-      ) {
-        errorMessage = error.response.data.error;
-        setBackendError(errorMessage);
-      } else {
-        setShowLoginModal(false);
-        toast.error(errorMessage, { position: 'top-center' }); 
-      }
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      setBackendError(result.error);
     }
+  
+    setIsSubmitting(false);
   };
 
   const handleSignUpClick = () => {

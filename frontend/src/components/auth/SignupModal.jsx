@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Button, Card } from 'react-bootstrap';
-import { X } from 'react-bootstrap-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import OrangeButton from '../common/OrangeButton';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,10 @@ const SignupModal = ({ showModal, setShowModal, setShowLoginModal }) => {
   const handleBackClick = () => {
     setShowModal(false);
     setShowLoginModal(true);
+  };
+
+  const handleClose = () => {
+    setShowModal(false);
   };
 
   function handlePersonalClick() {
@@ -40,11 +44,10 @@ const SignupModal = ({ showModal, setShowModal, setShowLoginModal }) => {
         <Button 
           variant="link" 
           className="position-absolute top-0 end-0 m-2 p-0 text-secondary"
-          onClick={() => setShowModal(false)}
+          onClick={handleClose}
         >
-          <X size={30} />
+          <FontAwesomeIcon icon={faTimes} size="lg" />
         </Button>
-
         <h5 className="text-center mt-3" style={{ color: 'var(--color-gray-purple)' }}>
           Τι λογαριασμό θέλετε να δημιουργήσετε;
         </h5>

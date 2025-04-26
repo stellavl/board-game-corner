@@ -53,10 +53,11 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowS
         password: formData.password,
       });
 
-      const user = response.data.user;
+      const { user, token } = response.data;
 
       setIsLoggedIn(true);
       setUserId(user.id);
+      localStorage.setItem('authToken', token);
       setShowLoginModal(false);
     } catch (error) {
       let errorMessage = 'Σφάλμα κατά τη σύνδεση. Προσπαθήστε ξανά.'; // database is down 

@@ -18,8 +18,9 @@ const LoginButton = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setDropdownOpen(false); 
+    setDropdownOpen(false);
     setUserId(null);
+    localStorage.removeItem('authToken'); 
   };
 
   const toggleDropdown = () => {
@@ -30,7 +31,12 @@ const LoginButton = () => {
     const fetchUserFirstName = async () => {
       if (userId) {
         try {          
-          const response = await axiosInstance.get(`api/users/${userId}`);
+          const token = localStorage.getItem('authToken');
+          const response = await axiosInstance.get(`api/users/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
           if (response.status !== 200) { 
             toast.error('Σφάλμα κατά την ανάκτηση των στοιχείων.', { position: 'top-center' }); 
           }

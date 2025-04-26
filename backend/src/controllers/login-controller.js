@@ -1,4 +1,8 @@
 import { loginUser } from "../services/login-service.js";
+import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+
+dotenv.config({ path: '../.env' }); 
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -8,13 +12,14 @@ export const login = async (req, res) => {
   }
 
   try {
-    const user = await loginUser(email, password);
+    const user = await loginUser(email, password);    
+    const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
     return res.status(200).json({
       message: 'Login successful',
       user: {
         id: user.id,
       },
-      // token: '...JWT...' (add this later)
+      token,
     });
   } catch (error) {
     if (error.code === 'INVALID_CREDENTIALS') {

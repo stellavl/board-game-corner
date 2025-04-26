@@ -4,6 +4,7 @@ import LoginModal from './LoginModal';
 import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
 import { fetchUser } from '../utils/fetchUser';
+import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 
 const LoginButton = () => {
@@ -15,11 +16,18 @@ const LoginButton = () => {
   const [userId, setUserId] = useState(null);
   const [userFirstName, setUserFirstName] = useState('');
 
+  const location = window.location; 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     setDropdownOpen(false);
     setUserId(null);
     localStorage.removeItem('authToken'); 
+
+    if (location.pathname.startsWith('/profile')) {
+      navigate('/home');
+    }
   };
 
   const toggleDropdown = () => {

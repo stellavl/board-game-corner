@@ -2,13 +2,15 @@ import axiosInstance from '../../config/axiosConfig';
 import { toast } from 'react-toastify';
 
 export const fetchUser = async (userId) => {
-  if (!userId) {
+
+  const token = localStorage.getItem('authToken');
+
+  if (!userId || !token) {
     toast.error('Αποτυχία φόρτωσης δεδομένων χρήστη.', { position: 'top-center' });
     return null;
   }
 
   try {
-    const token = localStorage.getItem('authToken');
     const response = await axiosInstance.get(`api/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,

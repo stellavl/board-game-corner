@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import users from '../../../data/users';
+import { fetchUser } from '../../utils/fetchUser';
+import { toast } from 'react-toastify';
 
 const AccountDropdown = ({ userId, onLogout }) => {
   const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [isLogoutHovered, setIsLogoutHovered] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  const user = users.find(user => user.id === userId);
+  useEffect(() => {
+    const loadUser = async () => {
+      const userData = await fetchUser(userId);
+      if (userData) {
+        setUser(userData);
+      }
+    };
+
+    loadUser();
+  }, [userId]);
 
   const handleProfileClick = () => {
-    if (user) {
-      navigate(`/profile/${user.firstName}/${user.lastName}`);
+    if (userId) {
+      navigate(`/profile/${userId}`);
+    } else {
+      toast.error('Ο χρήστης δεν είναι διαθέσιμος.', { position: 'top-center' });
     }
   };
 

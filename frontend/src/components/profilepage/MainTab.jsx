@@ -23,24 +23,23 @@ const wantToPlay = [
     { id: 4, name: "Dixit", image: "/images/dixit.jpg" }
 ];
 
-const MainTab = ({ editedUser, setEditedUser }) => {
-    
+const MainTab = ({ user, setUser }) => {
     return (
         <>
             <div className="border-1 p-4 rounded-3" style={{ borderColor: "var(--color-orange)" }}>
                 <div className="row g-4 mx-auto" style={{ maxWidth: "50rem" }}>
                     {[
-                        { label: "Όνομα", key: "firstName" },
-                        { label: "Επώνυμο", key: "lastName" },
+                        { label: "Όνομα", key: "first_name" },
+                        { label: "Επώνυμο", key: "last_name" },
                         { label: "Email", key: "email" },
-                        { label: "Τηλέφωνο Επικοινωνίας", key: "phone" },
+                        { label: "Τηλέφωνο Επικοινωνίας", key: "phone_number" },
                     ].map(({ label, key }) => (
                         <EditableField 
                             key={key} 
                             label={label} 
                             fieldKey={key} 
-                            editedUser={editedUser} 
-                            setEditedUser={setEditedUser} 
+                            user={user} 
+                            setUser={setUser} 
                         />
                     ))}
                 </div>

@@ -25,7 +25,7 @@ const validRoutePatterns = [
   "/signup/personal",
   "/signup/business/basic-info",
   "/signup/business/board-games",
-  "/profile/:firstName/:lastName", // Dynamic route for user profile
+  "/profile/:userId", // Dynamic route for user profile
   "/admin/:id"
 ];
 
@@ -60,7 +60,7 @@ const Main = () => {
         <Route path= "/signup/personal" element={<SignUpPersonal />} />
         <Route path= "/signup/business/basic-info" element={<SignUpBusinessBasicInfo />} />
         <Route path= "/signup/business/board-games" element={<SignUpBusinessBoardGames />} />
-        <Route path="/profile/:firstName/:lastName" element={<Profile />} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/admin/:id" element={<Admin />} />
       </Routes>
     </div>

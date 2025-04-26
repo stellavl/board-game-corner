@@ -13,13 +13,10 @@ export const getUserByIdController = async (req, res) => {
 
 export const createUserController = async (req, res) => {
   try {
-    console.log("Headers:", req.headers);
-    console.log(req.body);
     const userData = req.body;
     const newUser = await createUser(userData);
     res.status(201).json(newUser);
   } catch (error) {
-    console.error("Error creating user:", error);
     res.status(error.statusCode || 400).json({ error: error.message });
   }
 };

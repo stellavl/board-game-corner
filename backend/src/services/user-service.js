@@ -19,14 +19,14 @@ export const getUserById = async (id) => {
 };
 
 export const createUser = async (userData) => {
-  const { firstName, lastName, email, phoneNumber, password } = userData;
+  const { firstName, lastName, email, phone, password } = userData;
 
-  if (!firstName || !lastName || !email || !password || !phoneNumber) {
+  if (!firstName || !lastName || !email || !password || !phone) {
     const error = new Error("Όλα τα απαιτούμενα πεδία πρέπει να συμπληρωθούν.");
     error.statusCode = 400;
     throw error;
   }
 
-  const newUser = await insertUser({ firstName, lastName, email, phoneNumber, password });
+  const newUser = await insertUser({ firstName, lastName, email, phone, password });
   return newUser;
 };

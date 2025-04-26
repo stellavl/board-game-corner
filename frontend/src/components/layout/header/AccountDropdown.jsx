@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { fetchUser } from '../../utils/fetchUser';
 import { toast } from 'react-toastify';
 
 const AccountDropdown = ({ userId, onLogout }) => {

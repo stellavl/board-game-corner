@@ -6,6 +6,7 @@ import { validatePersonalData } from "../components/utils/validations";
 import axiosInstance from "../config/axiosConfig"; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { handleLogin } from "../components/utils/loginUser";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -31,7 +32,13 @@ const SignUpPersonal = () => {
         if (Object.keys(validationErrors).length === 0) {
             try {
                 await axiosInstance.post("/api/users", formData); 
-                navigate('/home');
+                // Log the user in after successful signup
+                const loginResponse = await handleLogin({ email: formData.email, password: formData.password });
+                if (loginResponse.success) {
+                    navigate('/home');
+                } else {
+                    toast.error(loginResponse.error, { position: 'top-center' });
+                }
             } catch (error) {
                 const errorMessage = error.response?.data?.error || "Σφάλμα κατά την εγγραφή. Προσπαθήστε ξανά.";
                 toast.error(errorMessage, { position: 'top-center' });

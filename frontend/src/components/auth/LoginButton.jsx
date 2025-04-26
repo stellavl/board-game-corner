@@ -23,7 +23,7 @@ const LoginButton = () => {
     setIsLoggedIn(false);
     setDropdownOpen(false);
     setUserId(null);
-    localStorage.removeItem('authToken'); 
+    localStorage.removeItem('authToken');
     localStorage.removeItem('userId'); 
 
     if (location.pathname.startsWith('/profile')) {
@@ -34,6 +34,15 @@ const LoginButton = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen); 
   };
+
+  useEffect(() => {
+    // Check if the user is already logged in
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+      setIsLoggedIn(true);
+    }
+  });
 
   useEffect(() => {
     const fetchUserFirstName = async () => {
@@ -97,6 +106,10 @@ const LoginButton = () => {
         showModal={showSignupModal}
         setShowModal={setShowSignupModal}
         setShowLoginModal={setShowLoginModal}
+        onLogin={(userId) => {
+          setIsLoggedIn(true);
+          setUserId(userId);
+        }}
       />
     </>
   );

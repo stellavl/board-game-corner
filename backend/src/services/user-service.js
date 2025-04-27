@@ -1,4 +1,5 @@
 import { findUserById } from "../repositories/user-repo.js";
+import { findUserByEmail } from "../repositories/user-repo.js";
 import { insertUser } from "../repositories/user-repo.js";
 
 export const getUserById = async (id) => {
@@ -24,6 +25,13 @@ export const createUser = async (userData) => {
   if (!firstName || !lastName || !email || !password || !phone) {
     const error = new Error("Όλα τα απαιτούμενα πεδία πρέπει να συμπληρωθούν.");
     error.statusCode = 400;
+    throw error;
+  }
+
+  const existingUser = await findUserByEmail(email);
+  if (existingUser) {
+    const error = new Error("Το email χρησιμοποιείται ήδη.");
+    error.statusCode = 409; // Conflict
     throw error;
   }
 

@@ -1,6 +1,7 @@
 import { findUserById } from "../repositories/user-repo.js";
 import { findUserByEmail } from "../repositories/user-repo.js";
 import { insertUser } from "../repositories/user-repo.js";
+import bcrypt from "bcryptjs";
 
 export const getUserById = async (id) => {
   if (!id) {
@@ -35,6 +36,15 @@ export const createUser = async (userData) => {
     throw error;
   }
 
-  const newUser = await insertUser({ firstName, lastName, email, phone, password });
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await insertUser({
+    firstName,
+    lastName,
+    email,
+    phone,
+    password: hashedPassword,
+  });  
+  
   return newUser;
 };

@@ -1,5 +1,22 @@
-import { findAdminByEmail, insertAdmin } from "../repositories/admin-repo.js";
+import { findAdminByEmail, insertAdmin, findAdminById } from "../repositories/admin-repo.js";
 import bcrypt from "bcryptjs";
+
+export const getAdminById = async (id) => {
+  if (!id) {
+    const error = new Error("Σφάλμα κατά την αναζήτηση του παιχνιδοκαφέ.");
+    error.statusCode = 500; 
+    throw error;
+  }
+
+  const admin = await findAdminById(id);
+  if (!admin) {
+    const error = new Error("Το παιχνιδοκαφέ δεν βρέθηκε.");
+    error.statusCode = 404; 
+    throw error;
+  }
+
+  return admin;
+};
 
 export const createAdmin = async (adminData) => {
   const { name, city, address, phone, email, password, photo } = adminData;

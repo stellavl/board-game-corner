@@ -10,6 +10,15 @@ export const findAdminByEmail = async (email) => {
   return rows.length > 0 ? rows[0] : null;
 };
 
+export const findAdminById = async (id) => {
+  const connection = await connectToDatabase();
+  const [rows] = await connection.execute(
+    'SELECT name, city, address, phone_number, email, photo FROM board_game_cafe WHERE id = ?',
+    [id]
+  );
+  return rows.length > 0 ? rows[0] : null;
+};
+
 export const insertAdmin = async ({ name, city, address, phone, email, password, photo }) => {
   const connection = await connectToDatabase();
   const [result] = await connection.execute(

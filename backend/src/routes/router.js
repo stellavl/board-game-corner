@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import login from './login-route.js';
+import loginPersonal from './login-route.js';
+import loginAdmin from './login-route.js';
 import userRoute from "./user-route.js";
 import adminRoute from "./admin-route.js";
 
@@ -9,7 +10,8 @@ router.get('/', (req, res) => {
   res.json({ message: 'Welcome to the API!' });
 });
 
-router.use('/', login);
+router.use('/', loginPersonal);
+router.use('/', loginAdmin);
 router.use('/', userRoute);
 router.use('/', adminRoute);
 

@@ -3,7 +3,7 @@ import axiosInstance from '../../config/axiosConfig';
 
 export const handleLogin = async (formData) => {
   try {
-    const response = await axiosInstance.post('/api/login', {
+    const response = await axiosInstance.post('/api/login/personal', {
       email: formData.email,
       password: formData.password,
     });

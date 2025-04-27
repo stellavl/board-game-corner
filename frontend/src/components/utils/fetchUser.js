@@ -6,6 +6,8 @@ export const fetchUser = async (userId) => {
   const token = localStorage.getItem('authToken');
 
   if (!userId || !token) {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userId');
     toast.error('Αποτυχία φόρτωσης δεδομένων χρήστη.', { position: 'top-center' });
     return null;
   }

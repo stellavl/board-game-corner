@@ -6,7 +6,7 @@ import { validatePersonalData } from "../components/utils/validations";
 import axiosInstance from "../config/axiosConfig"; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { handleLogin } from "../components/utils/loginUser";
+import { loginPersonal } from "../components/utils/handleLogin";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -33,7 +33,7 @@ const SignUpPersonal = () => {
             try {
                 await axiosInstance.post("/api/users", formData); 
                 // Log the user in after successful signup
-                const loginResponse = await handleLogin({ email: formData.email, password: formData.password });
+                const loginResponse = await loginPersonal({ email: formData.email, password: formData.password });
                 if (loginResponse.success) {
                     navigate('/home');
                 } else {

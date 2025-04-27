@@ -10,7 +10,9 @@ import StatisticsTab from "../components/adminpage/StatisticsTab";
 
 const Admin = () => {
     const { id } = useParams();
-    const cafe = boardGameCafes.find((cafe) => cafe.id === parseInt(id));
+    //TODO: Fetch the cafe data from the backend using the id from the URL
+    console.log("Cafe ID from URL:", id);
+    const cafe = boardGameCafes.find((cafe) => cafe.id === 1);
     const [activeTab, setActiveTab] = useState("reservations");
 
     return (

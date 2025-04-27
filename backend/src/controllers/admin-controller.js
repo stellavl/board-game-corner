@@ -1,4 +1,5 @@
 import { createAdmin, getAdminById } from "../services/admin-service.js";
+import upload from "../middleware/file-middleware.js";
 
 export const getAdminByIdController = async (req, res) => {
   try {
@@ -10,12 +11,16 @@ export const getAdminByIdController = async (req, res) => {
   }
 };
 
-export const createAdminController = async (req, res) => {
-  try {
-    const adminData = req.body;
-    const newAdmin = await createAdmin(adminData);
-    res.status(201).json(newAdmin);
-  } catch (error) {
-    res.status(error.statusCode || 400).json({ error: error.message });
-  }
-};
+export const createAdminController = [
+  upload.single("photo"), 
+  async (req, res) => {
+    try {
+      const adminData = req.body;
+      const photoPath = req.file ? req.file.path : null;
+      const newAdmin = await createAdmin({ ...adminData, photo: photoPath });
+      res.status(201).json(newAdmin);
+    } catch (error) {
+      res.status(error.statusCode || 400).json({ error: error.message });
+    }
+  },
+];

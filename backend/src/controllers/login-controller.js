@@ -1,4 +1,4 @@
-import { loginUser } from "../services/login-personal-service.js";
+import { loginPersonalUser} from "../services/login-personal-service.js";
 import { loginAdminUser } from "../services/login-admin-service.js";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
@@ -31,7 +31,7 @@ const handleLogin = async (req, res, loginFunction, userType) => {
 };
 
 export const loginPersonal = (req, res) => {
-  handleLogin(req, res, loginUser, 'user');
+  handleLogin(req, res, loginPersonalUser, 'user');
 };
 
 export const loginAdmin = (req, res) => {

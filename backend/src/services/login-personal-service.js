@@ -1,7 +1,7 @@
 import { findUserByEmail } from "../repositories/user-repo.js";
 import bcrypt from "bcrypt";
 
-export const loginUser = async (email, password) => {
+export const loginPersonalUser = async (email, password) => {
   const user = await findUserByEmail(email);
   const isPasswordValid = await bcrypt.compare(password, user.password);
 

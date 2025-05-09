@@ -40,7 +40,6 @@ const LoginButton = () => {
     const storedUserId = localStorage.getItem('userId');
     if (storedUserId) {
       setUserId(storedUserId);
-      setIsLoggedIn(true);
     }
   });
 
@@ -50,6 +49,7 @@ const LoginButton = () => {
         const user = await fetchUser(userId);
         if (user) {
           setUserFirstName(user.first_name);
+          setIsLoggedIn(true);
         } else {
           setUserFirstName('');
         }

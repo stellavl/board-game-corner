@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Pagination } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import usePagination from "../../hooks/usePagination";

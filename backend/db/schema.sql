@@ -1,4 +1,3 @@
-DROP DATABASE IF EXISTS board_game_corner;
 CREATE DATABASE IF NOT EXISTS board_game_corner;
 USE board_game_corner;
 
@@ -52,7 +51,16 @@ CREATE TABLE IF NOT EXISTS `user_board_game_list` (
 
 CREATE TABLE IF NOT EXISTS `board_game` (
 	`id` bigint AUTO_INCREMENT NOT NULL UNIQUE,
+	`bgg_id` varchar(255) NOT NULL UNIQUE,
+	`category` varchar(255) NOT NULL,
 	`name` varchar(255) NOT NULL UNIQUE,
+	`min_players` int NOT NULL,
+	`max_players` int NOT NULL,
+	`playing_time` int NOT NULL,
+	`age` int NOT NULL,
+	`description` text NOT NULL,
+	`image` varchar(255),
+	`is_hot` boolean NOT NULL DEFAULT false,
 	PRIMARY KEY (`id`)
 );
 

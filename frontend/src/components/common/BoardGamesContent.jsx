@@ -6,7 +6,9 @@ import OrangeButton from './OrangeButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import boardGames from "../../data/boardGames";
 import BoardGameSelectBar from './BoardGameSelectBar';
-import { fetchHotBoardGames } from '../utils/fetchHotBoardGames';
+import { Spinner } from 'react-bootstrap'; 
+import axiosInstance from '../../config/axiosConfig';
+import { toast } from 'react-toastify';
 
 const BoardGamesContent = () => {
   const location = useLocation();
@@ -33,13 +35,19 @@ const BoardGamesContent = () => {
     navigate(`?${queryParams.toString()}`);
   };
 
-  useEffect(() => {
-    const fetchHotGames = async () => {
-        const hotBoardGames = await fetchHotBoardGames();
-        setFilteredBoardGames(hotBoardGames);
-    };
-    fetchHotGames();
-  },[]);
+useEffect(() => {
+  const fetchHotBoardGames = async () => {
+    try {
+      const response = await axiosInstance.get("api/hot-games");
+      setFilteredBoardGames(response.data);
+    } catch (error) {
+      toast.error("Υπήρξε σφάλμα κατά την ανάκτηση των επιτραπέζιων παιχνιδιών.", { position: 'top-center' });
+      setFilteredBoardGames(null);
+    }
+  };
+
+  fetchHotBoardGames();
+}, []);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -97,7 +105,7 @@ const BoardGamesContent = () => {
 
   const getHeaderText = () => {
     if ((!searchTerm && filters.categories.length === 0)) {
-      return 'Προτεινόμενα:';
+      return 'Δημοφιλή επιτραπέζια:';
     }
     return `Αποτελέσματα (${filteredBoardGames.length}):`; 
   };
@@ -122,7 +130,15 @@ const BoardGamesContent = () => {
         </Col>
 
         <Col lg={9} xs={12} className="mt-4 mt-lg-0">
-          <BoardGameCards headerText={getHeaderText()} boardGames={filteredBoardGames} />
+          {filteredBoardGames === null ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <BoardGameCards headerText={getHeaderText()} boardGames={filteredBoardGames} />
+          )}
         </Col>
       </Row>
 

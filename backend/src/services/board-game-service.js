@@ -6,6 +6,7 @@ import {
   getHotBoardGames,
   markGameAsHot,
   markGameAsNotHot,
+  getBoardGameByName
 } from "../repositories/board-game-repo.js";
 
 export const fetchHotBoardGamesFromBGG = async () => {
@@ -32,6 +33,14 @@ export const fetchBoardGameDetailsByIdFromBGG = async (gameId) => {
     };
 };
 
+export const getBoardGameByNameService = async (name) => {
+    try {
+        const gameDetails = await getBoardGameByName(name);
+        return gameDetails;
+    } catch (error) {
+        throw error;
+    }
+}
 
 export const updateHotGamesService = async () => {
   try {

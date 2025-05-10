@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Offcanvas } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
@@ -10,11 +10,21 @@ import Reviews from "../components/boardgamepage/Reviews";
 import ReservationForm from "../components/common/ReservationForm";
 import BoardGameCards from "../components/common/BoardGameCards";
 import boardGames from "../data/boardGames";
+import axiosInstance from '../config/axiosConfig';
 
 const SpecificBoardGamePage = () => {
     const { boardGameName } = useParams();
-    const boardGame = boardGames.find(boardGame => boardGame.name === boardGameName);
+    const [boardGame, setBoardGame] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
+
+    useEffect(() => {
+        const fetchBoardGame = async () => {
+            const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
+            setBoardGame(response.data);
+            console.log(response.data);
+        };
+        fetchBoardGame();
+    }, [boardGameName]);
 
     if (!boardGame) {
         return <h1 className="text-center mt-5">Game Not Found</h1>;

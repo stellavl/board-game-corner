@@ -6,6 +6,7 @@ import OrangeButton from './OrangeButton';
 import { useLocation, useNavigate } from 'react-router-dom';
 import boardGames from "../../data/boardGames";
 import BoardGameSelectBar from './BoardGameSelectBar';
+import { fetchHotBoardGames } from '../utils/fetchHotBoardGames';
 
 const BoardGamesContent = () => {
   const location = useLocation();
@@ -20,7 +21,7 @@ const BoardGamesContent = () => {
     duration: 'Όλες',
     age: 'Όλες',
   });
-  const [filteredBoardGames, setFilteredBoardGames] = useState(boardGames);
+  const [filteredBoardGames, setFilteredBoardGames] = useState([]);
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
@@ -31,6 +32,14 @@ const BoardGamesContent = () => {
     }
     navigate(`?${queryParams.toString()}`);
   };
+
+  useEffect(() => {
+    const fetchHotGames = async () => {
+        const hotBoardGames = await fetchHotBoardGames();
+        setFilteredBoardGames(hotBoardGames);
+    };
+    fetchHotGames();
+  },[]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -92,6 +101,7 @@ const BoardGamesContent = () => {
     }
     return `Αποτελέσματα (${filteredBoardGames.length}):`; 
   };
+  
   return (
     <>
       <Row className='mb-5'>

@@ -3,6 +3,7 @@ import { Card, Col } from "react-bootstrap";
 import BoardGameDetails from "./BoardGameDetails";
 
 const BoardGameCard = ({ boardGame, handleCardClick }) => {
+
   const cardStyle = {
     borderColor: "var(--color-orange)",
     cursor: "pointer",

@@ -58,7 +58,7 @@ export const getHotBoardGames = async () => {
   try {
     const connection = await connectToDatabase();
     const [rows] = await connection.execute(
-      'SELECT id, bgg_id, name, min_players, max_players, age, category, image FROM board_game WHERE is_hot = true'
+      'SELECT id, bgg_id, name, min_players, max_players, age, category, image, playing_time FROM board_game WHERE is_hot = true'
     );
     return rows;
   } catch (error) {

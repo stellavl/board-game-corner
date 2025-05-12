@@ -31,7 +31,7 @@ const SignUpPersonal = () => {
         setErrors(validationErrors);
         if (Object.keys(validationErrors).length === 0) {
             try {
-                await axiosInstance.post("/api/users", formData); 
+                await axiosInstance.post("/api/basic-users", formData); 
                 // Log the user in after successful signup
                 const loginResponse = await loginPersonal({ email: formData.email, password: formData.password });
                 if (loginResponse.success) {

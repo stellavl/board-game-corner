@@ -3,13 +3,18 @@ import bcrypt from "bcrypt";
 
 export const loginPersonalUser = async (email, password) => {
   const user = await findUserByEmail(email);
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-
-  if (!user && !isPasswordValid) {
+  if (!user) {
     const error = new Error('Λάθος email ή κωδικός πρόσβασης.');
     error.code = 'INVALID_CREDENTIALS';
     throw error;
   }
-
+  else {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      const error = new Error('Λάθος email ή κωδικός πρόσβασης.');
+      error.code = 'INVALID_CREDENTIALS';
+      throw error;
+    }
+  }
   return user;
 };

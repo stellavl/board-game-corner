@@ -6,6 +6,7 @@ export const loginPersonal = async (formData) => {
     const response = await axiosInstance.post('/api/login/personal', {
       email: formData.email,
       password: formData.password,
+      role: 'USER'
     });
 
     const { user, token } = response.data;
@@ -24,6 +25,7 @@ export const loginAdmin = async (formData) => {
     const response = await axiosInstance.post('/api/login/admin', {
       email: formData.email,
       password: formData.password,
+      role: 'ADMIN'
     });
 
     const { admin, token } = response.data;

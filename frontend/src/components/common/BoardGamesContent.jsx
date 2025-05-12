@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 const BoardGamesContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true); 
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
@@ -41,11 +41,12 @@ useEffect(() => {
       const response = await axiosInstance.get("api/hot-games");
       setFilteredBoardGames(response.data);
     } catch (error) {
-      toast.error("Υπήρξε σφάλμα κατά την ανάκτηση των επιτραπέζιων παιχνιδιών.", { position: 'top-center' });
+      toast.error(error,{ position: 'top-center' });
       setFilteredBoardGames(null);
-    }
+    } finally {
+      setLoading(false); 
+  }
   };
-
   fetchHotBoardGames();
 }, []);
 
@@ -109,6 +110,16 @@ useEffect(() => {
     }
     return `Αποτελέσματα (${filteredBoardGames.length}):`; 
   };
+
+    if (loading) {
+      return (
+          <div className="text-center mt-5">
+              <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+              </Spinner>
+          </div>
+      );
+  }
   
   return (
     <>

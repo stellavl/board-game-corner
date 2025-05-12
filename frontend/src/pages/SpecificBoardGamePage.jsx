@@ -10,24 +10,38 @@ import Reviews from "../components/boardgamepage/Reviews";
 import ReservationForm from "../components/common/ReservationForm";
 import BoardGameCards from "../components/common/BoardGameCards";
 import boardGames from "../data/boardGames";
+import { toast } from "react-toastify";
+import Spinner from 'react-bootstrap/Spinner'; 
 import axiosInstance from '../config/axiosConfig';
 
 const SpecificBoardGamePage = () => {
     const { boardGameName } = useParams();
     const [boardGame, setBoardGame] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
+    const [loading, setLoading] = useState(true); 
 
     useEffect(() => {
         const fetchBoardGame = async () => {
-            const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
-            setBoardGame(response.data);
-            console.log(response.data);
+            try {
+                const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
+                setBoardGame(response.data);
+            } catch (error) {
+                toast.error(error,{ position: 'top-center' });
+            } finally {
+                setLoading(false); 
+            }
         };
         fetchBoardGame();
     }, [boardGameName]);
 
-    if (!boardGame) {
-        return <h1 className="text-center mt-5">Game Not Found</h1>;
+    if (loading) {
+        return (
+            <div className="text-center mt-5">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </div>
+        );
     }
 
     // Handle the toggle of reviews visibility

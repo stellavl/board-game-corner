@@ -3,7 +3,7 @@ import axiosInstance from '../../config/axiosConfig';
 
 export const loginPersonal = async (formData) => {
   try {
-    const response = await axiosInstance.post('/api/login/personal', {
+    const response = await axiosInstance.post('/api/login', {
       email: formData.email,
       password: formData.password,
       role: 'USER'
@@ -22,7 +22,7 @@ export const loginPersonal = async (formData) => {
 
 export const loginAdmin = async (formData) => {
   try {
-    const response = await axiosInstance.post('/api/login/admin', {
+    const response = await axiosInstance.post('/api/login', {
       email: formData.email,
       password: formData.password,
       role: 'ADMIN'

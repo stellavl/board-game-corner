@@ -19,12 +19,14 @@ export const login = async (req, res) => {
     loginFunction = loginAdminUser;
   }
 
+  const normalizedRole = role.toLowerCase(); 
+
   try {
     const user = await loginFunction(email, password);
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '1h' });
     return res.status(200).json({
-      message: `${role} login successful`,
-      [role]: {
+      message: `${normalizedRole} login successful`,
+      [normalizedRole]: {
         id: user.user_id,
       },
       token,

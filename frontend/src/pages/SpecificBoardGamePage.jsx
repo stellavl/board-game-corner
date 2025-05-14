@@ -9,7 +9,6 @@ import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImage
 import Reviews from "../components/boardgamepage/Reviews";
 import ReservationForm from "../components/common/ReservationForm";
 import BoardGameCards from "../components/common/BoardGameCards";
-import boardGames from "../data/boardGames";
 import { toast } from "react-toastify";
 import Spinner from 'react-bootstrap/Spinner'; 
 import axiosInstance from '../config/axiosConfig';
@@ -19,6 +18,7 @@ const SpecificBoardGamePage = () => {
     const [boardGame, setBoardGame] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
     const [loading, setLoading] = useState(true); 
+    const [hotBoardGames, setHotBoardGames] = useState([]);
 
     useEffect(() => {
         const fetchBoardGame = async () => {
@@ -33,6 +33,25 @@ const SpecificBoardGamePage = () => {
         };
         fetchBoardGame();
     }, [boardGameName]);
+
+    useEffect(() => {
+        const fetchHotBoardGames = async () => {
+        try {
+            const response = await axiosInstance.get("api/hot-games");
+            setHotBoardGames(response.data);
+        } catch (error) {
+            toast.error(error,{ position: 'top-center' });
+            setHotBoardGames(null);
+        } finally {
+            setLoading(false); 
+        }
+        };
+        fetchHotBoardGames();
+    }, []);
+
+    const suggestedGames = hotBoardGames
+    ? hotBoardGames.filter((game) => game.name !== boardGame?.name)
+    : [];
 
     if (loading) {
         return (
@@ -127,7 +146,7 @@ const SpecificBoardGamePage = () => {
                     {/* Suggested Board Games */}
                     <Row className="mt-4" >
                         <Col className="col-9 mx-auto">    
-                            <BoardGameCards maxHeight="350px" headerText="Αποτελέσματα" boardGames={boardGames}/>
+                            <BoardGameCards maxHeight="350px" headerText="Εξερεύνησε άλλα επιτραπέζια:" boardGames={suggestedGames}/>
                         </Col>
                     </Row>
                 </Container>

@@ -1,14 +1,18 @@
 import { Row, Pagination } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import usePagination from "../../hooks/usePagination";
 import BoardGameCard from "./BoardGameCard";
 
-const BoardGameCards = ({ headerText, itemsPerPage = 8, boardGames }) => {
+const BoardGameCards = ({
+    headerText,
+    itemsPerPage = 8,
+    boardGames,
+    totalElements = boardGames.length,
+    currentPage = 1,
+    handlePageChange = () => {},
+  }) => {
   const navigate = useNavigate();
 
-  const { currentPage, currentItems, totalPages, handlePageChange } = usePagination(
-    boardGames, itemsPerPage
-  );
+  const totalPages = Math.ceil(totalElements / itemsPerPage);
 
   const navigateToSpecificBoardGamePage = (boardGame) => {
     navigate(`/boardgames/${boardGame.name}`);
@@ -20,7 +24,7 @@ const BoardGameCards = ({ headerText, itemsPerPage = 8, boardGames }) => {
         {headerText}
       </h5>
       <Row className="gx-3 gy-3 flex-wrap">
-        {currentItems.map((boardGame, index) => (
+        {boardGames.map((boardGame, index) => (
           <BoardGameCard key={index} boardGame={boardGame} handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)} />
         ))}
       </Row>

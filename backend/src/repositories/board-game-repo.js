@@ -2,11 +2,15 @@ import { connectToDatabase } from "../config/db.js";
 
 export const findBoardGameByBggId = async (bgg_id) => {
   const connection = await connectToDatabase();
-  const [rows] = await connection.execute(
-    'SELECT id, is_hot FROM board_game WHERE bgg_id = ?',
-    [bgg_id]
-  );
-  return rows;
+  try {
+    const [rows] = await connection.execute(
+      'SELECT id, is_hot FROM board_game WHERE bgg_id = ?',
+      [bgg_id]
+    );
+    return rows;
+  } finally {
+    await connection.end(); 
+  }
 };
 
 export const insertBoardGame = async (gameDetails) => {
@@ -24,14 +28,33 @@ export const insertBoardGame = async (gameDetails) => {
   } = gameDetails;
 
   const connection = await connectToDatabase();
-  const [result] = await connection.execute(
-    `INSERT INTO board_game 
-    (bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 
-    [bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot]
-  );
-  return result.insertId;
+  try {
+    // If a game with the same ID exists, return its ID and skip insertion
+    const existingGameWithSameID = await findBoardGameByBggId(bgg_id);
+    if (existingGameWithSameID.length > 0) {
+      return existingGameWithSameID[0].id;
+    }
+
+    // If a game with the same name exists, return its ID and skip insertion
+    const [existingGameWithSameName] = await connection.execute(
+      'SELECT id FROM board_game WHERE name = ?',
+      [name]
+    );
+    if (existingGameWithSameName.length > 0) {
+      return existingGameWithSameName[0].id;
+    }
+
+    const [result] = await connection.execute(
+      `INSERT INTO board_game 
+      (bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot]
+    );
+    return result.insertId;
+  } finally {
+    await connection.end();
+  }
 };
 
 export const markGameAsNotHot = async (bggIdsToMarkNotHot) => {

@@ -1,5 +1,10 @@
 import { updateHotGamesService } from '../services/board-game-service.js';
-import { getHotBoardGamesService, getBoardGameByNameService } from '../services/board-game-service.js';
+import { 
+  getHotBoardGamesService, 
+  getBoardGameByNameService, 
+  getBoardGameIDsByNameFromBGG,
+  fetchPaginatedBoardGameDetails 
+} from '../services/board-game-service.js';
 
 export const getHotBoardGamesController = async (req, res) => {
   try {
@@ -24,6 +29,17 @@ export const getBoardGameByNameController = async (req, res) => {
     const { boardGameName } = req.params;
     const boardGame = await getBoardGameByNameService(boardGameName);
     res.status(200).json(boardGame);
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+}
+
+export const searchPaginatedBoardGames = async (req, res) => {
+  try {
+    const { searchText, currentPage, pageSize } = req.body;
+    const boardGamesIDs = await getBoardGameIDsByNameFromBGG(searchText);
+    const { boardGames, totalElements } = await fetchPaginatedBoardGameDetails(boardGamesIDs, currentPage, pageSize);
+    res.status(200).json({ boardGames, totalElements });
   } catch (err) {
     res.status(404).json({ error: err.message });
   }

@@ -15,21 +15,21 @@ export const fetchHotBoardGamesFromBGG = async () => {
     return parsedData.items.item.map(item => item.$.id);
 };
 
-export const fetchBoardGameDetailsByIdFromBGG = async (gameId) => {
+export const fetchBoardGameDetailsByIdFromBGG = async (gameId, isHot) => {
     const response = await axios.get(`https://boardgamegeek.com/xmlapi/boardgame/${gameId}`);
     const parsedData = await parseStringPromise(response.data);
     const game = parsedData.boardgames.boardgame[0];
     return {
         bgg_id: game.$.objectid,
         name: game.name[0]._,
-        category: game.boardgamecategory[0]._, 
+        category: game.boardgamecategory?.[0]?._ || '', 
         min_players: parseInt(game.minplayers[0], 10),
         max_players: parseInt(game.maxplayers[0], 10),
         playing_time: parseInt(game.playingtime[0], 10),
         age: parseInt(game.age[0], 10),
         description: game.description[0],
         image: game.image ? game.image[0] : null,
-        is_hot: true,
+        is_hot: isHot || false,
     };
 };
 
@@ -48,7 +48,7 @@ export const updateHotGamesService = async () => {
 
     // Mark existing games as hot or insert them if they don't exist
     for (const gameId of hotGameIds) {
-        const gameDetails = await fetchBoardGameDetailsByIdFromBGG(gameId);
+        const gameDetails = await fetchBoardGameDetailsByIdFromBGG(gameId, true);
 
         const existingGameInLocalDB = await findBoardGameByBggId(gameDetails.bgg_id);
 
@@ -78,4 +78,42 @@ export const getHotBoardGamesService = async () => {
     } catch (error) {
         throw new Error('Σφάλμα κατά την ανάκτηση των δημοφιλών παιχνιδιών.');
     }
+};
+
+export const getBoardGameIDsByNameFromBGG = async (searchText) => {
+    try {
+        const response = await axios.get(`https://www.boardgamegeek.com/xmlapi/search?search=${searchText}`);
+        const parsedData = await parseStringPromise(response.data);
+        if (!parsedData.boardgames || !parsedData.boardgames.boardgame) {
+            return [];
+        }
+        const gameData = parsedData.boardgames.boardgame.map(game => ({
+            bgg_id: game.$.objectid,
+        }));
+        return gameData;
+    } catch (error) {
+            throw new Error(error.message);
+    }
+}
+
+export const fetchPaginatedBoardGameDetails = async (boardGameIds, currentPage = 1, pageSize = 8) => {
+    const totalElements = boardGameIds.length;
+
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+
+    // Get the IDs for the current page
+    const paginatedIds = boardGameIds.slice(startIndex, endIndex);
+
+    // Fetch details for each ID
+    const boardGames = [];
+    for (const game of paginatedIds) {
+        try {
+            const gameDetails = await fetchBoardGameDetailsByIdFromBGG(game.bgg_id, false);
+            boardGames.push(gameDetails);
+        } catch (error) {
+            throw new Error("Σφάλμα κατά την ανάκτηση των παιχνιδιών που ταιριάζουν στην αναζήτηση.");
+        }
+    }
+    return { boardGames, totalElements };
 };

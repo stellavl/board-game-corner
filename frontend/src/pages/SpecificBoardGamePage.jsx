@@ -38,10 +38,10 @@ const SpecificBoardGamePage = () => {
         const fetchHotBoardGames = async () => {
         try {
             const response = await axiosInstance.get("api/hot-games");
-            setHotBoardGames(response.data);
+            setHotBoardGames(response.data.boardGames || []);
         } catch (error) {
             toast.error(error,{ position: 'top-center' });
-            setHotBoardGames(null);
+            setHotBoardGames([]);
         } finally {
             setLoading(false); 
         }

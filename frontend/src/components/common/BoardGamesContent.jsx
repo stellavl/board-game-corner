@@ -1,21 +1,20 @@
-import { React, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Row, Col, Offcanvas } from 'react-bootstrap';
 import BoardGameCards from './BoardGameCards';
 import BoardGameFilters from './BoardGameFilters';
 import OrangeButton from './OrangeButton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import boardGames from "../../data/boardGames";
 import BoardGameSelectBar from './BoardGameSelectBar';
 import { Spinner } from 'react-bootstrap'; 
 import axiosInstance from '../../config/axiosConfig';
 import { toast } from 'react-toastify';
+import { searchBoardGames } from '../utils/searchBoardGames';
 
 const BoardGamesContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true); 
   const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     categories: [],
     minPlayers: 'Όλοι',
@@ -24,10 +23,14 @@ const BoardGamesContent = () => {
     age: 'Όλες',
   });
   const [filteredBoardGames, setFilteredBoardGames] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchText, setSearchText] = useState('');
+  const pageSize = 8;
 
   const handleApplyFilters = (newFilters) => {
     setFilters(newFilters);
-
+    setCurrentPage(1);  
     const queryParams = new URLSearchParams();
     for (const key in newFilters) {
       queryParams.set(key, newFilters[key]);
@@ -35,20 +38,62 @@ const BoardGamesContent = () => {
     navigate(`?${queryParams.toString()}`);
   };
 
-useEffect(() => {
-  const fetchHotBoardGames = async () => {
+  const fetchBoardGames = async (searchText = '', page = 1, size = 8) => {
+    setLoading(true);
     try {
-      const response = await axiosInstance.get("api/hot-games");
-      setFilteredBoardGames(response.data);
+      const { boardGames, totalElements } = await searchBoardGames(searchText, page, size);
+      setFilteredBoardGames(boardGames);
+      setTotalElements(totalElements);
     } catch (error) {
-      toast.error(error,{ position: 'top-center' });
-      setFilteredBoardGames(null);
+      toast.error(error.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (location.state?.searchText) {
+      setLoading(true);
+      setSearchText(location.state.searchText);
+      navigate(location.pathname, { replace: true, state: {} }); // clear state
+    }
+  }, [location.state, location.pathname, navigate]);
+
+  useEffect(() => {
+    if (searchText) {
+      fetchBoardGames(searchText, currentPage, pageSize);
+    }
+  }, [searchText, currentPage, pageSize]);
+
+  const fetchHotBoardGames = async (page = 1, size = 8) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        `api/hot-games?currentPage=${page}&pageSize=${size}`
+      );
+      setFilteredBoardGames(response.data.boardGames);
+      setTotalElements(response.data.totalElements);
+    } catch (error) {
+      toast.error(error, { position: 'top-center' });
+      setFilteredBoardGames([]);
+      setTotalElements(0);
     } finally {
       setLoading(false); 
-  }
+    }
   };
-  fetchHotBoardGames();
-}, []);
+
+  const handleClearSearch = () => {
+    setSearchText('');
+    setCurrentPage(1); 
+    fetchHotBoardGames(currentPage, pageSize);
+  };  
+
+  useEffect(() => {
+    // Only fetch hot games if there's no searchText and no incoming searchText from navigation
+    if (!searchText && !location.state?.searchText) {
+      fetchHotBoardGames(currentPage, pageSize);
+    }
+  }, [searchText, currentPage, pageSize, location.state]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -59,73 +104,67 @@ useEffect(() => {
     setFilters(updatedFilters);
   }, [location.search]);
 
-  useEffect(() => {
-    let filteredGames = boardGames;
+  //  useEffect(() => {
+    // let filteredGames = boardGames;
 
-    if (searchTerm) {
-      filteredGames = filteredGames.filter(game =>
-        game.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
+    // if (currentSearchTerm) {
+    //   filteredGames = filteredGames.filter(game =>
+    //     game.name.toLowerCase().includes(currentSearchTerm.toLowerCase())
+    //   );
+    // }
 
-    if (filters.categories.length > 0) {
-      filteredGames = filteredGames.filter(game =>
-        filters.categories.includes(game.category)
-      );
-    }
+  //   if (filters.categories.length > 0) {
+  //     filteredGames = filteredGames.filter(game =>
+  //       filters.categories.includes(game.category)
+  //     );
+  //   }
 
-    if (filters.minPlayers !== 'Όλοι') {
-      filteredGames = filteredGames.filter(game =>
-        game.minPlayers >= parseInt(filters.minPlayers)
-      );
-    }
+  //   if (filters.minPlayers !== 'Όλοι') {
+  //     filteredGames = filteredGames.filter(game =>
+  //       game.minPlayers >= parseInt(filters.minPlayers)
+  //     );
+  //   }
 
-    if (filters.maxPlayers !== 'Όλοι') {
-      filteredGames = filteredGames.filter(game =>
-        game.maxPlayers <= parseInt(filters.maxPlayers)
-      );
-    }
+  //   if (filters.maxPlayers !== 'Όλοι') {
+  //     filteredGames = filteredGames.filter(game =>
+  //       game.maxPlayers <= parseInt(filters.maxPlayers)
+  //     );
+  //   }
 
-    if (filters.duration !== 'Όλες') {
-      filteredGames = filteredGames.filter(game =>
-        game.duration === filters.duration
-      );
-    }
+  //   if (filters.duration !== 'Όλες') {
+  //     filteredGames = filteredGames.filter(game =>
+  //       game.duration === filters.duration
+  //     );
+  //   }
 
-    if (filters.age !== 'Όλες') {
-      filteredGames = filteredGames.filter(game =>
-        game.age === filters.age
-      );
-    }
+  //   if (filters.age !== 'Όλες') {
+  //     filteredGames = filteredGames.filter(game =>
+  //       game.age === filters.age
+  //     );
+  //   }
 
-    setFilteredBoardGames(filteredGames);
-  }, [searchTerm, filters]);
+  //   setFilteredBoardGames(filteredGames);
+  // }, [currentSearchTerm, filters]);
 
   const handleClose = () => setShowFilters(false);
   const handleShow = () => setShowFilters(true);
 
   const getHeaderText = () => {
-    if ((!searchTerm && filters.categories.length === 0)) {
+    if ((!searchText && filters.categories.length === 0)) {
       return 'Δημοφιλή επιτραπέζια:';
     }
-    return `Αποτελέσματα (${filteredBoardGames.length}):`; 
+    return `Αποτελέσματα (${totalElements}):`; 
   };
-
-    if (loading) {
-      return (
-          <div className="text-center mt-5">
-              <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-              </Spinner>
-          </div>
-      );
-  }
   
   return (
     <>
       <Row className='mb-5'>
         <Col md={12} xs={12}>
-          <BoardGameSelectBar/>
+          <BoardGameSelectBar   
+            searchText={searchText}
+            setSearchText={setSearchText}
+            onClearSearch={handleClearSearch}
+          />
         </Col>    
       </Row>
 
@@ -141,14 +180,21 @@ useEffect(() => {
         </Col>
 
         <Col lg={9} xs={12} className="mt-4 mt-lg-0">
-          {filteredBoardGames === null ? (
+          {loading ? (
             <div className="text-center">
               <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
             </div>
           ) : (
-            <BoardGameCards headerText={getHeaderText()} boardGames={filteredBoardGames} />
+            <BoardGameCards 
+              headerText={getHeaderText()} 
+              boardGames={filteredBoardGames} 
+              totalElements={totalElements}
+              currentPage={currentPage}
+              handlePageChange={setCurrentPage}
+              itemsPerPage={pageSize}
+            />
           )}
         </Col>
       </Row>

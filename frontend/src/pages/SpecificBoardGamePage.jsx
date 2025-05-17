@@ -18,7 +18,11 @@ const SpecificBoardGamePage = () => {
     const [boardGame, setBoardGame] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
     const [loading, setLoading] = useState(true); 
-    const [hotBoardGames, setHotBoardGames] = useState([]);
+    const [suggestedGames, setSuggestedGames] = useState([]);
+    const [suggestedTotal, setSuggestedTotal] = useState(0);
+    const [suggestedPage, setSuggestedPage] = useState(1);
+    const suggestedPageSize = 8;
+    const [suggestedLoading, setSuggestedLoading] = useState(false);
 
     useEffect(() => {
         const fetchBoardGame = async () => {
@@ -34,24 +38,34 @@ const SpecificBoardGamePage = () => {
         fetchBoardGame();
     }, [boardGameName]);
 
+    // Fetch suggested games (hot games except the current one), paginated
     useEffect(() => {
-        const fetchHotBoardGames = async () => {
-        try {
-            const response = await axiosInstance.get("api/hot-games");
-            setHotBoardGames(response.data.boardGames || []);
-        } catch (error) {
-            toast.error(error,{ position: 'top-center' });
-            setHotBoardGames([]);
-        } finally {
-            setLoading(false); 
-        }
+        const fetchSuggestedGames = async () => {
+            setSuggestedLoading(true);
+            try {
+                const response = await axiosInstance.get(
+                    `api/hot-games?currentPage=${suggestedPage}&pageSize=${suggestedPageSize}`
+                );
+                // Filter out the current game
+                const filtered = response.data.boardGames.filter(
+                    (game) => game.name !== boardGame?.name
+                );
+                setSuggestedGames(filtered);
+                setSuggestedTotal(
+                    boardGame
+                        ? Math.max(response.data.totalElements - 1, 0)
+                        : response.data.totalElements
+                );
+            } catch (error) {
+                toast.error(error,{ position: 'top-center' });
+                setSuggestedGames([]);
+                setSuggestedTotal(0);
+            } finally {
+                setSuggestedLoading(false);
+            }
         };
-        fetchHotBoardGames();
-    }, []);
-
-    const suggestedGames = hotBoardGames
-    ? hotBoardGames.filter((game) => game.name !== boardGame?.name)
-    : [];
+        if (boardGame) fetchSuggestedGames();
+    }, [boardGame, suggestedPage]);
 
     if (loading || !boardGame) {
         return (
@@ -146,7 +160,23 @@ const SpecificBoardGamePage = () => {
                     {/* Suggested Board Games */}
                     <Row className="mt-4" >
                         <Col className="col-9 mx-auto">    
-                            <BoardGameCards maxHeight="350px" headerText="Εξερεύνησε άλλα επιτραπέζια:" boardGames={suggestedGames}/>
+                            {suggestedLoading ? (
+                                <div className="text-center">
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                </div>
+                            ) : (
+                                <BoardGameCards
+                                    maxHeight="350px"
+                                    headerText="Εξερεύνησε άλλα επιτραπέζια:"
+                                    boardGames={suggestedGames}
+                                    totalElements={suggestedTotal}
+                                    currentPage={suggestedPage}
+                                    handlePageChange={setSuggestedPage}
+                                    itemsPerPage={suggestedPageSize}
+                                />
+                            )}
                         </Col>
                     </Row>
                 </Container>

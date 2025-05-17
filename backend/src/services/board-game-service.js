@@ -86,7 +86,7 @@ export const getHotBoardGamesService = async (currentPage = 1, pageSize = 8) => 
     }
 };
 
-export const getBoardGameIDsByNameFromBGG = async (searchText) => {
+export const searchBoardGamesByNameFromBGG = async (searchText) => {
     try {
         const response = await axios.get(`https://www.boardgamegeek.com/xmlapi/search?search=${searchText}`);
         const parsedData = await parseStringPromise(response.data);
@@ -95,6 +95,7 @@ export const getBoardGameIDsByNameFromBGG = async (searchText) => {
         }
         const gameData = parsedData.boardgames.boardgame.map(game => ({
             bgg_id: game.$.objectid,
+            name: game.name[0]._,
         }));
         return gameData;
     } catch (error) {

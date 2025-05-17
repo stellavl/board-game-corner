@@ -1,8 +1,8 @@
-import { updateHotGamesService } from '../services/board-game-service.js';
 import { 
   getHotBoardGamesService, 
   getBoardGameByNameService, 
-  getBoardGameIDsByNameFromBGG,
+  updateHotGamesService,
+  searchBoardGamesByNameFromBGG,
   fetchPaginatedBoardGameDetails 
 } from '../services/board-game-service.js';
 
@@ -39,7 +39,7 @@ export const getBoardGameByNameController = async (req, res) => {
 export const searchPaginatedBoardGames = async (req, res) => {
   try {
     const { searchText, currentPage, pageSize } = req.body;
-    const boardGamesIDs = await getBoardGameIDsByNameFromBGG(searchText);
+    const boardGamesIDs = await searchBoardGamesByNameFromBGG(searchText);
     const { boardGames, totalElements } = await fetchPaginatedBoardGameDetails(boardGamesIDs, currentPage, pageSize);
     res.status(200).json({ boardGames, totalElements });
   } catch (err) {

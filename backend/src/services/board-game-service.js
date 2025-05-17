@@ -71,10 +71,16 @@ export const updateHotGamesService = async () => {
   }
 };
 
-export const getHotBoardGamesService = async () => {
+export const getHotBoardGamesService = async (currentPage = 1, pageSize = 8) => {
     try {
         const hotBoardGames = await getHotBoardGames();
-        return hotBoardGames;
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const paginatedGames = hotBoardGames.slice(startIndex, endIndex);
+        return { 
+            boardGames: paginatedGames,
+            totalElements: hotBoardGames.length 
+        };
     } catch (error) {
         throw new Error('Σφάλμα κατά την ανάκτηση των δημοφιλών παιχνιδιών.');
     }

@@ -8,8 +8,10 @@ import {
 
 export const getHotBoardGamesController = async (req, res) => {
   try {
-    const hotBoardGames = await getHotBoardGamesService();
-    res.status(200).json(hotBoardGames);
+    const currentPage = parseInt(req.query.currentPage) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 8;
+    const { boardGames, totalElements } = await getHotBoardGamesService(currentPage, pageSize);
+    res.status(200).json({ boardGames, totalElements });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

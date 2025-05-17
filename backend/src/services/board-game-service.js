@@ -35,8 +35,30 @@ export const fetchBoardGameDetailsByIdFromBGG = async (gameId, isHot) => {
 
 export const getBoardGameByNameService = async (name) => {
     try {
+        // Check if board games exists in local DB
         const gameDetails = await getBoardGameByName(name);
-        return gameDetails;
+        if (gameDetails) {
+            return gameDetails;
+        }
+
+        // Not found locally, search BGG
+        const bggResults = await searchBoardGamesByNameFromBGG(name);
+        if (!bggResults.length) {
+            throw new Error('Το παιχνίδι δεν βρέθηκε.');
+        }
+
+        // Fetch details for each BGG result and filter by exact name
+        for (const result of bggResults) {
+            const details = await fetchBoardGameDetailsByIdFromBGG(result.bgg_id, false);
+            if (details.name && details.name.trim().toLowerCase() === name.trim().toLowerCase()) {
+                return details;
+            }
+        }
+
+        // Cache board game details in local DB
+        saveBoardGameToDbService(details);
+
+        throw new Error('Το παιχνίδι δεν βρέθηκε.');
     } catch (error) {
         throw error;
     }
@@ -99,7 +121,7 @@ export const searchBoardGamesByNameFromBGG = async (searchText) => {
         }));
         return gameData;
     } catch (error) {
-            throw new Error(error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -123,4 +145,39 @@ export const fetchPaginatedBoardGameDetails = async (boardGameIds, currentPage =
         }
     }
     return { boardGames, totalElements };
+};
+
+export const saveBoardGameToDbService = async (gameDetails) => {
+    try {
+        // Map and set defaults
+        const mappedGame = {
+            bgg_id: gameDetails.bgg_id,
+            name: gameDetails.name,
+            category: gameDetails.category || '',
+            min_players: gameDetails.min_players || 0,
+            max_players: gameDetails.max_players || 0,
+            playing_time: gameDetails.playing_time || 0,
+            age: gameDetails.age || 0,
+            description: gameDetails.description || '',
+            image: gameDetails.image || null,
+            is_hot: false,
+        };
+
+        // Check existence by BGG ID
+        const existingById = await findBoardGameByBggId(mappedGame.bgg_id);
+        if (existingById.length > 0) {
+            return existingById[0].id;
+        }
+
+        // Check existence by name
+        const existingByName = await getBoardGameByName(mappedGame.name);
+        if (existingByName) {
+            return existingByName.id;
+        }
+
+        // Insert if not exists
+        return await insertBoardGame(mappedGame);
+    } catch (error) {
+        throw new Error('Σφάλμα κατά την αποθήκευση του παιχνιδιού στη βάση δεδομένων.');
+    }
 };

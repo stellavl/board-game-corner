@@ -9,8 +9,8 @@ const HomePage = () => {
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState('');
 
-    const navigateToBoardGames = (searchText) => {
-        navigate('/boardgames', { state: { searchText } });
+    const navigateToBoardGames = () => {
+        navigate('/boardgames');
     };
     
     const navigateToBoardGameCafes = () => {

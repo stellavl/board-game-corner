@@ -53,7 +53,7 @@ const SpecificBoardGamePage = () => {
     ? hotBoardGames.filter((game) => game.name !== boardGame?.name)
     : [];
 
-    if (loading) {
+    if (loading || !boardGame) {
         return (
             <div className="text-center mt-5">
                 <Spinner animation="border" role="status">

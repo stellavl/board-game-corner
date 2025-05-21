@@ -15,7 +15,7 @@ const BoardGameCards = ({
   const totalPages = Math.ceil(totalElements / itemsPerPage);
 
   const navigateToSpecificBoardGamePage = (boardGame) => {
-    navigate(`/boardgames/${boardGame.name}`);
+    navigate(`/boardgames/${boardGame.name}`, { state: { boardGame } });
   };
 
   return (

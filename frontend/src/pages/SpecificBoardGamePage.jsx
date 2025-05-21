@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { Container, Row, Col, Offcanvas } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
 import BoardGameOverview from "../components/boardgamepage/BoardGameOverview";  
@@ -15,7 +15,8 @@ import axiosInstance from '../config/axiosConfig';
 
 const SpecificBoardGamePage = () => {
     const { boardGameName } = useParams();
-    const [boardGame, setBoardGame] = useState(null);
+    const location = useLocation();
+    const [boardGame, setBoardGame] = useState(location.state?.boardGame || null);
     const [showReviews, setShowReviews] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [suggestedGames, setSuggestedGames] = useState([]);
@@ -25,6 +26,10 @@ const SpecificBoardGamePage = () => {
     const [suggestedLoading, setSuggestedLoading] = useState(false);
 
     useEffect(() => {
+        if (boardGame) {
+            setLoading(false);
+            return;
+        }
         const fetchBoardGame = async () => {
             try {
                 const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
@@ -36,7 +41,7 @@ const SpecificBoardGamePage = () => {
             }
         };
         fetchBoardGame();
-    }, [boardGameName]);
+    }, [boardGame]);
 
     // Fetch suggested games (hot games except the current one), paginated
     useEffect(() => {

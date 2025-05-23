@@ -136,11 +136,11 @@ export const getFilteredHotBoardGamesRepo = async (filters) => {
   }
 
   if (minPlayers != null) {
-    baseQuery += ` AND max_players >= ?`;
+    baseQuery += ` AND min_players >= ?`;
     params.push(minPlayers);
   }
   if (maxPlayers != null) {
-    baseQuery += ` AND min_players <= ?`;
+    baseQuery += ` AND max_players <= ?`;
     params.push(maxPlayers);
   }
   if (minAge != null) {

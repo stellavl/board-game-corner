@@ -64,6 +64,7 @@ const BoardGamesContent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchText, setSearchText] = useState('');
   const pageSize = 8;
+  const [allFilteredBoardGames, setAllFilteredBoardGames] = useState([]);
 
   const handleApplyFilters = async (newFilters, _filteredGames, isClear = false) => {
     setFilters(newFilters);
@@ -76,7 +77,7 @@ const BoardGamesContent = () => {
       return;
     }
 
-    await fetchFilteredBoardGames(newFilters, 1, pageSize);
+    await fetchFilteredBoardGames(newFilters, 1, pageSize, searchText);
 
     const queryParams = new URLSearchParams();
     for (const key in newFilters) {
@@ -95,7 +96,9 @@ const BoardGamesContent = () => {
     }
 
     if (isFiltersActive()) {
-      await fetchFilteredBoardGames(filters, page, pageSize);
+      const startIdx = (page - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      setFilteredBoardGames(allFilteredBoardGames.slice(startIdx, endIdx));
       return;
     }
     fetchHotBoardGames(page, pageSize);
@@ -116,14 +119,19 @@ const BoardGamesContent = () => {
       const backendFilters = transformFiltersForBackend(filtersObj);
       const response = await axiosInstance.post('/api/board-game/filter', {
         ...backendFilters,
-        currentPage: page,
-        pageSize: size,
+        searchText: searchText,
       });
-      setFilteredBoardGames(response.data.boardGames);
-      setTotalElements(response.data.totalElements);
+      const allGames = response.data.boardGames;
+      setAllFilteredBoardGames(allGames);
+      setTotalElements(allGames.length);
+      // Slice for current page
+      const startIdx = (page - 1) * size;
+      const endIdx = startIdx + size;
+      setFilteredBoardGames(allGames.slice(startIdx, endIdx));
     } catch (error) {
       toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
       setFilteredBoardGames([]);
+      setAllFilteredBoardGames([]);
       setTotalElements(0);
     } finally {
       setLoading(false);
@@ -163,6 +171,7 @@ const BoardGamesContent = () => {
   const handleClearSearch = () => {
     setSearchText('');
     setCurrentPage(1); 
+    setAllFilteredBoardGames([]);
     fetchHotBoardGames(1, pageSize);
   };  
 
@@ -171,6 +180,12 @@ const BoardGamesContent = () => {
       fetchBoardGames(searchText, currentPage, pageSize);
     }
   }, [searchText, currentPage, pageSize]);
+
+    useEffect(() => {
+    if (location.state?.searchText) {
+      setSearchText(location.state.searchText);
+    }
+  }, [location.state?.searchText]);
 
   useEffect(() => {
     if (!searchText && !location.state?.searchText && !isFiltersActive()) {

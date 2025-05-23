@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import {Dropdown, Form, Card, Row, Col } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import {Dropdown, Form, Card, Row, Col, Spinner } from "react-bootstrap";
 import OrangeButton from "./OrangeButton";
+import axiosInstance from '../../config/axiosConfig';
+import { toast } from "react-toastify"; 
 
-const categories = ["Περιπέτειας", "Στρατηγικής", "Οικογενειακά"];
 const playerOptions = ["Όλοι", 1, 2, 3, 4, 5, 6, 7, 8, 9, "10+"];
 
-const BoardGameFilters = ({ onApplyFilters }) => {
+const BoardGameFilters = ({ onApplyFilters, searchText }) => {
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [minPlayers, setMinPlayers] = useState("Όλοι");
   const [maxPlayers, setMaxPlayers] = useState("Όλοι");
@@ -74,6 +77,24 @@ const BoardGameFilters = ({ onApplyFilters }) => {
     });
   };
 
+  const fetchBoardGameCategories = async (searchText) => {
+    setCategoriesLoading(true); 
+    try {
+      const response = await axiosInstance.get(`api/board-game/categories?searchText=${searchText}`);
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+    } finally {
+      setCategoriesLoading(false); 
+    }
+  }
+
+  useEffect(() => {
+    setCategories([]);
+    fetchBoardGameCategories(searchText)
+      .then(( boardGameCategories ) => setCategories(boardGameCategories))
+  }, [searchText]);
+
   return (
     <Card className="p-3 rounded border-2 " style={{ borderColor: "var(--color-orange)" }}>
       <Card.Body>
@@ -118,16 +139,22 @@ const BoardGameFilters = ({ onApplyFilters }) => {
                     </span>
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
-                    {categories.map((category) => (
-                    <Form.Check
-                        key={category}
-                        type="checkbox"
-                        label={category}
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => handleCategoryChange(category)}
-                        className="ms-3"
-                    />
-                    ))}
+                  {categoriesLoading ? (
+                    <div className="d-flex justify-content-center align-items-center py-2">
+                      <Spinner animation="border" size="sm" />
+                    </div>
+                  ) : (
+                    categories &&
+                      categories.map((category) => (
+                        <Form.Check
+                          key={category}
+                          type="checkbox"
+                          label={category}
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => handleCategoryChange(category)}
+                          className="ms-3"
+                        />
+                    )))}
                 </Dropdown.Menu>
                 </Dropdown>
 

@@ -176,7 +176,7 @@ const BoardGamesContent = () => {
 
       <Row className="w-100">
         <Col lg={3} className="d-none d-lg-block">
-          <BoardGameFilters onApplyFilters={handleApplyFilters} />
+          <BoardGameFilters onApplyFilters={handleApplyFilters} searchText={searchText} />
         </Col>
 
         <Col lg={9} xs={12} className="mt-4 mt-lg-0">
@@ -204,7 +204,7 @@ const BoardGamesContent = () => {
           <Offcanvas.Title>Φίλτρα</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <BoardGameFilters onApplyFilters={handleApplyFilters} />
+            <BoardGameFilters onApplyFilters={handleApplyFilters} searchText={searchText} />
         </Offcanvas.Body>
       </Offcanvas>
     </>

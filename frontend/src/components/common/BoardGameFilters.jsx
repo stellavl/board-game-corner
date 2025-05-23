@@ -48,20 +48,18 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters({
+    const filters = {
       categories: selectedCategories,
       minPlayers,
       maxPlayers,
       duration,
       age,
-    });
-
-    // After applying filters, set filtersApplied to true
+    };
+    onApplyFilters(filters);
     setFiltersApplied(true);
   };
-
+  
   const handleClearFilters = () => {
-    // Reset all filters to their initial values
     setSelectedCategories([]);
     setMinPlayers("Όλοι");
     setMaxPlayers("Όλοι");
@@ -74,7 +72,7 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
       maxPlayers: "Όλοι",
       duration: "Όλες",
       age: "Όλες",
-    });
+    }, true);
   };
 
   const fetchBoardGameCategories = async (searchText) => {

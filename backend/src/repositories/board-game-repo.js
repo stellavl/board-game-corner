@@ -113,3 +113,53 @@ export const getHotBoardGameCategories = async () => {
     throw new Error('Σφάλμα κατά την ανάκτηση των κατηγοριών από τη βάση δεδομένων.');
   }
 };
+
+export const getFilteredHotBoardGamesRepo = async (filters) => {
+  const {
+    categories = [],
+    minPlayers,
+    maxPlayers,
+    minAge,
+    minduration,
+    maxduration,
+  } = filters;
+
+  const connection = await connectToDatabase();
+
+  let baseQuery = `FROM board_game WHERE is_hot = true`;
+  const params = [];
+
+  let filteredCategories = categories.filter(c => c && c.trim() !== '');
+  if (filteredCategories.length > 0) {
+    baseQuery += ` AND category IN (${filteredCategories.map(() => '?').join(',')})`;
+    params.push(...filteredCategories);
+  }
+
+  if (minPlayers != null) {
+    baseQuery += ` AND max_players >= ?`;
+    params.push(minPlayers);
+  }
+  if (maxPlayers != null) {
+    baseQuery += ` AND min_players <= ?`;
+    params.push(maxPlayers);
+  }
+  if (minAge != null) {
+    baseQuery += ` AND age >= ?`;
+    params.push(minAge);
+  }
+  if (minduration != null) {
+    baseQuery += ` AND playing_time >= ?`;
+    params.push(minduration);
+  }
+  if (maxduration != null) {
+    baseQuery += ` AND playing_time <= ?`;
+    params.push(maxduration);
+  }
+
+  const [rows] = await connection.execute(
+   `SELECT id, bgg_id, name, min_players, max_players, age, category, image, playing_time, description ${baseQuery}`,
+    params
+  );
+  await connection.end();
+  return rows; 
+};

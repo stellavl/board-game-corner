@@ -7,7 +7,8 @@ import {
   markGameAsHot,
   markGameAsNotHot,
   getBoardGameByName,
-  getHotBoardGameCategories
+  getHotBoardGameCategories,
+  getFilteredHotBoardGamesRepo,
 } from "../repositories/board-game-repo.js";
 
 export const fetchHotBoardGamesFromBGG = async () => {
@@ -223,4 +224,17 @@ export const getBoardGamesCategoriesService = async (searchText) => {
             throw new Error('Σφάλμα κατά την ανάκτηση των κατηγοριών.');
         }
     }
+};
+
+export const filterBoardGamesService = async (filters, currentPage = 1, pageSize = 8) => {
+  try {
+    const allFiltered = await getFilteredHotBoardGamesRepo(filters); 
+    const totalElements = allFiltered.length;
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedGames = allFiltered.slice(startIndex, endIndex);
+    return { boardGames: paginatedGames, totalElements };
+  } catch (error) {
+    throw new Error('Σφάλμα κατά το φιλτράρισμα των επιτραπέζιων παιχνιδιών.');
+  }
 };

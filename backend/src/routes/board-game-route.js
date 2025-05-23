@@ -4,14 +4,16 @@ import {
     getHotBoardGamesController, 
     getBoardGameByNameController,  
     searchPaginatedBoardGames,
-    getBoardGamesCategoriesController
+    getBoardGamesCategoriesController,
+    filterHotBoardGamesController
 } from '../controllers/board-game-controller.js';
 
 const router = express.Router();
 
 router.post('/hot-games', updateHotGamesController);
 router.get('/hot-games', getHotBoardGamesController);
-router.get('/board-game/categories', getBoardGamesCategoriesController)
+router.get('/board-game/categories', getBoardGamesCategoriesController);
+router.post('/board-game/filter', filterHotBoardGamesController);
 router.get ('/board-game/:boardGameName', getBoardGameByNameController);
 router.post('/board-game', searchPaginatedBoardGames);
 

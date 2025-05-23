@@ -226,15 +226,64 @@ export const getBoardGamesCategoriesService = async (searchText) => {
     }
 };
 
-export const filterBoardGamesService = async (filters, currentPage = 1, pageSize = 8) => {
+export const filterBoardGamesBySearchTermService = async (filters, searchTerm = '') => {
   try {
-    const allFiltered = await getFilteredHotBoardGamesRepo(filters); 
-    const totalElements = allFiltered.length;
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    const paginatedGames = allFiltered.slice(startIndex, endIndex);
-    return { boardGames: paginatedGames, totalElements };
+    const bggResults = await searchBoardGamesByNameFromBGG(searchTerm.trim());
+    const filteredGames = [];
+    for (const result of bggResults) {
+      try {
+        const details = await fetchBoardGameDetailsByIdFromBGG(result.bgg_id, false);
+
+        // Apply filters
+        let matches = true;
+        if (filters.categories && filters.categories.length > 0 && filters.categories[0] !== '') {
+          matches = matches && filters.categories.includes(details.category);
+        }
+        if (filters.minPlayers != null) {
+          matches = matches && details.min_players >= filters.minPlayers;
+        }
+        if (filters.maxPlayers != null) {
+          matches = matches && details.max_players <= filters.maxPlayers;
+        }
+        if (filters.minAge != null) {
+          matches = matches && details.age >= filters.minAge;
+        }
+        if (filters.minduration != null) {
+          matches = matches && details.playing_time >= filters.minduration;
+        }
+        if (filters.maxduration != null) {
+          matches = matches && details.playing_time <= filters.maxduration;
+        }
+
+        if (matches) {
+          filteredGames.push(details);
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+    const totalElements = filteredGames.length;
+    // Return all filtered games, no pagination
+    return { boardGames: filteredGames, totalElements };
   } catch (error) {
-    throw new Error('Σφάλμα κατά το φιλτράρισμα των επιτραπέζιων παιχνιδιών.');
+    throw new Error('Σφάλμα κατά το φιλτράρισμα των επιτραπέζιων παιχνιδιών από το BGG.');
+  }
+};
+
+export const filterHotBoardGamesService = async (filters) => {
+  try {
+    const boardGames = await getFilteredHotBoardGamesRepo(filters);
+    const totalElements = boardGames.length;
+    return { boardGames, totalElements };
+  } catch (error) {
+    throw new Error('Σφάλμα κατά το φιλτράρισμα των hot επιτραπέζιων παιχνιδιών.');
+  }
+};
+
+export const filterBoardGamesService = async (filters, searchTerm = '') => {
+  if (searchTerm && searchTerm.trim() !== '') {
+    return await filterBoardGamesBySearchTermService(filters, searchTerm);
+  } else {
+    return await filterHotBoardGamesService(filters);
   }
 };

@@ -59,12 +59,11 @@ export const getBoardGamesCategoriesController = async (req, res) => {
   }
 }
 
-export const filterHotBoardGamesController = async (req, res) => {
+export const filterBoardGamesController = async (req, res) => {
   try {
     const filters = req.body;
-    const currentPage = parseInt(req.body.currentPage) || 1;
-    const pageSize = parseInt(req.body.pageSize) || 8;
-    const result = await filterBoardGamesService(filters, currentPage, pageSize);
+    const searchTerm = req.body.searchText || '';
+    const result = await filterBoardGamesService(filters, searchTerm);
     res.status(200).json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });

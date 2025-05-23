@@ -29,8 +29,7 @@ const transformFiltersForBackend = (filters) => {
   // Age mapping
   let minAge = null;
   if (filters.age && filters.age !== 'Όλες') {
-    if (filters.age === '0-3') minAge = 0;
-    else minAge = parseInt(filters.age);
+    minAge = parseInt(filters.age);
   }
 
   // Players mapping

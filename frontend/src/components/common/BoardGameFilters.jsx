@@ -181,7 +181,6 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
             </Form.Label>
             <Form.Control as="select" value={age} onChange={(e) => setAge(e.target.value)}>
               <option>Όλες</option>
-              <option>0-3</option>
               <option>3+</option>
               <option>6+</option>
               <option>12+</option>

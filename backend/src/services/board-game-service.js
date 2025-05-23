@@ -6,7 +6,8 @@ import {
   getHotBoardGames,
   markGameAsHot,
   markGameAsNotHot,
-  getBoardGameByName
+  getBoardGameByName,
+  getHotBoardGameCategories
 } from "../repositories/board-game-repo.js";
 
 export const fetchHotBoardGamesFromBGG = async () => {
@@ -179,5 +180,47 @@ export const saveBoardGameToDbService = async (gameDetails) => {
         return await insertBoardGame(mappedGame);
     } catch (error) {
         throw new Error('Σφάλμα κατά την αποθήκευση του παιχνιδιού στη βάση δεδομένων.');
+    }
+};
+
+const fetchDistinctCategoriesFromBGG = async (searchText) => {
+    const response = await axios.get(`https://www.boardgamegeek.com/xmlapi/search?search=${searchText}`);
+    const parsedData = await parseStringPromise(response.data);
+    if (!parsedData.boardgames || !parsedData.boardgames.boardgame) {
+        return [];
+    }
+    const boardgames = parsedData.boardgames.boardgame;
+    const categoriesSet = new Set();
+    for (const game of boardgames) {
+        const bggId = game.$.objectid;
+        try {
+            const details = await fetchBoardGameDetailsByIdFromBGG(bggId, false);
+            if (details.category) {
+                categoriesSet.add(details.category.trim());
+            }
+        } catch (error) {
+            // Ignore errors for individual games
+            continue;
+        }
+    }
+    return Array.from(categoriesSet);
+};
+
+
+export const getBoardGamesCategoriesService = async (searchText) => {
+    if (searchText) {
+        try {
+            const categories = await fetchDistinctCategoriesFromBGG(searchText);
+            return categories;
+        } catch (error) {
+            throw new Error(error.message);
+        }
+    } else {
+        try {
+            const categories = await getHotBoardGameCategories();
+            return categories;
+        } catch (error) {
+            throw new Error('Σφάλμα κατά την ανάκτηση των κατηγοριών.');
+        }
     }
 };

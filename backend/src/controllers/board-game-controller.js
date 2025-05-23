@@ -3,7 +3,8 @@ import {
   getBoardGameByNameService, 
   updateHotGamesService,
   searchBoardGamesByNameFromBGG,
-  fetchPaginatedBoardGameDetails 
+  fetchPaginatedBoardGameDetails,
+  getBoardGamesCategoriesService
 } from '../services/board-game-service.js';
 
 export const getHotBoardGamesController = async (req, res) => {
@@ -42,6 +43,16 @@ export const searchPaginatedBoardGames = async (req, res) => {
     const boardGamesIDs = await searchBoardGamesByNameFromBGG(searchText);
     const { boardGames, totalElements } = await fetchPaginatedBoardGameDetails(boardGamesIDs, currentPage, pageSize);
     res.status(200).json({ boardGames, totalElements });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+}
+
+export const getBoardGamesCategoriesController = async (req, res) => {
+  try {
+    const searchText = req.query.searchText;
+    const boardGameCategories = await (getBoardGamesCategoriesService(searchText));
+    res.status(200).json(boardGameCategories);
   } catch (err) {
     res.status(404).json({ error: err.message });
   }

@@ -101,3 +101,15 @@ export const getBoardGameByName = async (name) => {
     throw new Error('Σφάλμα κατά την ανάκτηση του παιχνιδιού από τη βάση δεδομένων.');
   }
 }
+
+export const getHotBoardGameCategories = async () => {
+  try {
+    const connection = await connectToDatabase();
+    const [rows] = await connection.execute(
+      'SELECT DISTINCT category FROM board_game WHERE is_hot = true'
+    );
+    return rows.map(row => row.category);
+  } catch (error) {
+    throw new Error('Σφάλμα κατά την ανάκτηση των κατηγοριών από τη βάση δεδομένων.');
+  }
+};

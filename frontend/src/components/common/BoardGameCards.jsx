@@ -30,7 +30,7 @@ const BoardGameCards = ({
       </Row>
 
       {/* Pagination Controls */}
-        {boardGames.length > 0 && (
+        {totalPages > 1 && (
           <Pagination className="justify-content-center mt-3">
             <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
 

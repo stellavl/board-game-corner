@@ -116,49 +116,6 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
         )}
 
         <Form style={{ color: 'var(--color-gray-purple)' }}>
-          {/* Κατηγορία (Category) */}
-          <Form.Group className="mb-2">
-            <Form.Label>
-              <strong>Κατηγορία</strong>
-            </Form.Label>
-
-            <Dropdown>
-                <Dropdown.Toggle
-                    variant="light"
-                    className="w-100 text-start d-flex flex-wrap align-items-center"
-                    style={{ minHeight: "38px" }} // Ensures proper alignment
-                >
-                    <span className="flex-grow-1">
-                    {selectedCategories.length > 0 ? (
-                        selectedCategories.map((category, index) => (
-                        <div key={index}>{category}</div>
-                        ))
-                    ) : (
-                        "Όλες"
-                    )}
-                    </span>
-                </Dropdown.Toggle>
-                <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
-                  {categoriesLoading ? (
-                    <div className="d-flex justify-content-center align-items-center py-2">
-                      <Spinner animation="border" size="sm" />
-                    </div>
-                  ) : (
-                    categories &&
-                      categories.map((category) => (
-                        <Form.Check
-                          key={category}
-                          type="checkbox"
-                          label={category}
-                          checked={selectedCategories.includes(category)}
-                          onChange={() => handleCategoryChange(category)}
-                          className="ms-3"
-                        />
-                    )))}
-                </Dropdown.Menu>
-                </Dropdown>
-
-          </Form.Group>
 
           {/* Διάρκεια (Duration) */}
           <Form.Group className="mb-3">
@@ -220,7 +177,7 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
           </Form.Group>
 
           {/* Ηλικία (Age) */}
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-2">
             <Form.Label>
               <strong>Ηλικία</strong>
             </Form.Label>
@@ -234,9 +191,52 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
             </Form.Control>
           </Form.Group>
 
+          {/* Κατηγορία (Category) */}
+          <Form.Group className="mb-3">
+            <Form.Label>
+              <strong>Κατηγορία</strong>
+            </Form.Label>
+            <Dropdown>
+                <Dropdown.Toggle
+                    variant="light"
+                    className="w-100 text-start d-flex flex-wrap align-items-center"
+                    style={{ minHeight: "38px" }} // Ensures proper alignment
+                >
+                    <span className="flex-grow-1">
+                    {selectedCategories.length > 0 ? (
+                        selectedCategories.map((category, index) => (
+                        <div key={index}>{category}</div>
+                        ))
+                    ) : (
+                        "Όλες"
+                    )}
+                    </span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
+                  {categoriesLoading ? (
+                    <div className="d-flex justify-content-center align-items-center py-2">
+                      <Spinner animation="border" size="sm" />
+                    </div>
+                  ) : (
+                    categories &&
+                      categories.map((category) => (
+                        <Form.Check
+                          key={category}
+                          type="checkbox"
+                          label={category}
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => handleCategoryChange(category)}
+                          className="ms-3"
+                        />
+                    )))}
+                </Dropdown.Menu>
+                </Dropdown>
+          </Form.Group>
+
           <div className="d-flex justify-content-center">
             <OrangeButton text="Εφαρμογή" size="btn-md" onClick={handleApplyFilters} />
           </div>
+
         </Form>
       </Card.Body>
     </Card>

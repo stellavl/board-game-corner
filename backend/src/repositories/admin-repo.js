@@ -63,3 +63,40 @@ export const insertAdmin = async ({ name, city, address, phone, email, password,
     throw error;
   }
 };
+
+export const addBoardGamesToCatalog = async (bggIds, cafeId) => {
+  const connection = await connectToDatabase();
+  await connection.beginTransaction();
+  try {
+    for (const bgg_id of bggIds) {
+      // Check if the board game exists
+      const [existingGames] = await connection.execute(
+        `SELECT id FROM board_game WHERE bgg_id = ?`,
+        [bgg_id]
+      );
+      let boardGameId;
+      if (existingGames.length === 0) {
+        // Insert new board game with minimal/default values
+        const [result] = await connection.execute(
+          `INSERT INTO board_game (bgg_id, category, name, min_players, max_players, playing_time, age, description, is_hot)
+           VALUES (?, '', '', 0, 0, 0, 0, '', false)`,
+          [bgg_id]
+        );
+        boardGameId = result.insertId;
+      } else {
+        boardGameId = existingGames[0].id;
+      }
+
+      // Add to catalog if not already present
+      await connection.execute(
+        `INSERT IGNORE INTO board_game_catalog (board_game_id, board_game_cafe_id) VALUES (?, ?)`,
+        [boardGameId, cafeId]
+      );
+    }
+
+    await connection.commit();
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  }
+};

@@ -17,7 +17,15 @@ export const createAdminController = [
     try {
       const adminData = req.body;
       const photoPath = req.file ? req.file.path : null;
-      const newAdmin = await createAdmin({ ...adminData, photo: photoPath });
+      let bggIds = adminData.bggIds;
+      if (typeof bggIds === "string") {
+        try {
+          bggIds = JSON.parse(bggIds);
+        } catch {
+          bggIds = [];
+        }
+      }
+      const newAdmin = await createAdmin({ ...adminData, photo: photoPath, bggIds });
       res.status(201).json(newAdmin);
     } catch (error) {
       res.status(error.statusCode || 400).json({ error: error.message });

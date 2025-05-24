@@ -1,4 +1,4 @@
-import { findAdminByEmail, insertAdmin, findAdminById } from "../repositories/admin-repo.js";
+import { findAdminByEmail, insertAdmin, findAdminById, addBoardGamesToCatalog } from "../repositories/admin-repo.js";
 import bcrypt from "bcryptjs";
 
 export const getAdminById = async (id) => {
@@ -19,7 +19,7 @@ export const getAdminById = async (id) => {
 };
 
 export const createAdmin = async (adminData) => {
-  const { name, city, address, phone, email, password, photo } = adminData;
+  const { name, city, address, phone, email, password, photo, bggIds } = adminData;
 
   if (!name || !city || !address || !phone || !email || !password) {
     const error = new Error("Όλα τα απαιτούμενα πεδία πρέπει να συμπληρωθούν.");
@@ -45,6 +45,10 @@ export const createAdmin = async (adminData) => {
     password: hashedPassword,
     photo,
   });
+
+  if (Array.isArray(bggIds) && bggIds.length > 0) {
+    await addBoardGamesToCatalog(bggIds, newAdmin.cafeId);
+  }
 
   return newAdmin;
 };

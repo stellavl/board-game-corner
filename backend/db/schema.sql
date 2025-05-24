@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `board_game_cafe` (
 	`city` varchar(255) NOT NULL,
 	`address` varchar(255) NOT NULL,
 	`phone_number` varchar(10) NOT NULL,
-	`photo` varchar(255) NOT NULL,
+	`photo` varchar(255),
 	`user_id` bigint NOT NULL,
 	PRIMARY KEY (`id`)
 );

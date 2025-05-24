@@ -119,6 +119,7 @@ const SignUpBusinessBoardGames = () => {
             axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             sessionStorage.removeItem("adminBasicInfo");
             sessionStorage.removeItem("adminPhoto");
+            toast.success("Επιτυχής εγγραφή!", { position: 'top-center' });
             navigate(`/admin/${userId}`);
         } catch (error) {
             toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα κατά την εγγραφή", { position: 'top-center' });

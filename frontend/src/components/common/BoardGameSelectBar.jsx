@@ -21,7 +21,7 @@ const BoardGameSelectBar = ({
 
     const handleSearchClick = async () => {
         try {
-            if (location.pathname !== '/boardgames') {
+            if (location.pathname == '/home') {
                 navigateToBoardGames(temporaryText);
             } else {
                 setSearchText(temporaryText); 

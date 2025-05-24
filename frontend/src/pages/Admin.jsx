@@ -1,24 +1,55 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import boardGameCafes from "../data/boardGameCafes";
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col, Button, Spinner } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import ReservationsTab from "../components/adminpage/ReservationsTab";
 import InfoTab from "../components/adminpage/InfoTab";
 import BoardGamesTab from "../components/adminpage/BoardGamesTab";
 import StatisticsTab from "../components/adminpage/StatisticsTab";
+import axiosInstance from '../config/axiosConfig';
 
 const Admin = () => {
     const { id } = useParams();
-    //TODO: Fetch the cafe data from the backend using the id from the URL
-    const cafe = boardGameCafes.find((cafe) => cafe.id === 1);
+    const [cafe, setCafe] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState("reservations");
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchCafe = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const token = localStorage.getItem("authToken");
+                const response = await axiosInstance.get(`api/admins/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setCafe(response.data);
+            } catch (err) {
+                setError("Δεν βρέθηκε το παιχνιδοκαφέ ή υπήρξε σφάλμα.");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCafe();
+    }, [id]);
 
     const handleLogout = () => {
         localStorage.removeItem("authToken"); 
         navigate("/home");
     };
+
+    if (loading) return (
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "200px" }}>
+            <Spinner animation="border" role="status" style={{ color: "var(--color-orange)" }}>
+                <span className="visually-hidden">Φόρτωση...</span>
+            </Spinner>
+        </div>
+    );
+    if (error) return <p>{error}</p>;
 
     return (
         <>
@@ -85,5 +116,6 @@ const Admin = () => {
         </>
     );
 };
+
 
 export default Admin;

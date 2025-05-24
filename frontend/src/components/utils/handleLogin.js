@@ -30,8 +30,8 @@ export const loginAdmin = async (formData) => {
 
     const { admin, token } = response.data;
 
-    // localStorage.setItem('authToken', token);
-    // localStorage.setItem('userId', user.id);
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('userId', admin.id);
 
     return { success: true, adminId: admin.id };
   } catch (error) {

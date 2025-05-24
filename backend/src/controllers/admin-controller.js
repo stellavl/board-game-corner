@@ -26,7 +26,11 @@ export const createAdminController = [
         }
       }
       const newAdmin = await createAdmin({ ...adminData, photo: photoPath, bggIds });
-      res.status(201).json(newAdmin);
+      res.status(201).json({
+        message: "Επιτυχής εγγραφή παιχνιδοκαφέ.",
+        userId: newAdmin.userId, 
+        admin: newAdmin
+      });
     } catch (error) {
       res.status(error.statusCode || 400).json({ error: error.message });
     }

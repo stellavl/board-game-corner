@@ -9,6 +9,9 @@ const BoardGameCards = ({
     totalElements = boardGames.length,
     currentPage = 1,
     handlePageChange = () => {},
+    showActionButton = false, 
+    isAdded,                  
+    onActionClick,            
   }) => {
   const navigate = useNavigate();
 
@@ -25,7 +28,14 @@ const BoardGameCards = ({
       </h5>
       <Row className="gx-3 gy-3 flex-wrap">
         {boardGames.map((boardGame, index) => (
-          <BoardGameCard key={index} boardGame={boardGame} handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)} />
+            <BoardGameCard
+              key={index}
+              boardGame={boardGame}
+              handleCardClick={() => navigateToSpecificBoardGamePage(boardGame)}
+              showActionButton={showActionButton} 
+              isAdded={isAdded ? isAdded(boardGame) : false}
+              onActionClick={onActionClick} 
+          />
         ))}
       </Row>
 

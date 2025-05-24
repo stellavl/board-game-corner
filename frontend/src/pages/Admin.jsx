@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import boardGameCafes from "../data/boardGameCafes";
 import { Row, Col, Button } from "react-bootstrap";
-import BackButton from "../components/common/BackButton";
+import OrangeButton from "../components/common/OrangeButton";
 import ReservationsTab from "../components/adminpage/ReservationsTab";
 import InfoTab from "../components/adminpage/InfoTab";
 import BoardGamesTab from "../components/adminpage/BoardGamesTab";
@@ -11,9 +11,14 @@ import StatisticsTab from "../components/adminpage/StatisticsTab";
 const Admin = () => {
     const { id } = useParams();
     //TODO: Fetch the cafe data from the backend using the id from the URL
-    console.log("Cafe ID from URL:", id);
     const cafe = boardGameCafes.find((cafe) => cafe.id === 1);
     const [activeTab, setActiveTab] = useState("reservations");
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem("authToken"); 
+        navigate("/home");
+    };
 
     return (
         <>
@@ -21,7 +26,10 @@ const Admin = () => {
                 <>
                     <Row className="ms-5 mt-4">
                         <Col xs="auto">
-                            <BackButton text="Έξοδος από το προφίλ διαχειριστή" />
+                            <OrangeButton
+                                text="Έξοδος από το προφίλ διαχειριστή"
+                                onClick={handleLogout}
+                            />                        
                         </Col>
                         <Col xs="auto" className="ms-auto me-5">
                             <Button variant="outline-secondary" className="text-nowrap">

@@ -107,10 +107,19 @@ const SignUpBusinessBoardGames = () => {
         formData.append("bggIds", JSON.stringify(addedGames.map(g => g.bgg_id)));
 
         try {
-            await axiosInstance.post("/api/admins", formData);
+            const response = await axiosInstance.post("/api/admins", formData);
+            const userId = response.data.userId;
+            const loginRes = await axiosInstance.post("/api/login", {
+                email: formData.get("email"),
+                password: formData.get("password"),
+                role: "ADMIN"
+            });
+            const token = loginRes.data.token;
+            localStorage.setItem("authToken", token);
+            axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             sessionStorage.removeItem("adminBasicInfo");
             sessionStorage.removeItem("adminPhoto");
-            navigate('/home');
+            navigate(`/admin/${userId}`);
         } catch (error) {
             toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα κατά την εγγραφή", { position: 'top-center' });
         }

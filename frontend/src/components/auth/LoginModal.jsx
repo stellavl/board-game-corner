@@ -6,7 +6,7 @@ import OrangeButton from '../common/OrangeButton';
 import { loginPersonal, loginAdmin } from '../utils/handleLogin';
 import { useNavigate } from 'react-router-dom';
 
-const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowSignUpModal, setUserId }) => {
+const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setUserId }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -76,8 +76,12 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setShowS
   };
 
   const handleSignUpClick = () => {
-    setShowLoginModal(false);
-    setShowSignUpModal(true);
+    setShowLoginModal(false); 
+    if (activeTab === 'personal') {
+      navigate("/signup/personal");
+    } else if (activeTab === 'professional') {
+      navigate("/signup/business/basic-info");
+    }
   };
 
   return (

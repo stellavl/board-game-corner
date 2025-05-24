@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
-import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
 import { fetchUser } from '../utils/fetchUser';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const LoginButton = () => {
   const [isDropdownButtonHovered, setIsDropdownButtonHovered] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -99,17 +97,7 @@ const LoginButton = () => {
         showLoginModal={showLoginModal}
         setShowLoginModal={setShowLoginModal}
         setIsLoggedIn={setIsLoggedIn}
-        setShowSignUpModal={setShowSignupModal}
         setUserId={setUserId}
-      />
-      <SignupModal
-        showModal={showSignupModal}
-        setShowModal={setShowSignupModal}
-        setShowLoginModal={setShowLoginModal}
-        onLogin={(userId) => {
-          setIsLoggedIn(true);
-          setUserId(userId);
-        }}
       />
     </>
   );

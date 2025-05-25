@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Select from 'react-select';
-import { Button } from 'react-bootstrap';
+import { Button, Spinner } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom'; 
-import allBoardGameCafes from '../../data/boardGameCafes';
 
-const CafeSelectBar = ({ boardGameCafes= allBoardGameCafes }) => {
+const CafeSelectBar = ({ boardGameCafes = [], loading = false }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [selectedCafe, setSelectedCafe] = useState(null);
     const [searchText, setSearchText] = useState('');
@@ -49,6 +48,12 @@ const CafeSelectBar = ({ boardGameCafes= allBoardGameCafes }) => {
                 onInputChange={handleInputChange}
                 isSearchable
                 menuIsOpen={searchText.length >= 2}
+                isLoading={loading}
+                loadingMessage={() => (
+                    <div className="d-flex justify-content-center align-items-center" style={{ height: '2rem' }}>
+                        <Spinner animation="border" size="sm" />
+                    </div>
+                )}
                 styles={{
                     container: (provided) => ({
                         ...provided,
@@ -115,7 +120,7 @@ const CafeSelectBar = ({ boardGameCafes= allBoardGameCafes }) => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onClick={handleSearchClick}
-                disabled={!selectedCafe}
+                disabled={!selectedCafe || loading}
             >
                 <FontAwesomeIcon
                     icon={faSearch}

@@ -11,7 +11,8 @@ const CitiesCards = ({ text = "Διάλεξε πόλη:", currentCity, cafes = [
     });
     const cityCounts = Object.entries(counts)
         .filter(([city]) => city !== currentCity)
-        .map(([city, cafes]) => ({ city, cafes }));
+        .map(([city, cafes]) => ({ city, cafes }))
+        .sort((a, b) => a.city.localeCompare(b.city));
 
     const cardStyle = {
         backgroundColor: 'var(--color-soft-orange)',

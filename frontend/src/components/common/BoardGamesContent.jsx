@@ -9,6 +9,7 @@ import { Spinner } from 'react-bootstrap';
 import axiosInstance from '../../config/axiosConfig';
 import { toast } from 'react-toastify';
 import { searchBoardGames } from '../utils/searchBoardGames';
+import { useParams } from 'react-router-dom';
 
 const transformFiltersForBackend = (filters) => {
   // Duration mapping
@@ -64,6 +65,7 @@ const BoardGamesContent = () => {
   const [searchText, setSearchText] = useState('');
   const pageSize = 8;
   const [allFilteredBoardGames, setAllFilteredBoardGames] = useState([]);
+  const { id: cafeId } = useParams();
 
   const handleApplyFilters = async (newFilters, _filteredGames, isClear = false) => {
     setFilters(newFilters);
@@ -167,6 +169,24 @@ const BoardGamesContent = () => {
     }
   };
 
+    const fetchCafeBoardGames = async (cafeId, currentPage, pageSize) => {
+      setLoading(true);
+      try {
+        const response = await axiosInstance.post(
+          `/api/board-game-cafes/id/${cafeId}/board-games`,
+          { currentPage, pageSize }
+        );
+        setFilteredBoardGames(response.data.boardGames);
+        setTotalElements(response.data.totalElements);
+      } catch (error) {
+        toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+        setFilteredBoardGames([]);
+        setTotalElements(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
   const handleClearSearch = () => {
     setSearchText('');
     setCurrentPage(1); 
@@ -180,19 +200,21 @@ const BoardGamesContent = () => {
     }
   }, [searchText, currentPage, pageSize]);
 
-    useEffect(() => {
+  useEffect(() => {
     if (location.state?.searchText) {
       setSearchText(location.state.searchText);
     }
   }, [location.state?.searchText]);
 
   useEffect(() => {
-    if (!searchText && !location.state?.searchText && !isFiltersActive()) {
-      fetchHotBoardGames(currentPage, pageSize);
-    } else if (isFiltersActive()){
+    if (cafeId) {
+      fetchCafeBoardGames(cafeId, currentPage, pageSize);
+    } else if (isFiltersActive()) {
       fetchFilteredBoardGames(filters, currentPage, pageSize, searchText);
+    } else if (!searchText && !location.state?.searchText){
+      fetchHotBoardGames(currentPage, pageSize);
     } 
-  }, [searchText, currentPage, pageSize, location.state]);
+  }, [searchText, currentPage, pageSize, location.state, cafeId]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -216,7 +238,7 @@ const BoardGamesContent = () => {
   const handleShow = () => setShowFilters(true);
 
   const getHeaderText = () => {
-    if ((!searchText && filters.categories.length === 0)) {
+    if ((!searchText && filters.categories.length === 0 && !cafeId)) {
       return `Δημοφιλή επιτραπέζια (${totalElements}):`;
     }
     return `Αποτελέσματα (${totalElements}):`; 

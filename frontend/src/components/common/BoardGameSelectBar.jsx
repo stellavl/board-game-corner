@@ -53,7 +53,12 @@ const BoardGameSelectBar = ({
                     placeholder={"Αναζήτηση επιτραπεζίων"}
                     value={temporaryText}
                     onChange={handleInputChange}
-                    style={{
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && temporaryText.length >= 3) {
+                            handleSearchClick();
+                        }
+                    }}
+                    style={{    
                         width: '100%',
                         padding: '0.5rem',
                         border: '1px solid var(--color-orange)',

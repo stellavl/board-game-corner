@@ -95,6 +95,11 @@ const CafeSelectBar = ({ boardGameCafes= allBoardGameCafes }) => {
                     })
                 }}
                 isDisabled={false}
+                 onKeyDown={(e) => {
+                    if (e.key === 'Enter' && selectedCafe) {
+                        handleSearchClick();
+                    }
+                }}
             />
             <Button
                 style={{

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Container, Card, Form, Row, Col, Image } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Container, Form, Row, Col, Image } from "react-bootstrap";
 import OrangeButton from "../common/OrangeButton";
 
 const InfoTab = ({ cafeData }) => {
@@ -21,7 +21,7 @@ const InfoTab = ({ cafeData }) => {
                 city: cafeData.city || "",
                 address: cafeData.address || "",
                 email: cafeData.email || "", 
-                phone: cafeData.phone || "",
+                phone: cafeData.phone_number || "",
             });
             const imageUrl = `/${cafeData.image}`;
             setPhotoPreview(imageUrl);
@@ -163,7 +163,7 @@ const InfoTab = ({ cafeData }) => {
                         </Col>
                     </Row>
 
-                    {photoPreview && (
+                    {formData.photo && (
                         <Row className="d-flex justify-content-center mt-3">
                             <Col md={6} className="d-flex justify-content-center">
                                 <Image src={photoPreview} alt="Board Game Cafe Photo" fluid style={{ maxHeight: "200px", objectFit: "cover" }} />
@@ -174,7 +174,7 @@ const InfoTab = ({ cafeData }) => {
                     <Row className="d-flex justify-content-center mt-3">
                         <Col md={6} className="d-flex justify-content-center">
                             <OrangeButton
-                                text="Αλλαγή εικόνας"
+                                text={formData.photo ? "Αλλαγή εικόνας" : "Προσθήκη εικόνας"}
                                 onClick={() => document.getElementById("photoUpload").click()}
                             />
                         </Col>

@@ -1,4 +1,4 @@
-import { findAllCafes, findCafesByCity } from "../repositories/cafe-repo.js";
+import { findAllCafes, findCafesByCity, findCafeById } from "../repositories/cafe-repo.js";
 
 export const getAllCafes = async () => {
   return await findAllCafes();
@@ -6,4 +6,8 @@ export const getAllCafes = async () => {
 
 export const getCafesByCity = async (city) => {
   return await findCafesByCity(city);
+};
+
+export const getCafeById = async (id) => {
+  return await findCafeById(id);
 };

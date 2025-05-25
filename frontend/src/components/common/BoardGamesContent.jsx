@@ -65,6 +65,7 @@ const BoardGamesContent = () => {
   const [searchText, setSearchText] = useState('');
   const pageSize = 8;
   const [allFilteredBoardGames, setAllFilteredBoardGames] = useState([]);
+  const [allCafeBoardGames, setAllCafeBoardGames] = useState([]);
   const { id: cafeId } = useParams();
 
   const handleApplyFilters = async (newFilters, _filteredGames, isClear = false) => {
@@ -93,6 +94,13 @@ const BoardGamesContent = () => {
 
     if (searchText) {
       fetchBoardGames(searchText, page, pageSize);
+      return;
+    }
+
+      if (cafeId) {
+      const startIdx = (page - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      setFilteredBoardGames(allCafeBoardGames.slice(startIdx, endIdx));
       return;
     }
 
@@ -169,23 +177,29 @@ const BoardGamesContent = () => {
     }
   };
 
-    const fetchCafeBoardGames = async (cafeId, currentPage, pageSize) => {
-      setLoading(true);
-      try {
-        const response = await axiosInstance.post(
-          `/api/board-game-cafes/id/${cafeId}/board-games`,
-          { currentPage, pageSize }
-        );
-        setFilteredBoardGames(response.data.boardGames);
-        setTotalElements(response.data.totalElements);
-      } catch (error) {
-        toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
-        setFilteredBoardGames([]);
-        setTotalElements(0);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCafeBoardGames = async (cafeId, currentPage, pageSize) => {
+    setLoading(true);
+    try {
+      // Fetch all board games for the cafe (no pagination params)
+      const response = await axiosInstance.post(
+        `/api/board-game-cafes/id/${cafeId}/board-games`
+      );
+      const allGames = response.data.boardGames;
+      setAllCafeBoardGames(allGames);
+      setTotalElements(allGames.length);
+      // Slice for current page
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      setFilteredBoardGames(allGames.slice(startIdx, endIdx));
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+      setFilteredBoardGames([]);
+      setAllCafeBoardGames([]);
+      setTotalElements(0);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleClearSearch = () => {
     setSearchText('');

@@ -9,7 +9,7 @@ const BoardGameCafesPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchCafes = async () => {
+        const fetchAllCafes = async () => {
             try {
                 const res = await axiosInstance.get('api/board-game-cafes/all');
                 setCafes(res.data);
@@ -19,7 +19,7 @@ const BoardGameCafesPage = () => {
                 setLoading(false);
             }
         };
-        fetchCafes();
+        fetchAllCafes();
     }, []);
 
     return (

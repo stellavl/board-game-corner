@@ -20,7 +20,7 @@ const validRoutePatterns = [
   "/boardgamecafes",
   "/boardgames/:boardGameName", // Dynamic route
   "/boardgamecafes/:cityName",  // Dynamic route for specific city cafes
-  "/boardgamecafes/:cityName/:cafeName",  // Dynamic route for specific board game cafes
+  "/boardgamecafe/:id",  // Dynamic route for specific board game cafes
   "/reservation-details",
   "/signup/personal",
   "/signup/business/basic-info",
@@ -55,7 +55,7 @@ const Main = () => {
         <Route path="/boardgamecafes" element={<BoardGameCafesPage />} />
         <Route path="/boardgames/:boardGameName" element={<SpecificBoardGamePage />} />
         <Route path="/boardgamecafes/:cityName" element={<SpecificCityCafesPage />} />
-        <Route path="/boardgamecafes/:cityName/:cafeName" element={<SpecificCafePage/>} />
+        <Route path= "/boardgamecafe/:id" element={<SpecificCafePage/>} />
         <Route path="/reservation-details" element={<ReservationDetailsPage />} />
         <Route path= "/signup/personal" element={<SignUpPersonal />} />
         <Route path= "/signup/business/basic-info" element={<SignUpBusinessBasicInfo />} />

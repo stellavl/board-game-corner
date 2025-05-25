@@ -18,7 +18,7 @@ const SpecificCityCafesPage = () => {
         const fetchCityCafes = async () => {
             setLoading(true);
             try {
-                const res = await axiosInstance.get(`api/board-game-cafes/${cityName}`);
+                const res = await axiosInstance.get(`api/board-game-cafes/city/${cityName}`);
                 setCityCafes(res.data);
             } catch (error) {
                 setCityCafes([]);
@@ -39,8 +39,8 @@ const SpecificCityCafesPage = () => {
         fetchAllCafes();
     }, [cityName]);
 
-    const navigateToSpecificCafePage = (cafeName) => {
-        navigate(`/boardgamecafes/${cityName}/${cafeName}`);
+    const navigateToSpecificCafePage = (id) => {
+        navigate(`/boardgamecafe/${id}`);
     };
 
     return (
@@ -94,7 +94,7 @@ const SpecificCityCafesPage = () => {
                                         </Card.Text>
 
                                         <div className="mt-auto">
-                                            <OrangeButton text="Επέλεξε" size="btn-md" onClick={() => navigateToSpecificCafePage(cafe.name)}/>
+                                            <OrangeButton text="Επέλεξε" size="btn-md" onClick={() => navigateToSpecificCafePage(cafe.id)}/>
                                         </div>
                                     </Card.Body>
                                 </Card>

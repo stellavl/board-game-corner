@@ -4,7 +4,7 @@ import { getAllCafesController, getCafesByCityController, getCafeByIdController 
 const router = express.Router();
 
 router.get("/board-game-cafes/all", getAllCafesController);
-router.get("/board-game-cafes/:city", getCafesByCityController);
+router.get("/board-game-cafes/city/:city", getCafesByCityController);
 router.get("/board-game-cafes/id/:id", getCafeByIdController);
 
 export default router;

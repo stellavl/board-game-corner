@@ -22,7 +22,7 @@ const CafeSelectBar = ({ boardGameCafes = [], loading = false }) => {
         if (selectedCafe) {
             boardGameCafes.forEach(cafe => {
                 if (cafe.id === selectedCafe.value) {
-                    navigate(`/boardgamecafes/${cafe.city}/${cafe.name}`);
+                    navigate(`/boardgamecafe/${cafe.id}`);
                 }
             });
         }

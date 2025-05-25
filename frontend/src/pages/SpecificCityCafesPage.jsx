@@ -9,23 +9,34 @@ import axiosInstance from '../config/axiosConfig';
 
 const SpecificCityCafesPage = () => {
     const { cityName } = useParams();
-    const [cafes, setCafes] = useState([]);
+    const [cityCafes, setCityCafes] = useState([]);
+    const [allCafes, setAllCafes] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchCafes = async () => {
+        const fetchCityCafes = async () => {
             setLoading(true);
             try {
                 const res = await axiosInstance.get(`api/board-game-cafes/${cityName}`);
-                setCafes(res.data);
+                setCityCafes(res.data);
             } catch (error) {
-                setCafes([]);
+                setCityCafes([]);
             } finally {
                 setLoading(false);
             }
         };
-        fetchCafes();
+        fetchCityCafes();
+
+        const fetchAllCafes = async () => {
+            try {
+                const res = await axiosInstance.get('api/board-game-cafes/all');
+                setAllCafes(res.data);
+            } catch (error) {
+                setAllCafes([]);
+            }
+        };
+        fetchAllCafes();
     }, [cityName]);
 
     const navigateToSpecificCafePage = (cafeName) => {
@@ -55,7 +66,7 @@ const SpecificCityCafesPage = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <CafeSelectBar boardGameCafes={cafes} loading={loading} />
+                        <CafeSelectBar boardGameCafes={cityCafes} loading={loading} />
                     </Col>      
                 </Row>
                 <Row className="my-5 d-flex  w-100">
@@ -64,7 +75,7 @@ const SpecificCityCafesPage = () => {
                             <Spinner animation="border" />
                         </Col>
                     ) : (
-                        cafes.map(cafe => (    
+                        cityCafes.map(cafe => (    
                             <Col key={cafe.id} lg={3} md={4} sm={6} xs={12} className="mb-3 d-flex">
                                 <Card className="w-100 shadow-sm text-center"
                                     style={{ borderColor: 'var(--color-orange)', minHeight: '100%' }}>
@@ -96,7 +107,7 @@ const SpecificCityCafesPage = () => {
             <hr style={{ width: '50%', borderTop: '2px solid var(--color-orange)', margin: 'auto' }} /> 
             
             <Container className='mt-2 w-50'>
-                <CitiesCards text="Διάλεξε άλλη πόλη:" currentCity={cityName} />
+                <CitiesCards text="Διάλεξε άλλη πόλη:" currentCity={cityName} cafes={allCafes} loading={loading} />
             </Container>
         </>
     );

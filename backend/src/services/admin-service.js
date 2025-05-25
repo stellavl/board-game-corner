@@ -29,7 +29,7 @@ export const createAdmin = async (adminData) => {
 
   const existingAdmin = await findAdminByEmail(email);
   if (existingAdmin) {
-    const error = new Error("Το email χρησιμοποιείται ήδη.");
+    const error = new Error("Το email χρησιμοποιείται ήδη. Δοκιμάστε να συνδεθείτε ή να εγγραφείτε με διαφορετικό email.");
     error.statusCode = 409; // Conflict
     throw error;
   }

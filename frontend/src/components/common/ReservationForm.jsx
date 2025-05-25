@@ -1,16 +1,21 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Container, Row, Col, Form, Toast } from "react-bootstrap";
 import Select from 'react-select';
 import OrangeButton from './OrangeButton';
 import boardGames from '../../data/boardGames';
-import gameCafes from '../../data/boardGameCafes';
 import timeSlots from '../../data/timeslots';
 import { useNavigate } from "react-router-dom";
 import classNames from 'classnames';
+import axiosInstance from "../../config/axiosConfig";
+import { toast } from "react-toastify";
 
 const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameTitle, cafeName }) => {
   const navigate = useNavigate();
   const today = new Date().toISOString().split("T")[0];
+  const [gameCafes, setGameCafes] = useState([]);
+  const [cafeBoardGames, setCafeBoardGames] = useState([]);
+  const [boardGameSelectError, setBoardGameSelectError] = useState("");
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
     gameCafe: "",
@@ -20,14 +25,58 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
     time: "",
   });
 
-  const [errors, setErrors] = useState({});
+   const fetchCafes = async () => {
+      try {
+        const res = await axiosInstance.get("api/board-game-cafes/all");
+        setGameCafes(res.data);
+      } catch (err) {
+        setGameCafes([]);
+        toast.error(err, {position: 'top-center'})
+      }
+    };
+
+  useEffect(() => {
+    fetchCafes();
+  }, []);
+
+  const fetchCafeBoardGames = async (cafeId) => {
+    setCafeBoardGames([]);
+    setBoardGameSelectError("");
+    if (!cafeId) {
+      setBoardGameSelectError("Επιλέξτε πρώτα παιχνιδοκαφέ");
+      return;
+    }
+    try {
+      const cafeObj = gameCafes.find(c => c.id === cafeId);
+      if (!cafeObj) {
+        setBoardGameSelectError("Επιλέξτε πρώτα παιχνιδοκαφέ");
+        return;
+      }
+      const res = await axiosInstance.post(
+        `/api/board-game-cafes/id/${cafeObj.id}/board-games`
+      );
+      setCafeBoardGames(res.data.boardGames || []);
+    } catch (err) {
+      setCafeBoardGames([]);
+      setBoardGameSelectError("Σφάλμα κατά την ανάκτηση επιτραπέζιων.");
+    }
+  };
+
+  useEffect(() => {
+    if (showGameCafe && formData.gameCafe) {
+      fetchCafeBoardGames(formData.gameCafe);
+    } else {
+      setCafeBoardGames([]);
+    }
+  }, [formData.gameCafe]);
 
   const handleChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
-    if (value.trim() !== "") {
+
+     if (typeof value === "string" && value.trim() !== "") {
       setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
     }
   };
@@ -62,10 +111,16 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
     }
   };
 
-  const boardGameOptions = [
-    { value: "Θα επιλέξω στο κατάστημα", label: "Θα επιλέξω στο κατάστημα" },
-    ...boardGames.map(game => ({ value: game.name, label: game.name }))
-  ];
+  const boardGameOptions = showBoardGame
+    ? cafeBoardGames.length > 0
+      ? [
+          { value: "Θα επιλέξω στο κατάστημα", label: "Θα επιλέξω στο κατάστημα" },
+          ...cafeBoardGames.map(game => ({ value: game.name, label: game.name }))
+        ]
+      : []
+    : [
+        { value: boardGameTitle, label: boardGameTitle }
+      ];
 
   return (
     <>
@@ -93,7 +148,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 </Form.Label>
                 <Select 
                   name="gameCafe" 
-                  options={gameCafes.map(cafe => ({ value: cafe.name, label: `${cafe.name}(${cafe.city})` }))}
+                  options={gameCafes.map(cafe => ({ value: cafe.id, label: `${cafe.name}(${cafe.city})` }))}
                   onChange={(selectedOption) => handleChange("gameCafe", selectedOption ? selectedOption.value : "")}
                   className={classNames({ 'is-invalid': !!errors.gameCafe })}
                   placeholder="Παιχνιδοκαφέ"
@@ -123,9 +178,17 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                 <Select 
                   name="boardGame" 
                   options={boardGameOptions}
-                  onChange={(selectedOption) => handleChange("boardGame", selectedOption ? selectedOption.value : "")}
-                  className={classNames({ 'is-invalid': !!errors.boardGame })}
+                  onChange={(selectedOption) => {
+                    if (!formData.gameCafe) {
+                      setBoardGameSelectError("Επιλέξτε πρώτα παιχνιδοκαφέ");
+                      return;
+                    }
+                    setBoardGameSelectError("");
+                    handleChange("boardGame", selectedOption ? selectedOption.value : "");
+                  }}
+                  className={classNames({ 'is-invalid': !!errors.boardGame || !!boardGameSelectError })}
                   placeholder="Επιτραπέζιο"
+                  isDisabled={!formData.gameCafe}
                   styles={{ 
                     container: (provided) => ({ ...provided, maxWidth: "100%" }),
                     placeholder: (provided) => ({ ...provided, textAlign: 'left' }),
@@ -135,7 +198,7 @@ const ReservationForm = ({ showGameCafe = true, showBoardGame = true, boardGameT
                   }}
                 />
                 <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
-                  {errors.boardGame}
+                  {errors.boardGame || boardGameSelectError}
                 </div>
               </Form.Group>
             </Col>

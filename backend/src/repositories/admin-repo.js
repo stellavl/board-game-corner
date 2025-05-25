@@ -1,4 +1,5 @@
 import { connectToDatabase } from "../config/db.js";
+import { fetchBoardGameDetailsByIdFromBGG } from "../services/board-game-service.js";
 
 export const findAdminByEmail = async (email) => {
   const connection = await connectToDatabase();
@@ -76,11 +77,22 @@ export const addBoardGamesToCatalog = async (bggIds, cafeId) => {
       );
       let boardGameId;
       if (existingGames.length === 0) {
-        // Insert new board game with minimal/default values
+        const details = await fetchBoardGameDetailsByIdFromBGG(bgg_id, false);
         const [result] = await connection.execute(
-          `INSERT INTO board_game (bgg_id, category, name, min_players, max_players, playing_time, age, description, is_hot)
-           VALUES (?, '', '', 0, 0, 0, 0, '', false)`,
-          [bgg_id]
+          `INSERT INTO board_game (bgg_id, category, name, min_players, max_players, playing_time, age, description, image, is_hot)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            details.bgg_id,
+            details.category || '',
+            details.name || '',
+            details.min_players || 0,
+            details.max_players || 0,
+            details.playing_time || 0,
+            details.age || 0,
+            details.description || '',
+            details.image || null,
+            details.is_hot || false,
+          ]
         );
         boardGameId = result.insertId;
       } else {

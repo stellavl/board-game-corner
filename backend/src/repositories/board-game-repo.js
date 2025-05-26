@@ -93,7 +93,7 @@ export const getBoardGameByName = async (name) => {
   try {
     const connection = await connectToDatabase();
     const [rows] = await connection.execute(
-      'SELECT name, min_players, max_players, age, category, image, playing_time, description FROM board_game WHERE name = ?',
+      'SELECT id, bgg_id, name, min_players, max_players, age, category, image, playing_time, description FROM board_game WHERE name = ?',
       [name]
     );
     return rows[0];

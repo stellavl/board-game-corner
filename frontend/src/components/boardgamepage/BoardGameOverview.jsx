@@ -1,4 +1,3 @@
-import React from "react";
 import { Row, Col } from "react-bootstrap";
 import { useBoardGame } from "../context/BoardGameContext";
 import BoardGameCheckBox from "./BoardGameCheckBox";
@@ -64,7 +63,13 @@ const BoardGameOverview = ({ boardGame }) => {
             <Row className="mb-1">
                 <Col className="d-flex justify-content-center align-items-center">
                     <p className="text-center text-nowrap" style={{ color: "var(--color-orange)" }}>
-                        Διαθέσιμο σε <span className="fw-bold fs-6 p-1 rounded" style={{ color: "var(--color-soft-yellow)", backgroundColor: "var(--color-orange)" }}>{boardGameState.boardGameCafesCount}</span> παιχνιδοκαφέ
+                        Διαθέσιμο σε {' '} 
+                        <span 
+                            className="fw-bold fs-6 p-1 rounded" 
+                            style={{ color: "var(--color-soft-yellow)", backgroundColor: "var(--color-orange)" }}>
+                             {boardGame.cafesWithBoardGame.length} 
+                        </span> 
+                         {' '}παιχνιδοκαφέ
                     </p>
                 </Col>
             </Row>

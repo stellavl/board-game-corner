@@ -15,6 +15,8 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
   const [cafeBoardGames, setCafeBoardGames] = useState([]);
   const [boardGameSelectError, setBoardGameSelectError] = useState("");
   const [errors, setErrors] = useState({});
+  const [playersRange, setPlayersRange] = useState({ min: 1, max: undefined });
+  const [playersDisabled, setPlayersDisabled] = useState(true);
 
   const [formData, setFormData] = useState({
     gameCafe: cafeFromCafePage || "",
@@ -75,28 +77,76 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
       [name]: value
     }));
 
-    if (typeof value === "string" && value.trim() !== "") {
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    const fieldError = validateFields({ [name]: value });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: fieldError[name] || ""
+  }));
+  };
+
+    const validateFields = (fields) => {
+      const errors = {};
+      const entries = fields ? Object.entries(fields) : Object.entries(formData);
+
+      entries.forEach(([name, value]) => {
+        if (name === "gameCafe" && !cafeFromCafePage && !value) errors.gameCafe = "Επίλεξε ένα παιχνιδοκαφέ.";
+        if (name === "boardGame" && !gameFromGamePage && !value) errors.boardGame = "Επίλεξε ένα επιτραπέζιο.";
+        if (name === "players") {
+          if (!value) {
+            errors.players = "Πρόσθεσε αριθμό παικτών.";
+          } else {
+            const num = parseInt(value, 10);
+            if (playersRange.min !== undefined && num < playersRange.min) {
+              errors.players = `Ο αριθμός παικτών πρέπει να είναι τουλάχιστον ${playersRange.min}.`;
+            } else if (playersRange.max !== undefined && num > playersRange.max) {
+              errors.players = `Ο αριθμός παικτών δεν μπορεί να ξεπερνά το ${playersRange.max}.`;
+            }
+          }
+        }
+        if (name === "date") {
+          if (!value) errors.date = "Επίλεξε ημερομηνία.";
+          else if (value < today) errors.date = "Δεν μπορείς να επιλέξεις παρελθοντική ημερομηνία.";
+        }
+        if (name === "time" && !value) errors.time = "Επίλεξε ώρα.";
+      });
+
+      return errors;
+    };
+
+  const updatePlayersRange = (selectedGame) => {
+    if (!selectedGame || selectedGame === "Θα επιλέξω στο κατάστημα") {
+      setPlayersRange({ min: 1, max: undefined });
+      setPlayersDisabled(false);
+      return;
+    }
+    // If selectedGame is a string, find the object in cafeBoardGames
+    let gameObj = typeof selectedGame === "object" ? selectedGame : cafeBoardGames.find(g => g.name === selectedGame);
+    if (gameObj && typeof gameObj.min_players === "number" && typeof gameObj.max_players === "number") {
+      setPlayersRange({ min: gameObj.min_players, max: gameObj.max_players });
+      setPlayersDisabled(false);
+    } else {
+      setPlayersRange({ min: 1, max: undefined });
+      setPlayersDisabled(true);
     }
   };
 
-  const validateForm = () => {
-    let newErrors = {};
+  useEffect(() => {
+    if (gameFromGamePage) {
+      updatePlayersRange(gameFromGamePage);
+    } else if (formData.boardGame) {
+      updatePlayersRange(formData.boardGame);
+    } else {
+      setPlayersDisabled(true);
+      setPlayersRange({ min: 1, max: undefined });
+    }
+    // eslint-disable-next-line
+  }, [formData.boardGame, gameFromGamePage, cafeBoardGames]);
 
-    if (!cafeFromCafePage && !formData.gameCafe) newErrors.gameCafe = "Επίλεξε ένα παιχνιδοκαφέ.";
-    if (!gameFromGamePage && !formData.boardGame) newErrors.boardGame = "Επίλεξε ένα επιτραπέζιο.";
-    if (!formData.players) newErrors.players = "Πρόσθεσε αριθμό παικτών.";
-    else if (parseInt(formData.players, 10) < 1) newErrors.players = "Ο αριθμός παικτών πρέπει να είναι τουλάχιστον 1.";
-    if (!formData.date) newErrors.date = "Επίλεξε ημερομηνία.";
-    else if (formData.date < today) newErrors.date = "Δεν μπορείς να επιλέξεις παρελθοντική ημερομηνία.";
-    if (!formData.time) newErrors.time = "Επίλεξε ώρα.";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
+ 
   const handleSubmit = () => {
-    if (validateForm()) {
+    const newErrors = validateFields();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length === 0) {
       const formattedDate = formData.date.split("-").reverse().join("-");
       const reservationData = {
         ...formData,
@@ -213,11 +263,20 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
                   className="form-control w-100"
                   onChange={(e) => handleChange("players", e.target.value)}
                   isInvalid={!!errors.players}
-                  min="1"
+                  min={playersRange.min}
+                  max={playersRange.max}
+                  disabled={playersDisabled}
                 />
-                <div className="invalid-feedback" style={{ color: 'var(--color-gray-purple)' }}>
-                  {errors.players}
-                </div>
+                {errors.players && playersRange.max && (
+                  <div className="form-text" style={{ color: 'var(--color-gray-purple)' }}>
+                    Επιτρεπτός αριθμός: {playersRange.min} - {playersRange.max}
+                  </div>
+                )}
+                {errors.players && !playersRange.max && (
+                  <div className="form-text" style={{ color: 'var(--color-gray-purple)' }}>
+                   Επιλέξε πλήθος παικτών.
+                  </div>
+                )}
               </Form.Group>
             </Col>
             <Col xs={12} sm={8} md={4}>

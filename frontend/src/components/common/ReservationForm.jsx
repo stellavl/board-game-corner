@@ -198,7 +198,7 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
                 </Form.Group>
               </Col>
             )}
-            <Col xs={12} sm={8} md={4}>
+            <Col xs={12} sm={8} md={4} lg={2}>
               <Form.Group>
                 <Form.Label
                   className="fw-bold text-start w-100 text-nowrap"
@@ -209,7 +209,7 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
                 <Form.Control
                   type="number"
                   name="players"
-                  placeholder="Πλήθος παικτών"
+                  placeholder="Παίκτες"
                   className="form-control w-100"
                   onChange={(e) => handleChange("players", e.target.value)}
                   isInvalid={!!errors.players}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router-dom';
 import OrangeButton from '../components/common/OrangeButton';
@@ -35,6 +35,34 @@ const ReservationDetailsPage = () => {
         // expects 'DD-MM-YYYY', returns 'YYYY-MM-DD'
         const [day, month, year] = dateStr.split('-');
         return `${year}-${month}-${day}`;
+    };
+
+    useEffect(() => {
+        autofillUserData();
+    }, []);
+    
+    const autofillUserData = async () => {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('authToken');
+        if (userId && token) {
+        try {
+            const res = await axiosInstance.get(`api/basic-users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+            });
+            const user = res.data;
+            setFormData((prev) => ({
+            ...prev,
+            firstName: user.first_name || "",
+            lastName: user.last_name || "",
+            phone: user.phone_number || "",
+            email: user.email || ""
+            }));
+        } catch (err) {
+            // If request fails, do nothing (leave form empty)
+        }
+        }
     };
 
     const validateForm = () => {

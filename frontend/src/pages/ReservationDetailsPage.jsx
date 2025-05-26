@@ -1,16 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Container, Row, Col, Card, Form } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import OrangeButton from '../components/common/OrangeButton';
 
 const ReservationDetailsPage = () => {
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const gameCafe = queryParams.get('gameCafe');
-    const boardGame = queryParams.get('boardGame');
-    const players = queryParams.get('players');
-    const date = queryParams.get('date');
-    const time = queryParams.get('time');
+    const reservation = location.state;
+    const { gameCafe, boardGame, players, date, time } = reservation;
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -65,9 +61,11 @@ const ReservationDetailsPage = () => {
                 <Col xs={12} md={6} lg={4}>
                     <Card className="text-center text-white p-2" style={{ backgroundColor: 'var(--color-orange)' }}>
                         <Card.Body>
-                            <Card.Title className="fw-bold mb-1">{gameCafe} | Αθήνα</Card.Title>
+                            <Card.Title className="fw-bold mb-1">
+                                {gameCafe?.name } | {gameCafe?.city}
+                            </Card.Title>
                             <Card.Text className="fst-italic">
-                                {boardGame === "Θα επιλέξω στο κατάστημα" ? "Δεν έχει επιλεγεί επιτραπέζιο" : boardGame}
+                                {boardGame?.name === "Θα επιλέξω στο κατάστημα" ? "Δεν έχει επιλεγεί επιτραπέζιο" : boardGame?.name }
                             </Card.Text>
                             <Row className="justify-content-center">
                                 <Col xs="auto">{date}</Col>
@@ -76,7 +74,7 @@ const ReservationDetailsPage = () => {
                             </Row>
                         </Card.Body>
                     </Card>
-                    <p className="mt-1 text-end" style={{ color: 'var(--color-orange)' }}> 
+                    <p className="mt-1 text-end" style={{ color: 'var(--color-orange)' }}>
                         Επεξεργασία
                     </p>
                 </Col>
@@ -96,12 +94,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Όνομα</Form.Label>
-                                                <Form.Control 
-                                                    type="text" 
-                                                    name="firstName" 
-                                                    value={formData.firstName} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.firstName} 
+                                                <Form.Control
+                                                    type="text"
+                                                    name="firstName"
+                                                    value={formData.firstName}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.firstName}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.firstName}
@@ -111,12 +109,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Επίθετο</Form.Label>
-                                                <Form.Control 
-                                                    type="text" 
-                                                    name="lastName" 
-                                                    value={formData.lastName} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.lastName} 
+                                                <Form.Control
+                                                    type="text"
+                                                    name="lastName"
+                                                    value={formData.lastName}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.lastName}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.lastName}
@@ -127,12 +125,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Τηλέφωνο Επικοινωνίας</Form.Label>
-                                                <Form.Control 
-                                                    type="text" 
-                                                    name="phone" 
-                                                    value={formData.phone} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.phone} 
+                                                <Form.Control
+                                                    type="text"
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.phone}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.phone}
@@ -142,12 +140,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Email</Form.Label>
-                                                <Form.Control 
-                                                    type="email" 
-                                                    name="email" 
-                                                    value={formData.email} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.email} 
+                                                <Form.Control
+                                                    type="email"
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.email}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.email}

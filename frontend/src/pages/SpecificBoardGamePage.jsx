@@ -158,7 +158,7 @@ const SpecificBoardGamePage = () => {
                     {/* Reservation Form */}
                     <Row>
                         <Container className="p-3 text-center">
-                            <ReservationForm showBoardGame={false} boardGameTitle={boardGame.name} />
+                            <ReservationForm gameFromGamePage={boardGame} />
                         </Container>
                     </Row>
 

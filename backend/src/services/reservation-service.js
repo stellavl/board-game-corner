@@ -1,4 +1,8 @@
-import { createReservationRepo, getReservationsByUserRepo } from "../repositories/reservation-repo.js";
+import { 
+  createReservationRepo, 
+  getReservationsByUserRepo,
+  getReservationsByCafeRepo 
+} from "../repositories/reservation-repo.js";
 
 export const createReservationService = async (reservationData) => {
   const requiredFields = [
@@ -30,6 +34,7 @@ export const createReservationService = async (reservationData) => {
       reservationData[field] === ""
     ) {
       throw new Error(`Λείπει το απαιτούμενο πεδίο: ${fieldNames[field] || field}`);
+    
     }
   }
 
@@ -50,4 +55,11 @@ export const getReservationsByUserService = async (userId) => {
     throw new Error("Δεν επιτρέπεται η πρόσβαση. Απαιτείται σύνδεση.");
   }
   return await getReservationsByUserRepo(userId);
+};
+
+export const getReservationsByCafeService = async (userId) => {
+  if (!userId) {
+    throw new Error("Δεν επιτρέπεται η πρόσβαση. Απαιτείται σύνδεση.");
+  }
+  return await getReservationsByCafeRepo(userId);
 };

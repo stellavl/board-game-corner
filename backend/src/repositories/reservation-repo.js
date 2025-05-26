@@ -64,3 +64,41 @@ export const getReservationsByUserRepo = async (userId) => {
     await connection.end();
   }
 };
+
+export const getReservationsByCafeRepo = async (userId) => {
+  const connection = await connectToDatabase();
+  try {
+    // Get cafeId for this user
+    const [cafes] = await connection.execute(
+      `SELECT id FROM board_game_cafe WHERE user_id = ?`,
+      [userId]
+    );
+    if (cafes.length === 0) return []; // No cafe found for this user
+
+    const cafeId = cafes[0].id;
+
+    // Now get reservations for this cafeId
+    const [rows] = await connection.execute(
+      `SELECT 
+         r.id,
+         DATE_FORMAT(r.date, '%d-%m-%Y') AS date,
+         r.time,
+         r.players_no,
+         r.status,
+         r.customer_first_name,
+         r.customer_last_name,
+         r.customer_email,
+         r.customer_phone,
+         bg.name AS board_game_name,
+         bgc.name AS board_game_cafe_name
+       FROM reservation r
+       JOIN board_game bg ON r.board_game_id = bg.id
+       JOIN board_game_cafe bgc ON r.board_game_cafe_id = bgc.id
+       WHERE r.board_game_cafe_id = ?`,
+      [cafeId]
+    );
+    return rows;
+  } finally {
+    await connection.end();
+  }
+};

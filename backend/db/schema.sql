@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `reservation` (
 	`customer_email` varchar(255) NOT NULL,
 	`customer_phone` varchar(10) NOT NULL,
 	`status` varchar(255) NOT NULL,
-	`board_game_id` bigint NOT NULL,
+	`board_game_id` bigint,
 	`board_game_cafe_id` bigint NOT NULL,
 	`basic_user_id` bigint,
 	PRIMARY KEY (`id`)

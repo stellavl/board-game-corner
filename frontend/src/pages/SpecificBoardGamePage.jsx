@@ -36,7 +36,7 @@ const SpecificBoardGamePage = () => {
             }
         };
         fetchBoardGame();
-    }, []);
+    }, [boardGameName]);
 
     // Fetch suggested games (hot games except the current one), paginated
     useEffect(() => {

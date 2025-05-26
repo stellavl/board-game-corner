@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { Container, Row, Col, Card, Form } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import OrangeButton from '../components/common/OrangeButton';
+import axiosInstance from '../config/axiosConfig';
+import { toast } from 'react-toastify';
 
 const ReservationDetailsPage = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const reservation = location.state;
     const { gameCafe, boardGame, players, date, time } = reservation;
 
@@ -28,6 +31,12 @@ const ReservationDetailsPage = () => {
         }
     };
 
+    const formatDateToISO = (dateStr) => {
+        // expects 'DD-MM-YYYY', returns 'YYYY-MM-DD'
+        const [day, month, year] = dateStr.split('-');
+        return `${year}-${month}-${day}`;
+    };
+
     const validateForm = () => {
         let newErrors = {};
 
@@ -48,10 +57,30 @@ const ReservationDetailsPage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleReservationClick = () => {
+ const handleReservationClick = async () => {
         if (validateForm()) {
-            // TODO: SAVE RESERVATION DATA IN DATABASE
-            console.log("Reservation Data:", formData);
+            const reservationData = {
+                date: formatDateToISO(date),
+                time: time,
+                players_no: players,
+                customer_first_name: formData.firstName,
+                customer_last_name: formData.lastName,
+                customer_email: formData.email,
+                customer_phone: formData.phone,
+                board_game_id: boardGame?.id,
+                board_game_cafe_id: gameCafe?.id
+            };
+            try {
+                const response = await axiosInstance.post(`/api/reservations`, reservationData);
+                if (response.status === 201) {
+                    toast.success("Η κράτηση καταχωρήθηκε με επιτυχία!",{ position: 'top-center' });
+                    navigate("/"); // Redirect to home after successful reservation
+                } else {
+                    toast.error(response.data.error || "Σφάλμα κατά την καταχώρηση της κράτησης.",{ position: 'top-center' });
+                }
+            } catch (error) {
+                toast.error("Σφάλμα δικτύου. Δοκιμάστε ξανά.",{ position: 'top-center' });
+            }
         }
     };
 

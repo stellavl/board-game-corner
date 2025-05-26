@@ -25,10 +25,6 @@ const SpecificBoardGamePage = () => {
     const [suggestedLoading, setSuggestedLoading] = useState(false);
 
     useEffect(() => {
-        if (boardGame) {
-            setLoading(false);
-            return;
-        }
         const fetchBoardGame = async () => {
             try {
                 const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
@@ -40,7 +36,7 @@ const SpecificBoardGamePage = () => {
             }
         };
         fetchBoardGame();
-    }, [boardGame]);
+    }, []);
 
     // Fetch suggested games (hot games except the current one), paginated
     useEffect(() => {

@@ -1,24 +1,65 @@
-import React, { useState } from "react";
-import reservationsData from "../../data/reservationsData";
-import { Table, Container, Button } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Table, Container, Button, Spinner } from "react-bootstrap";
 import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { formatDateRangeForFilter } from "../utils/formatDateRangeForFilter";
 import { handleDateNavigation } from "../utils/handleDateNavigation";
+import axiosInstance from "../../config/axiosConfig";
+import { toast } from "react-toastify";
 
 const ReservationsTab = () => {
     const today = new Date();
 
     const [filter, setFilter] = useState("all");
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [reservations, setReservations] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const handleDateChange = (direction) => {
         const newDate = handleDateNavigation(currentDate, filter, direction);
         setCurrentDate(newDate);
     };
 
+       useEffect(() => {
+        const fetchReservations = async () => {
+            setLoading(true);
+            try {
+                const userId = localStorage.getItem("userId");
+                const authToken = localStorage.getItem("authToken");
+                const response = await axiosInstance.get(
+                    `api/reservations/admin/${userId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                    }
+                );
+                setReservations(response.data);
+            } catch (err) {
+                toast.error(err, {position: "top-center"});
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchReservations();
+    }, []);
+
+    if (loading) {
+        return (
+            <Container className="text-center mt-4">
+                <Spinner animation="border" role="status" variant="warning" />
+            </Container>
+        );
+    }
+
+    const parseReservationDate = (dateStr) => {
+        // Expects dd/mm/yyyy
+        const [day, month, year] = dateStr.split('-');
+        return new Date(`${year}-${month}-${day}T00:00:00`);
+    };
+
     const filterReservations = (reservations) => {
         return reservations.filter(reservation => {
-            const reservationDate = new Date(`${reservation.date.split('/')[1]}/${reservation.date.split('/')[0]}/${reservation.date.split('/')[2]}`);
+            const reservationDate = parseReservationDate(reservation.date);
 
             switch (filter) {
                 case "year":
@@ -40,13 +81,13 @@ const ReservationsTab = () => {
         });
     };
     
-    const pendingReservations = reservationsData.filter(reservation => {
-        const reservationDate = new Date(reservation.date);
+    const pendingReservations = reservations.filter(reservation => {
+        const reservationDate = parseReservationDate(reservation.date);
         return reservation.status === 'Αναμονή για επιβεβαίωση' && reservationDate >= today;
     });
 
-    const confirmedReservationsAll = reservationsData.filter(reservation => {
-        const reservationDate = new Date(reservation.date);
+    const confirmedReservationsAll = reservations.filter(reservation => {
+        const reservationDate = parseReservationDate(reservation.date);
         return reservation.status === 'Εγκρίθηκε' && reservationDate >= today;
     });
 
@@ -91,10 +132,10 @@ const ReservationsTab = () => {
                             <tr key={index}>
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
-                                <td style={textStyle}>{reservation.players}</td>
-                                <td style={textStyle}>{reservation.boardGame}</td>
-                                <td style={textStyle}>{reservation.customerName}</td>
-                                <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.phoneNumber}</td>
+                                <td style={textStyle}>{reservation.players_no}</td>
+                                <td style={textStyle}>{reservation.board_game_name}</td>
+                                <td style={textStyle}>{reservation.customer_first_name} {reservation.customer_last_name}</td>
+                                <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
                                     <div className="d-flex justify-content-around">
                                         <div className="me-1">
@@ -165,10 +206,10 @@ const ReservationsTab = () => {
                             <tr key={index}>
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
-                                <td style={textStyle}>{reservation.players}</td>
-                                <td style={textStyle}>{reservation.boardGame}</td>
-                                <td style={textStyle}>{reservation.customerName}</td>
-                                <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.phoneNumber}</td>
+                                <td style={textStyle}>{reservation.players_no}</td>
+                                <td style={textStyle}>{reservation.board_game_name}</td>
+                                <td style={textStyle}>{reservation.customer_first_name} {reservation.customer_last_name}</td>
+                                <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
                                     <div className="d-flex justify-content-center">
                                         <Button className="text-white btn-sm" variant="danger">Απόρριψη</Button>

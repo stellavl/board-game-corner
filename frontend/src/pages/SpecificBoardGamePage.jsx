@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Container, Row, Col, Offcanvas } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
 import BoardGameOverview from "../components/boardgamepage/BoardGameOverview";  
@@ -15,8 +15,7 @@ import axiosInstance from '../config/axiosConfig';
 
 const SpecificBoardGamePage = () => {
     const { boardGameName } = useParams();
-    const location = useLocation();
-    const [boardGame, setBoardGame] = useState(location.state?.boardGame || null);
+    const [boardGame, setBoardGame] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
     const [loading, setLoading] = useState(true); 
     const [suggestedGames, setSuggestedGames] = useState([]);

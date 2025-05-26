@@ -163,3 +163,20 @@ export const getFilteredHotBoardGamesRepo = async (filters) => {
   await connection.end();
   return rows; 
 };
+
+export const getCafesWithBoardGame = async (name) => {
+  const connection = await connectToDatabase();
+  try {
+    const [rows] = await connection.execute(
+      `SELECT DISTINCT c.*
+       FROM board_game bg
+       JOIN board_game_catalog bgc ON bg.id = bgc.board_game_id
+       JOIN board_game_cafe c ON bgc.board_game_cafe_id = c.id
+       WHERE bg.name = ?`,
+      [name]
+    );
+    return rows;
+  } finally {
+    await connection.end();
+  }
+};

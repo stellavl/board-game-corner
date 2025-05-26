@@ -9,6 +9,7 @@ import {
   getBoardGameByName,
   getHotBoardGameCategories,
   getFilteredHotBoardGamesRepo,
+  getCafesWithBoardGame
 } from "../repositories/board-game-repo.js";
 
 export const fetchHotBoardGamesFromBGG = async () => {
@@ -40,7 +41,8 @@ export const getBoardGameByNameService = async (name) => {
         // Check if board games exists in local DB
         const gameDetails = await getBoardGameByName(name);
         if (gameDetails) {
-            return gameDetails;
+            const cafesWithBoardGame = await getCafesWithBoardGame(name);
+            return { ...gameDetails, cafesWithBoardGame };
         }
 
         // Not found locally, search BGG
@@ -53,7 +55,8 @@ export const getBoardGameByNameService = async (name) => {
         for (const result of bggResults) {
             const details = await fetchBoardGameDetailsByIdFromBGG(result.bgg_id, false);
             if (details.name && details.name.trim().toLowerCase() === name.trim().toLowerCase()) {
-                return details;
+                // Not in local DB, so cafeCount is 0
+                return { ...details, cafeCount: 0 };
             }
         }
 

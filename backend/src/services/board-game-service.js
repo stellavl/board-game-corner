@@ -55,14 +55,14 @@ export const getBoardGameByNameService = async (name) => {
         for (const result of bggResults) {
             const details = await fetchBoardGameDetailsByIdFromBGG(result.bgg_id, false);
             if (details.name && details.name.trim().toLowerCase() === name.trim().toLowerCase()) {
+                // Cache board game details in local DB
+                saveBoardGameToDbService(details);
+                const gameDetails = await getBoardGameByName(name);
                 // Not in local DB, so cafeCount is 0
-                return { ...details, cafeCount: 0 };
+                return { ...gameDetails, cafesWithBoardGame: [] };
             }
         }
-
-        // Cache board game details in local DB
-        saveBoardGameToDbService(details);
-
+        
         throw new Error('Το παιχνίδι δεν βρέθηκε.');
     } catch (error) {
         throw error;

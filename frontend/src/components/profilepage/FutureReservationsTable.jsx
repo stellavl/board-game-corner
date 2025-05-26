@@ -1,4 +1,3 @@
-import React from "react";
 import { Table } from "react-bootstrap";
 import OrangeButton from "../common/OrangeButton";
 
@@ -47,11 +46,11 @@ const FutureReservationsTable = ({ futureReservations }) => {
                     <tbody>
                         {futureReservations.map((reservation, index) => (
                             <tr key={index}>
-                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.cafe}</td>
+                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.board_game_cafe_name}</td>
                                 <td style={{ color: "var(--color-gray-purple)" }}>{reservation.date}</td>
                                 <td style={{ color: "var(--color-gray-purple)" }}>{reservation.time}</td>
-                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.players}</td>
-                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.boardGame}</td>
+                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.players_no}</td>
+                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.board_game_name}</td>
                                 <td style={{ color: "var(--color-gray-purple)", borderRight: '2px solid var(--color-orange)' }}>
                                     <span className={`badge ${getStatusClass(reservation.status)}`}>
                                         {reservation.status}

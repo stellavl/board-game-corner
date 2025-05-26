@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Table, Button, Pagination } from "react-bootstrap";
 import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 
@@ -17,11 +17,10 @@ const PastReservationsTable = ({ pastReservations }) => {
         setCurrentPage(pageNumber);
     };
 
-    const filteredPastReservations = pastReservations.filter((reservation) => {
-        const reservationDate = new Date(
-            `${reservation.date.split('/')[1]}/${reservation.date.split('/')[0]}/${reservation.date.split('/')[2]}`
-        );
-    
+   const filteredPastReservations = pastReservations.filter((reservation) => {
+        const [day, month, year] = reservation.date.split('-').map(Number);
+        const reservationDate = new Date(year, month - 1, day);
+
         switch (filter) {
             case "year":
                 return reservationDate.getFullYear() === currentDate.getFullYear();
@@ -33,8 +32,10 @@ const PastReservationsTable = ({ pastReservations }) => {
             case "week":
                 const weekStart = new Date(currentDate);
                 weekStart.setDate(currentDate.getDate() - ((currentDate.getDay() + 6) % 7)); // Monday-starting week
+                weekStart.setHours(0, 0, 0, 0);
                 const weekEnd = new Date(weekStart);
                 weekEnd.setDate(weekStart.getDate() + 6);
+                weekEnd.setHours(23, 59, 59, 999);
                 return reservationDate >= weekStart && reservationDate <= weekEnd;
             case "day":
                 return reservationDate.toDateString() === currentDate.toDateString();
@@ -162,11 +163,11 @@ const PastReservationsTable = ({ pastReservations }) => {
                     <tbody>
                         {paginatedReservations.map((reservation, index) => (
                             <tr key={index}>
-                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.cafe}</td>
+                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.board_game_cafe_name}</td>
                                 <td style={{ color: "var(--color-gray-purple)" }}>{reservation.date}</td>
                                 <td style={{ color: "var(--color-gray-purple)" }}>{reservation.time}</td>
-                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.players}</td>
-                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.boardGame}</td>
+                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.players_no}</td>
+                                <td style={{ color: "var(--color-gray-purple)" }}>{reservation.board_game_name}</td>
                             </tr>
                         ))}
                     </tbody>

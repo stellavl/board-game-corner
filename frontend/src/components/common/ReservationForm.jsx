@@ -37,8 +37,13 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
   };
 
   useEffect(() => {
-    if (!cafeFromCafePage) 
-      fetchCafes();
+    if (!cafeFromCafePage) {
+      if (gameFromGamePage) {
+        setGameCafes(gameFromGamePage.cafesWithBoardGame);
+      } else {
+        fetchCafes();
+      }
+    }
   }, [cafeFromCafePage]);
 
    const fetchBoardGamesOfSpecificCafe = async (cafeId) => {

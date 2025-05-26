@@ -40,3 +40,27 @@ export const createReservationRepo = async (reservationData) => {
     await connection.end();
   }
 };
+
+export const getReservationsByUserRepo = async (userId) => {
+  const connection = await connectToDatabase();
+  try {
+    const [rows] = await connection.execute(
+      `SELECT 
+         DATE_FORMAT(r.date, '%d-%m-%Y') AS date,
+         r.time,
+         r.players_no,
+         r.status,
+         bg.name AS board_game_name,
+         bgc.name AS board_game_cafe_name
+       FROM reservation r
+       JOIN basic_user bu ON r.basic_user_id = bu.id
+       JOIN board_game bg ON r.board_game_id = bg.id
+       JOIN board_game_cafe bgc ON r.board_game_cafe_id = bgc.id
+       WHERE bu.user_id = ?`,
+      [userId]
+    );
+    return rows;
+  } finally {
+    await connection.end();
+  }
+};

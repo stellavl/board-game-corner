@@ -1,4 +1,4 @@
-import { createReservationRepo } from "../repositories/reservation-repo.js";
+import { createReservationRepo, getReservationsByUserRepo } from "../repositories/reservation-repo.js";
 
 export const createReservationService = async (reservationData) => {
   const requiredFields = [
@@ -41,6 +41,13 @@ export const createReservationService = async (reservationData) => {
     throw new Error("Μη έγκυρη μορφή αριθμού τηλεφώνου");
   }
 
-  const reservationWithStatus = { ...reservationData, status: "pending" };
+  const reservationWithStatus = { ...reservationData, status: "Αναμονή για επιβεβαίωση" };
   return await createReservationRepo(reservationWithStatus);
+};
+
+export const getReservationsByUserService = async (userId) => {
+  if (!userId) {
+    throw new Error("Δεν επιτρέπεται η πρόσβαση. Απαιτείται σύνδεση.");
+  }
+  return await getReservationsByUserRepo(userId);
 };

@@ -19,34 +19,60 @@ const ReservationsTab = () => {
     const [confirmedSort, setConfirmedSort] = useState({ key: null, direction: null });
     const [pendingSort, setPendingSort] = useState({ key: null, direction: null });
 
+    // Track which reservation is being updated
+    const [updatingId, setUpdatingId] = useState(null);
+
     const handleDateChange = (direction) => {
         const newDate = handleDateNavigation(currentDate, filter, direction);
         setCurrentDate(newDate);
     };
 
+    const fetchReservations = async () => {
+        setLoading(true);
+        try {
+            const userId = localStorage.getItem("userId");
+            const authToken = localStorage.getItem("authToken");
+            const response = await axiosInstance.get(
+                `api/reservations/admin/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                }
+            );
+            setReservations(response.data);
+        } catch (err) {
+            toast.error(err, {position: "top-center"});
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchReservations = async () => {
-            setLoading(true);
-            try {
-                const userId = localStorage.getItem("userId");
-                const authToken = localStorage.getItem("authToken");
-                const response = await axiosInstance.get(
-                    `api/reservations/admin/${userId}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${authToken}`,
-                        },
-                    }
-                );
-                setReservations(response.data);
-            } catch (err) {
-                toast.error(err, {position: "top-center"});
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchReservations();
     }, []);
+
+    const handleUpdateStatus = async (reservationId, status) => {
+        setUpdatingId(reservationId);
+        try {
+            const authToken = localStorage.getItem("authToken");
+            await axiosInstance.put(
+                `/api/reservations/${reservationId}/status`,
+                { status },
+                {
+                    headers: {
+                        Authorization: `Bearer ${authToken}`,
+                    },
+                }
+            );
+            toast.success(`Η κράτηση ενημερώθηκε σε: ${status}`, { position: "top-center" });
+            await fetchReservations();
+        } catch (err) {
+            toast.error(err?.response?.data?.error || err.message, { position: "top-center" });
+        } finally {
+            setUpdatingId(null);
+        }
+    };
 
     if (loading) {
         return (
@@ -195,9 +221,23 @@ const ReservationsTab = () => {
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
                                     <div className="d-flex justify-content-around">
                                         <div className="me-1">
-                                            <Button className="text-white btn-sm" variant="success">Επιβεβαίωση</Button>
+                                            <Button
+                                                className="text-white btn-sm"
+                                                variant="success"
+                                                disabled={updatingId === reservation.id}
+                                                onClick={() => handleUpdateStatus(reservation.id, "Εγκρίθηκε")}
+                                            >
+                                                {updatingId === reservation.id ? <Spinner size="sm" animation="border" /> : "Επιβεβαίωση"}
+                                            </Button>
                                         </div>
-                                        <Button className="text-white btn-sm" variant="danger">Απόρριψη</Button>
+                                        <Button
+                                            className="text-white btn-sm"
+                                            variant="danger"
+                                            disabled={updatingId === reservation.id}
+                                            onClick={() => handleUpdateStatus(reservation.id, "Απορρίφθηκε")}
+                                        >
+                                            {updatingId === reservation.id ? <Spinner size="sm" animation="border" /> : "Απόρριψη"}
+                                        </Button>
                                     </div>
                                 </td>
                             </tr>
@@ -279,7 +319,14 @@ const ReservationsTab = () => {
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
                                     <div className="d-flex justify-content-center">
-                                        <Button className="text-white btn-sm" variant="danger">Απόρριψη</Button>
+                                        <Button
+                                            className="text-white btn-sm"
+                                            variant="danger"
+                                            disabled={updatingId === reservation.id}
+                                            onClick={() => handleUpdateStatus(reservation.id, "Απορρίφθηκε")}
+                                        >
+                                            {updatingId === reservation.id ? <Spinner size="sm" animation="border" /> : "Απόρριψη"}
+                                        </Button>
                                     </div>
                                 </td>
                             </tr>

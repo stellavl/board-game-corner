@@ -102,3 +102,16 @@ export const getReservationsByCafeRepo = async (userId) => {
     await connection.end();
   }
 };
+
+export const updateReservationStatusRepo = async (reservationId, status) => {
+  const connection = await connectToDatabase();
+  try {
+    const [result] = await connection.execute(
+      `UPDATE reservation SET status = ? WHERE id = ?`,
+      [status, reservationId]
+    );
+    return result.affectedRows > 0;
+  } finally {
+    await connection.end();
+  }
+};

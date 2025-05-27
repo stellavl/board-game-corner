@@ -1,7 +1,8 @@
 import { 
   createReservationRepo, 
   getReservationsByUserRepo,
-  getReservationsByCafeRepo 
+  getReservationsByCafeRepo,
+  updateReservationStatusRepo 
 } from "../repositories/reservation-repo.js";
 
 export const createReservationService = async (reservationData) => {
@@ -62,4 +63,12 @@ export const getReservationsByCafeService = async (userId) => {
     throw new Error("Δεν επιτρέπεται η πρόσβαση. Απαιτείται σύνδεση.");
   }
   return await getReservationsByCafeRepo(userId);
+};
+
+export const updateReservationStatusService = async (reservationId, status) => {
+  const allowedStatuses = ["Αναμονή για επιβεβαίωση", "Εγκρίθηκε", "Απορρίφθηκε"];
+  if (!allowedStatuses.includes(status)) {
+    throw new Error("Μη έγκυρη κατάσταση κράτησης.");
+  }
+  return await updateReservationStatusRepo(reservationId, status);
 };

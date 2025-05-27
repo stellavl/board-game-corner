@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { Table } from "react-bootstrap";
+import { BsChevronUp, BsChevronDown } from "react-icons/bs";
 import OrangeButton from "../common/OrangeButton";
+import { handleUpArrowClick, handleDownArrowClick } from "../utils/handleTableSorting";
 
 const getStatusClass = (status) => {
     switch (status) {
@@ -14,7 +17,27 @@ const getStatusClass = (status) => {
     }
 };
 
+const headers = [
+    { label: "Παιχνιδοκαφέ", key: "board_game_cafe_name" },
+    { label: "Ημερομηνία", key: "date" },
+    { label: "Ώρα", key: "time" },
+    { label: "Παίκτες", key: "players_no" },
+    { label: "Επιτραπέζιο", key: "board_game_name" },
+    { label: "Κατάσταση", key: "status" }
+];
+
 const FutureReservationsTable = ({ futureReservations }) => {
+    const [sort, setSort] = useState({ key: null, direction: null });
+
+    let sortedReservations = futureReservations;
+    if (sort.key && sort.direction) {
+        if (sort.direction === "asc") {
+            sortedReservations = handleUpArrowClick(futureReservations, sort.key);
+        } else {
+            sortedReservations = handleDownArrowClick(futureReservations, sort.key);
+        }
+    }
+
     return (
         <>
             <h4 className="mb-3"><strong>Προσεχείς κρατήσεις:</strong></h4>
@@ -26,7 +49,8 @@ const FutureReservationsTable = ({ futureReservations }) => {
                     className="bg-transparent"
                     style={{
                         border: '2px solid var(--color-orange)',
-                        backgroundColor: 'var(--color-soft-yellow)'
+                        backgroundColor: 'var(--color-soft-yellow)',
+                        minWidth: 1100
                     }}
                 >
                     <thead style={{
@@ -34,17 +58,44 @@ const FutureReservationsTable = ({ futureReservations }) => {
                         borderBottom: '2px solid var(--color-orange)'
                     }}>
                         <tr>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Παιχνιδοκαφέ</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Ημερομηνία</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Ώρα</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Παίκτες</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Επιτραπέζιο</th>
-                            <th style={{ color: 'var(--color-gray-purple)', borderRight: '2px solid var(--color-orange)' }}>Κατάσταση</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Ενέργειες</th>
+                            {headers.map((header, idx) => (
+                                <th
+                                    key={header.key}
+                                    style={{
+                                        color: 'var(--color-gray-purple)',
+                                        borderRight: idx === headers.length - 1 ? '2px solid var(--color-orange)' : undefined,
+                                        whiteSpace: 'nowrap',
+                                        minWidth: 140 
+                                    }}
+                                >
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                                        {header.label}
+                                        <span>
+                                            <BsChevronUp
+                                                size={14}
+                                                onClick={() => setSort({ key: header.key, direction: "asc" })}
+                                                style={{
+                                                    color: sort.key === header.key && sort.direction === "asc" ? "var(--color-orange)" : "#aaa",
+                                                    cursor: "pointer"
+                                                }}
+                                            />
+                                            <BsChevronDown
+                                                size={14}
+                                                onClick={() => setSort({ key: header.key, direction: "desc" })}
+                                                style={{
+                                                    color: sort.key === header.key && sort.direction === "desc" ? "var(--color-orange)" : "#aaa",
+                                                    cursor: "pointer"
+                                                }}
+                                            />
+                                        </span>
+                                    </span>
+                                </th>
+                            ))}
+                            <th style={{ color: 'var(--color-gray-purple)', minWidth: 120 }}>Ενέργειες</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {futureReservations.map((reservation, index) => (
+                        {sortedReservations.map((reservation, index) => (
                             <tr key={index}>
                                 <td style={{ color: "var(--color-gray-purple)" }}>{reservation.board_game_cafe_name}</td>
                                 <td style={{ color: "var(--color-gray-purple)" }}>{reservation.date}</td>

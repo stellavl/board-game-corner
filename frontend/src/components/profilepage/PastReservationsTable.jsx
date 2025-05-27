@@ -1,13 +1,22 @@
 import { useState } from "react";
 import { Table, Button, Pagination } from "react-bootstrap";
-import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { BsCalendar, BsChevronLeft, BsChevronRight, BsChevronUp, BsChevronDown } from "react-icons/bs";
 
 const PAGE_SIZE = 5; 
+
+const headers = [
+    { label: "Παιχνιδοκαφέ", key: "board_game_cafe_name" },
+    { label: "Ημερομηνία", key: "date" },
+    { label: "Ώρα", key: "time" },
+    { label: "Παίκτες", key: "players_no" },
+    { label: "Επιτραπέζιο", key: "board_game_name" }
+];
 
 const PastReservationsTable = ({ pastReservations }) => {
     const [filter, setFilter] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [sort, setSort] = useState({ key: null, direction: null });
 
     const filterReservations = (filterType) => {
         setFilter(filterType);
@@ -17,7 +26,7 @@ const PastReservationsTable = ({ pastReservations }) => {
         setCurrentPage(pageNumber);
     };
 
-   const filteredPastReservations = pastReservations.filter((reservation) => {
+    const filteredPastReservations = pastReservations.filter((reservation) => {
         const [day, month, year] = reservation.date.split('-').map(Number);
         const reservationDate = new Date(year, month - 1, day);
 
@@ -43,7 +52,34 @@ const PastReservationsTable = ({ pastReservations }) => {
                 return true;
         }
     });
-    
+
+    // Sorting logic
+    let sortedReservations = filteredPastReservations;
+    if (sort.key && sort.direction) {
+        sortedReservations = [...filteredPastReservations].sort((a, b) => {
+            let aValue = a[sort.key];
+            let bValue = b[sort.key];
+
+            // Special handling for date and time
+            if (sort.key === "date") {
+                const [ad, am, ay] = aValue.split('-').map(Number);
+                const [bd, bm, by] = bValue.split('-').map(Number);
+                aValue = new Date(ay, am - 1, ad);
+                bValue = new Date(by, bm - 1, bd);
+            } else if (sort.key === "time") {
+                // Compare as time strings (hh:mm)
+                aValue = aValue;
+                bValue = bValue;
+            } else if (sort.key === "players_no") {
+                aValue = Number(aValue);
+                bValue = Number(bValue);
+            }
+
+            if (aValue < bValue) return sort.direction === "asc" ? -1 : 1;
+            if (aValue > bValue) return sort.direction === "asc" ? 1 : -1;
+            return 0;
+        });
+    }
 
     const getDateRangeText = () => {
         const monthNames = [
@@ -94,8 +130,8 @@ const PastReservationsTable = ({ pastReservations }) => {
         setCurrentDate(newDate);
     };    
         
-    const totalPages = Math.ceil(filteredPastReservations.length / PAGE_SIZE);
-    const paginatedReservations = filteredPastReservations.slice(
+    const totalPages = Math.ceil(sortedReservations.length / PAGE_SIZE);
+    const paginatedReservations = sortedReservations.slice(
         (currentPage - 1) * PAGE_SIZE,
         currentPage * PAGE_SIZE
     );    
@@ -135,11 +171,9 @@ const PastReservationsTable = ({ pastReservations }) => {
                 </h6>
             )}
 
-
-            {filteredPastReservations.length === 0 ? (
+            {sortedReservations.length === 0 ? (
                 <h6 className="text-danger">Δεν υπάρχουν προηγούμενες κρατήσεις για αυτήν την περίοδο.</h6>
             ) : (
-            
                 <Table
                     hover
                     className="bg-transparent"
@@ -153,11 +187,34 @@ const PastReservationsTable = ({ pastReservations }) => {
                         borderBottom: '2px solid var(--color-orange)'
                     }}>
                         <tr>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Παιχνιδοκαφέ</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Ημερομηνία</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Ώρα</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Παίκτες</th>
-                            <th style={{ color: 'var(--color-gray-purple)' }}>Επιτραπέζιο</th>
+                            {headers.map((header, idx) => (
+                                <th
+                                    key={header.key}
+                                    style={{ color: 'var(--color-gray-purple)' }}
+                                >
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 2 }}>
+                                        {header.label}
+                                        <span>
+                                            <BsChevronUp
+                                                size={14}
+                                                onClick={() => setSort({ key: header.key, direction: "asc" })}
+                                                style={{
+                                                    color: sort.key === header.key && sort.direction === "asc" ? "var(--color-orange)" : "#aaa",
+                                                    cursor: "pointer"
+                                                }}
+                                            />
+                                            <BsChevronDown
+                                                size={14}
+                                                onClick={() => setSort({ key: header.key, direction: "desc" })}
+                                                style={{
+                                                    color: sort.key === header.key && sort.direction === "desc" ? "var(--color-orange)" : "#aaa",
+                                                    cursor: "pointer"
+                                                }}
+                                            />
+                                        </span>
+                                    </span>
+                                </th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>

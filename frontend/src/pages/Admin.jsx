@@ -107,7 +107,7 @@ const Admin = () => {
                         {/* Render the active tab */}
                         {activeTab === "reservations" && <ReservationsTab />}
                         {activeTab === "info" && <InfoTab cafeData={cafe} />}
-                        {activeTab === "boardGames" && <BoardGamesTab />}
+                        {activeTab === "boardGames" && <BoardGamesTab cafeId={cafe.cafe_id} />}
                     {activeTab === "statistics" && <StatisticsTab />}
                 </>
             ) : (

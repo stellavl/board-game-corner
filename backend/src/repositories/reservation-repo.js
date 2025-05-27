@@ -47,7 +47,7 @@ export const getReservationsByUserRepo = async (userId) => {
     const [rows] = await connection.execute(
       `SELECT 
          DATE_FORMAT(r.date, '%d-%m-%Y') AS date,
-         r.time,
+         DATE_FORMAT(r.time, '%H:%i') AS time,
          r.players_no,
          r.status,
          bg.name AS board_game_name,
@@ -82,7 +82,7 @@ export const getReservationsByCafeRepo = async (userId) => {
       `SELECT 
          r.id,
          DATE_FORMAT(r.date, '%d-%m-%Y') AS date,
-         r.time,
+         DATE_FORMAT(r.time, '%H:%i') AS time,
          r.players_no,
          r.status,
          r.customer_first_name,

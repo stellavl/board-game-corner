@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { Table, Container, Button, Spinner } from "react-bootstrap";
-import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
+import { BsCalendar, BsChevronLeft, BsChevronRight, BsChevronUp, BsChevronDown } from "react-icons/bs";
 import { formatDateRangeForFilter } from "../utils/formatDateRangeForFilter";
 import { handleDateNavigation } from "../utils/handleDateNavigation";
 import axiosInstance from "../../config/axiosConfig";
 import { toast } from "react-toastify";
+import { handleUpArrowClick, handleDownArrowClick } from "../utils/handleTableSorting";
 
 const ReservationsTab = () => {
     const today = new Date();
@@ -14,12 +15,16 @@ const ReservationsTab = () => {
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // Sorting state for confirmed and pending reservations
+    const [confirmedSort, setConfirmedSort] = useState({ key: null, direction: null });
+    const [pendingSort, setPendingSort] = useState({ key: null, direction: null });
+
     const handleDateChange = (direction) => {
         const newDate = handleDateNavigation(currentDate, filter, direction);
         setCurrentDate(newDate);
     };
 
-       useEffect(() => {
+    useEffect(() => {
         const fetchReservations = async () => {
             setLoading(true);
             try {
@@ -46,13 +51,13 @@ const ReservationsTab = () => {
     if (loading) {
         return (
             <Container className="text-center mt-4">
-                <Spinner animation="border" role="status" variant="warning" />
+                <Spinner animation="border"/>
             </Container>
         );
     }
 
     const parseReservationDate = (dateStr) => {
-        // Expects dd/mm/yyyy
+        // Expects dd-mm-yyyy
         const [day, month, year] = dateStr.split('-');
         return new Date(`${year}-${month}-${day}T00:00:00`);
     };
@@ -81,7 +86,7 @@ const ReservationsTab = () => {
         });
     };
     
-    const pendingReservations = reservations.filter(reservation => {
+    const pendingReservationsAll = reservations.filter(reservation => {
         const reservationDate = parseReservationDate(reservation.date);
         return reservation.status === 'Αναμονή για επιβεβαίωση' && reservationDate >= today;
     });
@@ -91,7 +96,47 @@ const ReservationsTab = () => {
         return reservation.status === 'Εγκρίθηκε' && reservationDate >= today;
     });
 
+    const pendingReservations = pendingReservationsAll;
     const confirmedReservations = filterReservations(confirmedReservationsAll);
+
+    // Table headers for sorting
+    const pendingHeaders = [
+        { label: "Ημερομηνία", key: "date" },
+        { label: "Ώρα", key: "time" },
+        { label: "Παίκτες", key: "players_no" },
+        { label: "Επιτραπέζιο", key: "board_game_name" },
+        { label: "Ονοματεπώνυμο Πελάτη", key: "customer_full_name" },
+        { label: "Τηλέφωνο Πελάτη", key: "customer_phone" }
+    ];
+    const confirmedHeaders = pendingHeaders;
+
+    // Add full name property for sorting
+    const pendingReservationsWithFullName = pendingReservations.map(r => ({
+        ...r,
+        customer_full_name: `${r.customer_first_name} ${r.customer_last_name}`
+    }));
+    const confirmedReservationsWithFullName = confirmedReservations.map(r => ({
+        ...r,
+        customer_full_name: `${r.customer_first_name} ${r.customer_last_name}`
+    }));
+
+    // Apply sorting
+    let sortedPendingReservations = pendingReservationsWithFullName;
+    if (pendingSort.key && pendingSort.direction) {
+        if (pendingSort.direction === "asc") {
+            sortedPendingReservations = handleUpArrowClick(pendingReservationsWithFullName, pendingSort.key);
+        } else {
+            sortedPendingReservations = handleDownArrowClick(pendingReservationsWithFullName, pendingSort.key);
+        }
+    }
+    let sortedConfirmedReservations = confirmedReservationsWithFullName;
+    if (confirmedSort.key && confirmedSort.direction) {
+        if (confirmedSort.direction === "asc") {
+            sortedConfirmedReservations = handleUpArrowClick(confirmedReservationsWithFullName, confirmedSort.key);
+        } else {
+            sortedConfirmedReservations = handleDownArrowClick(confirmedReservationsWithFullName, confirmedSort.key);
+        }
+    }
 
     const tableStyle = {
         border: '2px solid var(--color-orange)',
@@ -112,29 +157,40 @@ const ReservationsTab = () => {
             <h5 className="mb-3 text-decoration-underline" style={{ color: 'var(--color-orange)' }}>
                 Περιμένουν επιβεβαίωση:
             </h5>
-            {pendingReservations.length === 0 ? (
+            {sortedPendingReservations.length === 0 ? (
                 <h6 className="text-danger">Δεν υπάρχουν εκκρεμείς κρατήσεις.</h6>
             ) : (
                 <Table hover className="bg-transparent text-center" style={tableStyle}>
                     <thead style={headerStyle}>
                         <tr>
-                            <th style={textStyle}>Ημερομηνία</th>
-                            <th style={textStyle}>Ώρα</th>
-                            <th style={textStyle}>Παίκτες</th>
-                            <th style={textStyle}>Επιτραπέζιο</th>
-                            <th style={textStyle}>Ονοματεπώνυμο Πελάτη</th>
-                            <th style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>Τηλέφωνο Πελάτη</th>
+                            {pendingHeaders.map((header, idx) => (
+                                <th key={header.key} style={idx === pendingHeaders.length - 1 ? { ...textStyle, borderRight: '2px solid var(--color-orange)' } : textStyle}>
+                                    {header.label}
+                                    <span style={{ cursor: "pointer", marginLeft: 4 }}>
+                                        <BsChevronUp
+                                            size={14}
+                                            onClick={() => setPendingSort({ key: header.key, direction: "asc" })}
+                                            style={{ color: pendingSort.key === header.key && pendingSort.direction === "asc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                        <BsChevronDown
+                                            size={14}
+                                            onClick={() => setPendingSort({ key: header.key, direction: "desc" })}
+                                            style={{ color: pendingSort.key === header.key && pendingSort.direction === "desc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                    </span>
+                                </th>
+                            ))}
                             <th style={textStyle}>Ενέργειες</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {pendingReservations.map((reservation, index) => (
+                        {sortedPendingReservations.map((reservation, index) => (
                             <tr key={index}>
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
                                 <td style={textStyle}>{reservation.players_no}</td>
                                 <td style={textStyle}>{reservation.board_game_name}</td>
-                                <td style={textStyle}>{reservation.customer_first_name} {reservation.customer_last_name}</td>
+                                <td style={textStyle}>{reservation.customer_full_name}</td>
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
                                     <div className="d-flex justify-content-around">
@@ -186,29 +242,40 @@ const ReservationsTab = () => {
                 </h6>
             )}
 
-            {confirmedReservations.length === 0 ? (
+            {sortedConfirmedReservations.length === 0 ? (
                 <h6 className="text-danger">Δεν υπάρχουν επιβεβαιωμένες κρατήσεις για αυτήν την περίοδο.</h6>
             ) : (
                 <Table hover className="bg-transparent text-center" style={tableStyle}>
                     <thead style={headerStyle}>
                         <tr>
-                            <th style={textStyle}>Ημερομηνία</th>
-                            <th style={textStyle}>Ώρα</th>
-                            <th style={textStyle}>Παίκτες</th>
-                            <th style={textStyle}>Επιτραπέζιο</th>
-                            <th style={textStyle}>Ονοματεπώνυμο Πελάτη</th>
-                            <th style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>Τηλέφωνο Πελάτη</th>
+                            {confirmedHeaders.map((header, idx) => (
+                                <th key={header.key} style={idx === confirmedHeaders.length - 1 ? { ...textStyle, borderRight: '2px solid var(--color-orange)' } : textStyle}>
+                                    {header.label}
+                                    <span style={{ cursor: "pointer", marginLeft: 4 }}>
+                                        <BsChevronUp
+                                            size={14}
+                                            onClick={() => setConfirmedSort({ key: header.key, direction: "asc" })}
+                                            style={{ color: confirmedSort.key === header.key && confirmedSort.direction === "asc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                        <BsChevronDown
+                                            size={14}
+                                            onClick={() => setConfirmedSort({ key: header.key, direction: "desc" })}
+                                            style={{ color: confirmedSort.key === header.key && confirmedSort.direction === "desc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                    </span>
+                                </th>
+                            ))}
                             <th style={textStyle}>Ενέργειες</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {confirmedReservations.map((reservation, index) => (
+                        {sortedConfirmedReservations.map((reservation, index) => (
                             <tr key={index}>
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
                                 <td style={textStyle}>{reservation.players_no}</td>
                                 <td style={textStyle}>{reservation.board_game_name}</td>
-                                <td style={textStyle}>{reservation.customer_first_name} {reservation.customer_last_name}</td>
+                                <td style={textStyle}>{reservation.customer_full_name}</td>
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
                                     <div className="d-flex justify-content-center">

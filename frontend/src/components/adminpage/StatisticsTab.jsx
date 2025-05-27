@@ -5,6 +5,8 @@ import { formatDateRangeForFilter } from "../utils/formatDateRangeForFilter";
 import { handleDateNavigation } from "../utils/handleDateNavigation";
 import axiosInstance from "../../config/axiosConfig";
 import { toast } from "react-toastify";
+import { BsChevronUp, BsChevronDown } from "react-icons/bs";
+import { handleUpArrowClick, handleDownArrowClick } from "../utils/handleTableSorting";
 
 const StatisticsTab = () => {
     const today = new Date();
@@ -17,6 +19,22 @@ const StatisticsTab = () => {
 
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    const [reservationSort, setReservationSort] = useState({ key: null, direction: null });
+    const [gameSort, setGameSort] = useState({ key: null, direction: null });
+
+    const reservationHeaders = [
+        { label: "Ημερομηνία", key: "date" },
+        { label: "Ώρα", key: "time" },
+        { label: "Παίκτες", key: "players_no" },
+        { label: "Επιτραπέζιο", key: "board_game_name" },
+        { label: "Ονοματεπώνυμο Πελάτη", key: "customer_full_name" },
+        { label: "Τηλέφωνο Πελάτη", key: "customer_phone" }
+    ];
+    const gameHeaders = [
+        { label: "Όνομα Επιτραπέζιου", key: "game" },
+        { label: "Φορές που παίχτηκε", key: "timesPlayed" }
+    ]; 
 
     useEffect(() => {
         const fetchReservations = async () => {
@@ -92,6 +110,20 @@ const StatisticsTab = () => {
     const previousReservations = filterReservations(previousReservationsAll, reservationsFilter, currentDate);
     const gameStatsReservations = filterReservations(previousReservationsAll, gamesFilter, currentDateGames);
 
+    const reservationsWithFullName = previousReservations.map(r => ({
+        ...r,
+        customer_full_name: `${r.customer_first_name} ${r.customer_last_name}`
+    }));
+
+    let sortedReservations = reservationsWithFullName;
+    if (reservationSort.key && reservationSort.direction) {
+        if (reservationSort.direction === "asc") {
+            sortedReservations = handleUpArrowClick(reservationsWithFullName, reservationSort.key);
+        } else {
+            sortedReservations = handleDownArrowClick(reservationsWithFullName, reservationSort.key);
+        }
+    }
+
     // Build game play counts from reservations
     const buildGamePlayCounts = () => {
         const counts = {};
@@ -141,6 +173,19 @@ const StatisticsTab = () => {
     const dynamicGamePlayCounts = buildGamePlayCounts();
     const filteredGamePlayCounts = filterGamePlayCounts(dynamicGamePlayCounts, gamesFilter, currentDateGames);
 
+    const gamesData = Object.entries(filteredGamePlayCounts).map(([game, entries]) => ({
+        game,
+        timesPlayed: entries.reduce((sum, entry) => sum + entry.timesPlayed, 0)
+    }));
+
+    let sortedGamesData = gamesData;
+    if (gameSort.key && gameSort.direction) {
+        if (gameSort.direction === "asc") {
+            sortedGamesData = handleUpArrowClick(gamesData, gameSort.key);
+        } else {
+            sortedGamesData = handleDownArrowClick(gamesData, gameSort.key);
+        }
+    }
     const isGamePlayCountsEmpty = Object.entries(filteredGamePlayCounts).every(([_, entries]) =>
         entries.length === 0
     );
@@ -207,22 +252,33 @@ const StatisticsTab = () => {
                 <Table hover className="bg-transparent text-center" style={tableStyle}>
                     <thead style={headerStyle}>
                         <tr>
-                            <th style={textStyle}>Ημερομηνία</th>
-                            <th style={textStyle}>Ώρα</th>
-                            <th style={textStyle}>Παίκτες</th>
-                            <th style={textStyle}>Επιτραπέζιο</th>
-                            <th style={textStyle}>Ονοματεπώνυμο Πελάτη</th>
-                            <th style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>Τηλέφωνο Πελάτη</th>
+                             {reservationHeaders.map((header, idx) => (
+                                <th key={header.key} style={idx === reservationHeaders.length - 1 ? { ...textStyle, borderRight: '2px solid var(--color-orange)' } : textStyle}>
+                                    {header.label}
+                                    <span style={{ cursor: "pointer", marginLeft: 4 }}>
+                                        <BsChevronUp
+                                            size={14}
+                                            onClick={() => setReservationSort({ key: header.key, direction: "asc" })}
+                                            style={{ color: reservationSort.key === header.key && reservationSort.direction === "asc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                        <BsChevronDown
+                                            size={14}
+                                            onClick={() => setReservationSort({ key: header.key, direction: "desc" })}
+                                            style={{ color: reservationSort.key === header.key && reservationSort.direction === "desc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                    </span>
+                                </th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {previousReservations.map((reservation, index) => (
+                        {sortedReservations.map((reservation, index) => (
                             <tr key={index}>
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
                                 <td style={textStyle}>{reservation.players_no}</td>
                                 <td style={textStyle}>{reservation.board_game_name}</td>
-                                <td style={textStyle}>{reservation.customer_first_name} {reservation.customer_last_name}</td>
+                                <td style={textStyle}>{reservation.customer_full_name}</td>
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                             </tr>
                         ))}
@@ -267,20 +323,32 @@ const StatisticsTab = () => {
             <Table hover className="bg-transparent text-center w-75 mx-auto" style={tableStyle}>
                 <thead style={headerStyle}>
                     <tr>
-                        <th style={textStyle}>Όνομα Επιτραπέζιου</th>
-                        <th style={textStyle}>Φορές που παίχτηκε</th>
+                        {gameHeaders.map(header => (
+                            <th key={header.key} style={textStyle}>
+                                {header.label}
+                                <span style={{ cursor: "pointer", marginLeft: 4 }}>
+                                    <BsChevronUp
+                                        size={14}
+                                        onClick={() => setGameSort({ key: header.key, direction: "asc" })}
+                                        style={{ color: gameSort.key === header.key && gameSort.direction === "asc" ? "var(--color-orange)" : "#aaa" }}
+                                    />
+                                    <BsChevronDown
+                                        size={14}
+                                        onClick={() => setGameSort({ key: header.key, direction: "desc" })}
+                                        style={{ color: gameSort.key === header.key && gameSort.direction === "desc" ? "var(--color-orange)" : "#aaa" }}
+                                    />
+                                </span>
+                            </th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {Object.entries(filteredGamePlayCounts).map(([game, entries]) => {
-                        const totalTimesPlayed = entries.reduce((sum, entry) => sum + entry.timesPlayed, 0);
-                        return (
-                            <tr key={game}>
-                                <td style={textStyle}>{game}</td>
-                                <td style={textStyle}>{totalTimesPlayed}</td>
-                            </tr>
-                        );
-                    })}
+                    {sortedGamesData.map(({ game, timesPlayed }) => (
+                        <tr key={game}>
+                            <td style={textStyle}>{game}</td>
+                            <td style={textStyle}>{timesPlayed}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </Table>)}
         </Container>

@@ -40,8 +40,6 @@ const Main = () => {
   useEffect(() => {
     if (!isValidRoute(location.pathname)) {
       navigate("/home", { replace: true }); // Redirect invalid routes
-    } else if (location.pathname === "/signup/business/board-games" && !sessionStorage.getItem("completedBasicInfo")) {
-      navigate("/signup/business/basic-info", { replace: true }); // Redirect to basic-info if board-games is accessed directly
     }
   }, [location.pathname, navigate]);
 

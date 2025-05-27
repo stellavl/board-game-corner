@@ -118,8 +118,17 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setUserI
             </div>
           </div>
 
-            {backendError && <Alert variant="danger" onClose={() => setBackendError(null)} dismissible>{backendError}</Alert>}
-            {validationErrors.form && <Alert variant="danger">{validationErrors.form}</Alert>}
+          {backendError && <Alert variant="danger" onClose={() => setBackendError(null)} dismissible>{backendError}</Alert>}
+          {validationErrors.form && <Alert variant="danger">{validationErrors.form}</Alert>}
+
+          <Form
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleLoginSubmit();
+              }
+            }}
+          >
             <Form.Group className="mb-3" controlId="formEmail">
               <Form.Label style={{ color: 'var(--color-gray-purple)' }}>
                 {activeTab === 'personal' ? 'Προσωπικό Email' : 'Επαγγελματικό Email'}
@@ -201,8 +210,9 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setUserI
                 </div>
               </Col>
             </Row>
-          </Modal.Body>
-        </Modal>
+          </Form>
+        </Modal.Body>
+      </Modal>
     </>
   );
 };

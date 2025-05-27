@@ -5,7 +5,20 @@ import { Card } from 'react-bootstrap';
 const BoardGameDetails = ({ boardGame }) => (
   <Card.Text className="text-nowrap">
     <FontAwesomeIcon icon={faGamepad} className="me-2" />
-    {boardGame.category} <br />
+      <span
+        style={{
+          display: 'inline-block',
+          maxWidth: 80,
+          verticalAlign: 'bottom',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap'
+        }}
+        title={boardGame.category}
+      >
+      {boardGame.category}
+    </span>
+    <br />
     <FontAwesomeIcon icon={faClock} className="me-3" />
     {boardGame.playing_time}' <br />
     <FontAwesomeIcon icon={faUsers} className="me-2" />

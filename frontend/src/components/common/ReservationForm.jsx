@@ -52,13 +52,13 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
   
     if (cafeId) {
       try {
-        const res = await axiosInstance.post(
+        const res = await axiosInstance.get(
           `/api/board-game-cafes/id/${cafeId}/board-games`
         );
         setCafeBoardGames(res.data.boardGames || []);
       } catch (err) {
         setCafeBoardGames([]);
-        setBoardGameSelectError("Σφάλμα κατά την ανάκτηση επιτραπέζιων.");
+        toast.error(err, {position: 'top-center'});
       }
     } else {
       setBoardGameSelectError("Επιλέξτε πρώτα παιχνιδοκαφέ");
@@ -144,7 +144,6 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
       setPlayersDisabled(true);
       setPlayersRange({ min: 1, max: undefined });
     }
-    // eslint-disable-next-line
   }, [formData.boardGame, gameFromGamePage, cafeBoardGames]);
 
  

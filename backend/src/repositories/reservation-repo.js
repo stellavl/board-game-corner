@@ -10,9 +10,9 @@ export const createReservationRepo = async (reservationData) => {
     customer_email,
     customer_phone,
     status,
-    board_game_id,
+    board_game_id = null, // optional
     board_game_cafe_id,
-    basic_user_id = null // optional
+    user_id = null // optional
   } = reservationData;
 
   const connection = await connectToDatabase();
@@ -20,7 +20,7 @@ export const createReservationRepo = async (reservationData) => {
     const [result] = await connection.execute(
       `INSERT INTO reservation 
         (date, time, players_no, customer_first_name, customer_last_name, customer_email, customer_phone, status, board_game_id, board_game_cafe_id, basic_user_id)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, (SELECT id FROM basic_user WHERE user_id = ?))`,
       [
         date,
         time,
@@ -32,7 +32,7 @@ export const createReservationRepo = async (reservationData) => {
         status,
         board_game_id,
         board_game_cafe_id,
-        basic_user_id
+        user_id
       ]
     );
     return result.insertId;
@@ -54,7 +54,7 @@ export const getReservationsByUserRepo = async (userId) => {
          bgc.name AS board_game_cafe_name
        FROM reservation r
        JOIN basic_user bu ON r.basic_user_id = bu.id
-       JOIN board_game bg ON r.board_game_id = bg.id
+       LEFT JOIN board_game bg ON r.board_game_id = bg.id
        JOIN board_game_cafe bgc ON r.board_game_cafe_id = bgc.id
        WHERE bu.user_id = ?`,
       [userId]
@@ -92,7 +92,7 @@ export const getReservationsByCafeRepo = async (userId) => {
          bg.name AS board_game_name,
          bgc.name AS board_game_cafe_name
        FROM reservation r
-       JOIN board_game bg ON r.board_game_id = bg.id
+       LEFT JOIN board_game bg ON r.board_game_id = bg.id
        JOIN board_game_cafe bgc ON r.board_game_cafe_id = bgc.id
        WHERE r.board_game_cafe_id = ?`,
       [cafeId]

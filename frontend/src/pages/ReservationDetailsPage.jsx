@@ -85,33 +85,34 @@ const ReservationDetailsPage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
- const handleReservationClick = async () => {
-        if (validateForm()) {
-            const reservationData = {
-                date: formatDateToISO(date),
-                time: time,
-                players_no: players,
-                customer_first_name: formData.firstName,
-                customer_last_name: formData.lastName,
-                customer_email: formData.email,
-                customer_phone: formData.phone,
-                board_game_id: boardGame?.id,
-                board_game_cafe_id: gameCafe?.id
-            };
-            try {
-                const response = await axiosInstance.post(`/api/reservations`, reservationData);
-                if (response.status === 201) {
-                    toast.success("Η κράτηση καταχωρήθηκε με επιτυχία!",{ position: 'top-center' });
-                    navigate("/"); // Redirect to home after successful reservation
-                } else {
-                    toast.error(response.data.error || "Σφάλμα κατά την καταχώρηση της κράτησης.",{ position: 'top-center' });
-                }
-            } catch (error) {
-                toast.error("Σφάλμα δικτύου. Δοκιμάστε ξανά.",{ position: 'top-center' });
+const handleReservationClick = async () => {
+    if (validateForm()) {
+        const userId = localStorage.getItem('userId');
+        const reservationData = {
+            date: formatDateToISO(date),
+            time: time,
+            players_no: players,
+            customer_first_name: formData.firstName,
+            customer_last_name: formData.lastName,
+            customer_email: formData.email,
+            customer_phone: formData.phone,
+            board_game_id: boardGame?.id,
+            board_game_cafe_id: gameCafe?.id,
+            user_id: userId
+        };
+        try {
+            const response = await axiosInstance.post(`/api/reservations`, reservationData);
+            if (response.status === 201) {
+                toast.success("Η κράτηση καταχωρήθηκε με επιτυχία!",{ position: 'top-center' });
+                navigate("/"); // Redirect to home after successful reservation
+            } else {
+                toast.error(response.data.error || "Σφάλμα κατά την καταχώρηση της κράτησης.",{ position: 'top-center' });
             }
+        } catch (error) {
+            toast.error("Σφάλμα δικτύου. Δοκιμάστε ξανά.",{ position: 'top-center' });
         }
-    };
-
+    }
+};
     return (
         <Container className="my-4">
             <Row className="justify-content-center">

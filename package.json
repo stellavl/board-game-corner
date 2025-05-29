@@ -1,0 +1,22 @@
+{
+  "name": "board-game-corner",
+  "version": "1.0.0",
+  "description": "A full stack web application for finding board games and making reservations in board game cafes in Greece.",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd backend && node src/server.js",
+    "heroku-postbuild": "cd frontend && npm install && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stellavl/board-game-corner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/stellavl/board-game-corner/issues"
+  },
+  "homepage": "https://github.com/stellavl/board-game-corner#readme"
+}

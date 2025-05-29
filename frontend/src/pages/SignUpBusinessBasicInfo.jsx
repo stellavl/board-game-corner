@@ -67,12 +67,23 @@ const SignUpBusinessBasicInfo = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log("Sign Up Data:", formData);
-            sessionStorage.setItem("completedBasicInfo", "true"); 
-            navigate('/signup/business/board-games');
+            const { photo, cafeName, confirmPassword, ...rest } = formData;
+            const adminInfo = { ...rest, name: cafeName };
+            sessionStorage.setItem("adminBasicInfo", JSON.stringify(adminInfo));
+            if (photo) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    sessionStorage.setItem("adminPhoto", reader.result);
+                    navigate('/signup/business/board-games');
+                };
+                reader.readAsDataURL(photo);
+            } else {
+                sessionStorage.removeItem("adminPhoto");
+                navigate('/signup/business/board-games');
+            }
         }
     };
-
+    
     return (
         <>
          <Row>

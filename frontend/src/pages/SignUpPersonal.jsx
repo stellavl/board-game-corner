@@ -3,6 +3,10 @@ import { Container, Card, Form, Row, Col } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
 import { validatePersonalData } from "../components/utils/validations";
+import axiosInstance from "../config/axiosConfig"; 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { loginPersonal } from "../components/utils/handleLogin";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -21,13 +25,24 @@ const SignUpPersonal = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validatePersonalData(formData);  
         setErrors(validationErrors);
         if (Object.keys(validationErrors).length === 0) {
-            console.log("Sign Up Data:", formData);
-            navigate('/home');
+            try {
+                await axiosInstance.post("/api/basic-users", formData); 
+                // Log the user in after successful signup
+                const loginResponse = await loginPersonal({ email: formData.email, password: formData.password });
+                if (loginResponse.success) {
+                    navigate('/home');
+                } else {
+                    toast.error(loginResponse.error, { position: 'top-center' });
+                }
+            } catch (error) {
+                const errorMessage = error.response?.data?.error || "Σφάλμα κατά την εγγραφή. Προσπαθήστε ξανά.";
+                toast.error(errorMessage, { position: 'top-center' });
+            }
         }
     };
 

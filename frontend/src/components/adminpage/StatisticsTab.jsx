@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import reservationsData from "../../data/reservationsData";
-import { Table, Container, Button } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Table, Container, Button, Spinner } from "react-bootstrap";
 import { BsCalendar, BsChevronLeft, BsChevronRight } from "react-icons/bs";
 import { formatDateRangeForFilter } from "../utils/formatDateRangeForFilter";
 import { handleDateNavigation } from "../utils/handleDateNavigation";
-import gamePlayCounts from "../../data/gamePlayCounts";
+import axiosInstance from "../../config/axiosConfig";
+import { toast } from "react-toastify";
+import { BsChevronUp, BsChevronDown } from "react-icons/bs";
+import { handleUpArrowClick, handleDownArrowClick } from "../utils/handleTableSorting";
 
 const StatisticsTab = () => {
     const today = new Date();
@@ -14,6 +16,49 @@ const StatisticsTab = () => {
 
     const [gamesFilter, setGamesFilter] = useState("day");
     const [currentDateGames, setCurrentDateGames] = useState(new Date());
+
+    const [reservations, setReservations] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const [reservationSort, setReservationSort] = useState({ key: null, direction: null });
+    const [gameSort, setGameSort] = useState({ key: null, direction: null });
+
+    const reservationHeaders = [
+        { label: "Ημερομηνία", key: "date" },
+        { label: "Ώρα", key: "time" },
+        { label: "Παίκτες", key: "players_no" },
+        { label: "Επιτραπέζιο", key: "board_game_name" },
+        { label: "Ονοματεπώνυμο Πελάτη", key: "customer_full_name" },
+        { label: "Τηλέφωνο Πελάτη", key: "customer_phone" }
+    ];
+    const gameHeaders = [
+        { label: "Όνομα Επιτραπέζιου", key: "game" },
+        { label: "Φορές που παίχτηκε", key: "timesPlayed" }
+    ]; 
+
+    useEffect(() => {
+        const fetchReservations = async () => {
+            setLoading(true);
+            try {
+                const userId = localStorage.getItem("userId");
+                const authToken = localStorage.getItem("authToken");
+                const response = await axiosInstance.get(
+                    `api/reservations/admin/${userId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${authToken}`,
+                        },
+                    }
+                );
+                setReservations(response.data);
+            } catch (err) {
+                toast.error("Σφάλμα κατά τη λήψη κρατήσεων", { position: "top-center" });
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchReservations();
+    }, []);
 
     const handleReservationsDateChange = (direction) => {
         const newDate = handleDateNavigation(currentDate, reservationsFilter, direction);
@@ -27,9 +72,15 @@ const StatisticsTab = () => {
         setCurrentDateGames(newDate);
     };
 
+    const parseReservationDate = (dateStr) => {
+        // Expects dd-mm-yyyy
+        const [day, month, year] = dateStr.split('-');
+        return new Date(`${year}-${month}-${day}T00:00:00`);
+    };
+
     const filterReservations = (reservations, filterType, date) => {
         return reservations.filter(reservation => {
-            const reservationDate = new Date(`${reservation.date.split('/')[1]}/${reservation.date.split('/')[0]}/${reservation.date.split('/')[2]}`);
+            const reservationDate = parseReservationDate(reservation.date);
             switch (filterType) {
                 case "year":
                     return reservationDate.getFullYear() === date.getFullYear();
@@ -50,11 +101,50 @@ const StatisticsTab = () => {
         });
     };
 
+    // Only approved and past reservations
+    const previousReservationsAll = reservations.filter(reservation => {
+        const reservationDate = parseReservationDate(reservation.date);
+        return reservation.status === 'Εγκρίθηκε' && reservationDate <= today;
+    });
+
+    const previousReservations = filterReservations(previousReservationsAll, reservationsFilter, currentDate);
+    const gameStatsReservations = filterReservations(previousReservationsAll, gamesFilter, currentDateGames);
+
+    const reservationsWithFullName = previousReservations.map(r => ({
+        ...r,
+        customer_full_name: `${r.customer_first_name} ${r.customer_last_name}`
+    }));
+
+    let sortedReservations = reservationsWithFullName;
+    if (reservationSort.key && reservationSort.direction) {
+        if (reservationSort.direction === "asc") {
+            sortedReservations = handleUpArrowClick(reservationsWithFullName, reservationSort.key);
+        } else {
+            sortedReservations = handleDownArrowClick(reservationsWithFullName, reservationSort.key);
+        }
+    }
+
+    // Build game play counts from reservations
+    const buildGamePlayCounts = () => {
+        const counts = {};
+        gameStatsReservations.forEach(res => {
+            const game = res.board_game_name;
+            if (!counts[game]) counts[game] = [];
+            const existingDateEntry = counts[game].find(entry => entry.date === res.date);
+            if (existingDateEntry) {
+                existingDateEntry.timesPlayed++;
+            } else {
+                counts[game].push({ date: res.date, timesPlayed: 1 });
+            }
+        });
+        return counts;
+    };
+
     const filterGamePlayCounts = (gamePlayCounts, filterType, date) => {
         const filteredCounts = {};
         Object.entries(gamePlayCounts).forEach(([game, entries]) => {
             const filteredEntries = entries.filter(entry => {
-                const entryDate = new Date(`${entry.date.split('/')[1]}/${entry.date.split('/')[0]}/${entry.date.split('/')[2]}`);
+                const entryDate = parseReservationDate(entry.date);
                 switch (filterType) {
                     case "year":
                         return entryDate.getFullYear() === date.getFullYear();
@@ -73,7 +163,6 @@ const StatisticsTab = () => {
                         return true;
                 }
             });
-
             if (filteredEntries.length > 0) {
                 filteredCounts[game] = filteredEntries;
             }
@@ -81,30 +170,23 @@ const StatisticsTab = () => {
         return filteredCounts;
     };
 
-    const filteredGamePlayCounts = filterGamePlayCounts(gamePlayCounts, gamesFilter, currentDateGames);
+    const dynamicGamePlayCounts = buildGamePlayCounts();
+    const filteredGamePlayCounts = filterGamePlayCounts(dynamicGamePlayCounts, gamesFilter, currentDateGames);
 
-    const previousReservationsAll = reservationsData.filter(reservation => {
-        const reservationDate = new Date(reservation.date);
-        return reservation.status === 'Εγκρίθηκε' && reservationDate <= today;
-    });
+    const gamesData = Object.entries(filteredGamePlayCounts).map(([game, entries]) => ({
+        game,
+        timesPlayed: entries.reduce((sum, entry) => sum + entry.timesPlayed, 0)
+    }));
 
-    const previousReservations = filterReservations(previousReservationsAll, reservationsFilter, currentDate);
-    const gameStatsReservations = filterReservations(previousReservationsAll, gamesFilter, currentDateGames);
-
-    gameStatsReservations.forEach(res => {
-        if (!gamePlayCounts[res.boardGame]) {
-            gamePlayCounts[res.boardGame] = [];
-        }
-    
-        const existingDateEntry = gamePlayCounts[res.boardGame].find(entry => entry.date === res.date);
-        if (existingDateEntry) {
-            existingDateEntry.timesPlayed++;
+    let sortedGamesData = gamesData;
+    if (gameSort.key && gameSort.direction) {
+        if (gameSort.direction === "asc") {
+            sortedGamesData = handleUpArrowClick(gamesData, gameSort.key);
         } else {
-            gamePlayCounts[res.boardGame].push({ date: res.date, timesPlayed: 1 });
+            sortedGamesData = handleDownArrowClick(gamesData, gameSort.key);
         }
-    });
-
-    const isGamePlayCountsEmpty = Object.entries(filteredGamePlayCounts).every(([_, entries]) => 
+    }
+    const isGamePlayCountsEmpty = Object.entries(filteredGamePlayCounts).every(([_, entries]) =>
         entries.length === 0
     );
 
@@ -121,6 +203,14 @@ const StatisticsTab = () => {
     const textStyle = {
         color: 'var(--color-gray-purple)'
     };
+
+    if (loading) {
+        return (
+            <Container className="text-center mt-4">
+                <Spinner animation="border"/>
+            </Container>
+        );
+    }
 
     return (
         <Container className="text-center mt-4">
@@ -162,23 +252,34 @@ const StatisticsTab = () => {
                 <Table hover className="bg-transparent text-center" style={tableStyle}>
                     <thead style={headerStyle}>
                         <tr>
-                            <th style={textStyle}>Ημερομηνία</th>
-                            <th style={textStyle}>Ώρα</th>
-                            <th style={textStyle}>Παίκτες</th>
-                            <th style={textStyle}>Επιτραπέζιο</th>
-                            <th style={textStyle}>Ονοματεπώνυμο Πελάτη</th>
-                            <th style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>Τηλέφωνο Πελάτη</th>
+                             {reservationHeaders.map((header, idx) => (
+                                <th key={header.key} style={idx === reservationHeaders.length - 1 ? { ...textStyle, borderRight: '2px solid var(--color-orange)' } : textStyle}>
+                                    {header.label}
+                                    <span style={{ cursor: "pointer", marginLeft: 4 }}>
+                                        <BsChevronUp
+                                            size={14}
+                                            onClick={() => setReservationSort({ key: header.key, direction: "asc" })}
+                                            style={{ color: reservationSort.key === header.key && reservationSort.direction === "asc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                        <BsChevronDown
+                                            size={14}
+                                            onClick={() => setReservationSort({ key: header.key, direction: "desc" })}
+                                            style={{ color: reservationSort.key === header.key && reservationSort.direction === "desc" ? "var(--color-orange)" : "#aaa" }}
+                                        />
+                                    </span>
+                                </th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {previousReservations.map((reservation, index) => (
+                        {sortedReservations.map((reservation, index) => (
                             <tr key={index}>
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
-                                <td style={textStyle}>{reservation.players}</td>
-                                <td style={textStyle}>{reservation.boardGame}</td>
-                                <td style={textStyle}>{reservation.customerName}</td>
-                                <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.phoneNumber}</td>
+                                <td style={textStyle}>{reservation.players_no}</td>
+                                <td style={textStyle}>{reservation.board_game_name}</td>
+                                <td style={textStyle}>{reservation.customer_full_name}</td>
+                                <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -222,20 +323,32 @@ const StatisticsTab = () => {
             <Table hover className="bg-transparent text-center w-75 mx-auto" style={tableStyle}>
                 <thead style={headerStyle}>
                     <tr>
-                        <th style={textStyle}>Όνομα Επιτραπέζιου</th>
-                        <th style={textStyle}>Φορές που παίχτηκε</th>
+                        {gameHeaders.map(header => (
+                            <th key={header.key} style={textStyle}>
+                                {header.label}
+                                <span style={{ cursor: "pointer", marginLeft: 4 }}>
+                                    <BsChevronUp
+                                        size={14}
+                                        onClick={() => setGameSort({ key: header.key, direction: "asc" })}
+                                        style={{ color: gameSort.key === header.key && gameSort.direction === "asc" ? "var(--color-orange)" : "#aaa" }}
+                                    />
+                                    <BsChevronDown
+                                        size={14}
+                                        onClick={() => setGameSort({ key: header.key, direction: "desc" })}
+                                        style={{ color: gameSort.key === header.key && gameSort.direction === "desc" ? "var(--color-orange)" : "#aaa" }}
+                                    />
+                                </span>
+                            </th>
+                        ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {Object.entries(filteredGamePlayCounts).map(([game, entries]) => {
-                        const totalTimesPlayed = entries.reduce((sum, entry) => sum + entry.timesPlayed, 0);
-                        return (
-                            <tr key={game}>
-                                <td style={textStyle}>{game}</td>
-                                <td style={textStyle}>{totalTimesPlayed}</td>
-                            </tr>
-                        );
-                    })}
+                    {sortedGamesData.map(({ game, timesPlayed }) => (
+                        <tr key={game}>
+                            <td style={textStyle}>{game}</td>
+                            <td style={textStyle}>{timesPlayed}</td>
+                        </tr>
+                    ))}
                 </tbody>
             </Table>)}
         </Container>

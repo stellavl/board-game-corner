@@ -1,18 +1,57 @@
-import { React, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Row, Col, Offcanvas } from 'react-bootstrap';
 import BoardGameCards from './BoardGameCards';
 import BoardGameFilters from './BoardGameFilters';
 import OrangeButton from './OrangeButton';
 import { useLocation, useNavigate } from 'react-router-dom';
-import boardGames from "../../data/boardGames";
 import BoardGameSelectBar from './BoardGameSelectBar';
+import { Spinner } from 'react-bootstrap'; 
+import axiosInstance from '../../config/axiosConfig';
+import { toast } from 'react-toastify';
+import { searchBoardGames } from '../utils/searchBoardGames';
+import { useParams } from 'react-router-dom';
+
+const transformFiltersForBackend = (filters) => {
+  // Duration mapping
+  let minduration = null, maxduration = null;
+  switch (filters.duration) {
+    case '<10 λεπτά':
+      minduration = 0; maxduration = 10; break;
+    case '10-30 λεπτά':
+      minduration = 10; maxduration = 30; break;
+    case '30-60 λεπτά':
+      minduration = 30; maxduration = 60; break;
+    case '60+ λεπτά':
+      minduration = 60; maxduration = null; break;
+    default:
+      minduration = null; maxduration = null;
+  }
+
+  // Age mapping
+  let minAge = null;
+  if (filters.age && filters.age !== 'Όλες') {
+    minAge = parseInt(filters.age);
+  }
+
+  // Players mapping
+  const parsePlayers = (val) =>
+    val === 'Όλοι' ? null : val === '10+' ? 10 : Number(val);
+
+  return {
+    categories: filters.categories || [],
+    minPlayers: parsePlayers(filters.minPlayers),
+    maxPlayers: parsePlayers(filters.maxPlayers),
+    minAge,
+    minduration,
+    maxduration,
+  };
+};
 
 const BoardGamesContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
+  const [loading, setLoading] = useState(true); 
   const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     categories: [],
     minPlayers: 'Όλοι',
@@ -20,10 +59,27 @@ const BoardGamesContent = () => {
     duration: 'Όλες',
     age: 'Όλες',
   });
-  const [filteredBoardGames, setFilteredBoardGames] = useState(boardGames);
+  const [filteredBoardGames, setFilteredBoardGames] = useState([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchText, setSearchText] = useState('');
+  const pageSize = 8;
+  const [allFilteredBoardGames, setAllFilteredBoardGames] = useState([]);
+  const [allCafeBoardGames, setAllCafeBoardGames] = useState([]);
+  const { id: cafeId } = useParams();
 
-  const handleApplyFilters = (newFilters) => {
+  const handleApplyFilters = async (newFilters, _filteredGames, isClear = false) => {
     setFilters(newFilters);
+    setCurrentPage(1);
+
+    if (isClear) {
+      setSearchText('');
+      fetchHotBoardGames(1, pageSize);
+      navigate(location.pathname);
+      return;
+    }
+
+    await fetchFilteredBoardGames(newFilters, 1, pageSize, searchText);
 
     const queryParams = new URLSearchParams();
     for (const key in newFilters) {
@@ -32,71 +88,185 @@ const BoardGamesContent = () => {
     navigate(`?${queryParams.toString()}`);
   };
 
+  // Handle pagination change
+  const handlePageChange = async (page) => {
+    setCurrentPage(page);
+
+    if (searchText) {
+      fetchBoardGames(searchText, page, pageSize);
+      return;
+    }
+
+      if (cafeId) {
+      const startIdx = (page - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      setFilteredBoardGames(allCafeBoardGames.slice(startIdx, endIdx));
+      return;
+    }
+
+    if (isFiltersActive()) {
+      const startIdx = (page - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      setFilteredBoardGames(allFilteredBoardGames.slice(startIdx, endIdx));
+      return;
+    }
+    fetchHotBoardGames(page, pageSize);
+  };
+
+  // Helper to check if filters are active
+  const isFiltersActive = () => (
+    filters.categories.length > 0 ||
+    (filters.minPlayers !== 'Όλοι' && filters.minPlayers !== null && filters.minPlayers !== undefined) ||
+    (filters.maxPlayers !== 'Όλοι' && filters.maxPlayers !== null && filters.maxPlayers !== undefined) ||
+    (filters.duration !== 'Όλες' && filters.duration !== undefined) ||
+    (filters.age !== 'Όλες' && filters.age !== undefined)
+  );
+
+  const fetchFilteredBoardGames = async (filtersObj, page = 1, size = pageSize, searchText="") => {
+    setLoading(true);
+    try {
+      const backendFilters = transformFiltersForBackend(filtersObj);
+      const response = await axiosInstance.post('/api/board-game/filter', {
+        ...backendFilters,
+        searchText: searchText,
+      });
+      const allGames = response.data.boardGames;
+      setAllFilteredBoardGames(allGames);
+      setTotalElements(allGames.length);
+      // Slice for current page
+      const startIdx = (page - 1) * size;
+      const endIdx = startIdx + size;
+      setFilteredBoardGames(allGames.slice(startIdx, endIdx));
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+      setFilteredBoardGames([]);
+      setAllFilteredBoardGames([]);
+      setTotalElements(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBoardGames = async (searchText = '', page = 1, size = 8) => {
+    setLoading(true);
+    try {
+      const { boardGames, totalElements } = await searchBoardGames(searchText, page, size);
+      setFilteredBoardGames(boardGames);
+      setTotalElements(totalElements);
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchHotBoardGames = async (page = 1, size = 8) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.get(
+        `api/hot-games?currentPage=${page}&pageSize=${size}`
+      );
+      setFilteredBoardGames(response.data.boardGames);
+      setTotalElements(response.data.totalElements);
+    } catch (error) {
+      toast.error(error, { position: 'top-center' });
+      setFilteredBoardGames([]);
+      setTotalElements(0);
+    } finally {
+      setLoading(false); 
+    }
+  };
+
+  const fetchCafeBoardGames = async (cafeId, currentPage, pageSize) => {
+    setLoading(true);
+    try {
+      // Fetch all board games for the cafe (no pagination params)
+      const response = await axiosInstance.post(
+        `/api/board-game-cafes/id/${cafeId}/board-games`
+      );
+      const allGames = response.data.boardGames;
+      setAllCafeBoardGames(allGames);
+      setTotalElements(allGames.length);
+      // Slice for current page
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      setFilteredBoardGames(allGames.slice(startIdx, endIdx));
+    } catch (error) {
+      toast.error(error?.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+      setFilteredBoardGames([]);
+      setAllCafeBoardGames([]);
+      setTotalElements(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearchText('');
+    setCurrentPage(1); 
+    setAllFilteredBoardGames([]);
+    fetchHotBoardGames(1, pageSize);
+  };  
+
+  useEffect(() => {
+    if (searchText) {
+      fetchBoardGames(searchText, currentPage, pageSize);
+    }
+  }, [searchText, currentPage, pageSize]);
+
+  useEffect(() => {
+    if (location.state?.searchText) {
+      setSearchText(location.state.searchText);
+    }
+  }, [location.state?.searchText]);
+
+  useEffect(() => {
+    if (cafeId) {
+      fetchCafeBoardGames(cafeId, currentPage, pageSize);
+    } else if (isFiltersActive()) {
+      fetchFilteredBoardGames(filters, currentPage, pageSize, searchText);
+    } else if (!searchText && !location.state?.searchText){
+      fetchHotBoardGames(currentPage, pageSize);
+    } 
+  }, [searchText, currentPage, pageSize, location.state, cafeId]);
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const updatedFilters = { ...filters };
+    const updatedFilters = {
+      categories: [],
+      minPlayers: 'Όλοι',
+      maxPlayers: 'Όλοι',
+      duration: 'Όλες',
+      age: 'Όλες',
+    };
     queryParams.forEach((value, key) => {
-      updatedFilters[key] = value;
+      if (key === "categories") {
+        updatedFilters.categories = Array.isArray(value) ? value : [value];
+      } else if (["minPlayers", "maxPlayers", "duration", "age"].includes(key)) {
+        updatedFilters[key] = value;
+      }
     });
     setFilters(updatedFilters);
   }, [location.search]);
-
-  useEffect(() => {
-    let filteredGames = boardGames;
-
-    if (searchTerm) {
-      filteredGames = filteredGames.filter(game =>
-        game.name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filters.categories.length > 0) {
-      filteredGames = filteredGames.filter(game =>
-        filters.categories.includes(game.category)
-      );
-    }
-
-    if (filters.minPlayers !== 'Όλοι') {
-      filteredGames = filteredGames.filter(game =>
-        game.minPlayers >= parseInt(filters.minPlayers)
-      );
-    }
-
-    if (filters.maxPlayers !== 'Όλοι') {
-      filteredGames = filteredGames.filter(game =>
-        game.maxPlayers <= parseInt(filters.maxPlayers)
-      );
-    }
-
-    if (filters.duration !== 'Όλες') {
-      filteredGames = filteredGames.filter(game =>
-        game.duration === filters.duration
-      );
-    }
-
-    if (filters.age !== 'Όλες') {
-      filteredGames = filteredGames.filter(game =>
-        game.age === filters.age
-      );
-    }
-
-    setFilteredBoardGames(filteredGames);
-  }, [searchTerm, filters]);
-
   const handleClose = () => setShowFilters(false);
   const handleShow = () => setShowFilters(true);
 
   const getHeaderText = () => {
-    if ((!searchTerm && filters.categories.length === 0)) {
-      return 'Προτεινόμενα:';
+    if ((!searchText && filters.categories.length === 0 && !cafeId)) {
+      return `Δημοφιλή επιτραπέζια (${totalElements}):`;
     }
-    return `Αποτελέσματα (${filteredBoardGames.length}):`; 
+    return `Αποτελέσματα (${totalElements}):`; 
   };
+
   return (
     <>
       <Row className='mb-5'>
         <Col md={12} xs={12}>
-          <BoardGameSelectBar/>
+          <BoardGameSelectBar   
+            searchText={searchText}
+            setSearchText={setSearchText}
+            onClearSearch={handleClearSearch}
+          />
         </Col>    
       </Row>
 
@@ -108,11 +278,26 @@ const BoardGamesContent = () => {
 
       <Row className="w-100">
         <Col lg={3} className="d-none d-lg-block">
-          <BoardGameFilters onApplyFilters={handleApplyFilters} />
+          <BoardGameFilters onApplyFilters={handleApplyFilters} searchText={searchText} />
         </Col>
 
         <Col lg={9} xs={12} className="mt-4 mt-lg-0">
-          <BoardGameCards headerText={getHeaderText()} boardGames={filteredBoardGames} />
+          {loading ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <BoardGameCards 
+              headerText={getHeaderText()} 
+              boardGames={filteredBoardGames} 
+              totalElements={totalElements}
+              currentPage={currentPage}
+              handlePageChange={handlePageChange}
+              itemsPerPage={pageSize}
+            />
+          )}
         </Col>
       </Row>
 
@@ -121,7 +306,7 @@ const BoardGamesContent = () => {
           <Offcanvas.Title>Φίλτρα</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-          <BoardGameFilters onApplyFilters={handleApplyFilters} />
+            <BoardGameFilters onApplyFilters={handleApplyFilters} searchText={searchText} />
         </Offcanvas.Body>
       </Offcanvas>
     </>

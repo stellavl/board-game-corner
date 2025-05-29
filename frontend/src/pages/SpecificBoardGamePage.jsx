@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Container, Row, Col, Offcanvas } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
@@ -9,15 +9,72 @@ import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImage
 import Reviews from "../components/boardgamepage/Reviews";
 import ReservationForm from "../components/common/ReservationForm";
 import BoardGameCards from "../components/common/BoardGameCards";
-import boardGames from "../data/boardGames";
+import { toast } from "react-toastify";
+import Spinner from 'react-bootstrap/Spinner'; 
+import axiosInstance from '../config/axiosConfig';
 
 const SpecificBoardGamePage = () => {
     const { boardGameName } = useParams();
-    const boardGame = boardGames.find(boardGame => boardGame.name === boardGameName);
+    const [boardGame, setBoardGame] = useState(null);
     const [showReviews, setShowReviews] = useState(false);
+    const [loading, setLoading] = useState(true); 
+    const [suggestedGames, setSuggestedGames] = useState([]);
+    const [suggestedTotal, setSuggestedTotal] = useState(0);
+    const [suggestedPage, setSuggestedPage] = useState(1);
+    const suggestedPageSize = 8;
+    const [suggestedLoading, setSuggestedLoading] = useState(false);
 
-    if (!boardGame) {
-        return <h1 className="text-center mt-5">Game Not Found</h1>;
+    useEffect(() => {
+        const fetchBoardGame = async () => {
+            try {
+                const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
+                setBoardGame(response.data);
+            } catch (error) {
+                toast.error(error,{ position: 'top-center' });
+            } finally {
+                setLoading(false); 
+            }
+        };
+        fetchBoardGame();
+    }, [boardGameName]);
+
+    // Fetch suggested games (hot games except the current one), paginated
+    useEffect(() => {
+        const fetchSuggestedGames = async () => {
+            setSuggestedLoading(true);
+            try {
+                const response = await axiosInstance.get(
+                    `api/hot-games?currentPage=${suggestedPage}&pageSize=${suggestedPageSize}`
+                );
+                // Filter out the current game
+                const filtered = response.data.boardGames.filter(
+                    (game) => game.name !== boardGame?.name
+                );
+                setSuggestedGames(filtered);
+                setSuggestedTotal(
+                    boardGame
+                        ? Math.max(response.data.totalElements - 1, 0)
+                        : response.data.totalElements
+                );
+            } catch (error) {
+                toast.error(error,{ position: 'top-center' });
+                setSuggestedGames([]);
+                setSuggestedTotal(0);
+            } finally {
+                setSuggestedLoading(false);
+            }
+        };
+        if (boardGame) fetchSuggestedGames();
+    }, [boardGame, suggestedPage]);
+
+    if (loading || !boardGame) {
+        return (
+            <div className="text-center mt-5">
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </div>
+        );
     }
 
     // Handle the toggle of reviews visibility
@@ -96,14 +153,30 @@ const SpecificBoardGamePage = () => {
                     {/* Reservation Form */}
                     <Row>
                         <Container className="p-3 text-center">
-                            <ReservationForm showBoardGame={false} boardGameTitle={boardGame.name} />
+                            <ReservationForm gameFromGamePage={boardGame} />
                         </Container>
                     </Row>
 
                     {/* Suggested Board Games */}
                     <Row className="mt-4" >
                         <Col className="col-9 mx-auto">    
-                            <BoardGameCards maxHeight="350px" headerText="Αποτελέσματα" boardGames={boardGames}/>
+                            {suggestedLoading ? (
+                                <div className="text-center">
+                                    <Spinner animation="border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
+                                </div>
+                            ) : (
+                                <BoardGameCards
+                                    maxHeight="350px"
+                                    headerText="Εξερεύνησε άλλα επιτραπέζια:"
+                                    boardGames={suggestedGames}
+                                    totalElements={suggestedTotal}
+                                    currentPage={suggestedPage}
+                                    handlePageChange={setSuggestedPage}
+                                    itemsPerPage={suggestedPageSize}
+                                />
+                            )}
                         </Col>
                     </Row>
                 </Container>

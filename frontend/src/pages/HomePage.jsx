@@ -7,7 +7,7 @@ import BoardGameSelectBar from '../components/common/BoardGameSelectBar';
 
 const HomePage = () => {
     const navigate = useNavigate();
-    const [selectedGame, setSelectedGame] = useState(null);
+    const [searchText, setSearchText] = useState('');
 
     const navigateToBoardGames = () => {
         navigate('/boardgames');
@@ -27,7 +27,10 @@ const HomePage = () => {
                 </Col>
             </Row>
 
-            <BoardGameSelectBar />
+            <BoardGameSelectBar 
+                searchText={searchText}
+                setSearchText={setSearchText}
+            />
 
             <Container className="p-5 text-center">
                 <ReservationForm />

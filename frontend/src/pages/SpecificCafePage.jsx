@@ -1,25 +1,49 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Image } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
+import { Container, Row, Col, Image, Spinner } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/common/BackButton';
-import boardGameCafes from '../data/boardGameCafes';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt, faPhone } from '@fortawesome/free-solid-svg-icons';
 import ReservationForm from '../components/common/ReservationForm';
 import BoardGamesContent from '../components/common/BoardGamesContent';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import axiosInstance from '../config/axiosConfig';
 
 const SpecificCafePage = () => {
-    const { cityName, cafeName } = useParams();
-    const cafe = boardGameCafes.find(cafe => cafe.name === cafeName && cafe.city === cityName);
+    const { id } = useParams();
+    const [cafe, setCafe] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [imageLoaded, setImageLoaded] = useState(false);
+
+    useEffect(() => {
+        const fetchCafe = async () => {
+            setLoading(true);
+            try {
+                const res = await axiosInstance.get(`/api/board-game-cafes/id/${id}`);
+                setCafe(res.data);
+            } catch (error) {
+                setCafe(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchCafe();
+    }, [id]);
+
+     if (loading) {
+        return (
+            <Container className="text-center mt-5">
+                <Spinner animation="border" />
+            </Container>
+        );
+    }
 
     if (!cafe) {
         return <h1 className="text-center mt-5">Cafe Not Found</h1>;
     }
 
-    return (
+   return (
         <>
             <div className="ms-5 mt-3">
                 <BackButton />
@@ -36,11 +60,12 @@ const SpecificCafePage = () => {
                         <div className='fw-semibold text-muted text-center pt-3'>
                             <div className='d-inline-block text-start'>
                                 <FontAwesomeIcon icon={faMapMarkerAlt} /> <span className="ms-1">{cafe.address}</span>
-                                    <br />
-                                <FontAwesomeIcon icon={faPhone} /> <span className="ms-1">{cafe.phone}</span>
+                                <br />
+                                <FontAwesomeIcon icon={faPhone} /> <span className="ms-1">{cafe.phoneNumber}</span>
                             </div>
                         </div>
                     </Col>
+                    { cafe.image && 
                     <Col xs={12} md={6} className="text-center">
                         {!imageLoaded && <Skeleton height={150} width={150} />}
                         <Image 
@@ -51,18 +76,19 @@ const SpecificCafePage = () => {
                             style={{ display: imageLoaded ? 'block' : 'none' }}
                         />
                     </Col>
+            }
                 </Row>
             </Container>
 
             <Container className="p-5 text-center">
-                <ReservationForm showGameCafe={false} cafeName={cafe.name} />
+                <ReservationForm cafeFromCafePage={cafe}/>
             </Container>
 
             <Container className='d-flex flex-column align-items-center w-75 mt-5'>
                 <h4 className="pb-3 fw-semibold text-decoration-underline" style={{ color: 'var( --color-gray-purple)' }}>
                     Διαθέσιμα Επιτραπέζια
                 </h4>
-                <BoardGamesContent/>
+            <BoardGamesContent/>
             </Container>
         </>
     );

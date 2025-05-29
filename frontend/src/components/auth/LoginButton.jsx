@@ -1,30 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Stack, Dropdown } from 'react-bootstrap';
 import LoginModal from './LoginModal';
-import SignupModal from './SignupModal'; 
 import AccountDropdown from '../layout/header/AccountDropdown';
-import users from '../../data/users';
+import { fetchUser } from '../utils/fetchUser';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginButton = () => {
   const [isDropdownButtonHovered, setIsDropdownButtonHovered] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignupModal, setShowSignupModal] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [userFirstName, setUserFirstName] = useState('');
+
+  const location = window.location; 
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    setDropdownOpen(false); 
+    setDropdownOpen(false);
     setUserId(null);
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userId'); 
+
+    if (location.pathname.startsWith('/profile')) {
+      navigate('/home');
+    }
   };
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen); 
   };
 
-  const userName = userId ? users.find(user => user.id === userId).firstName : '';
+  useEffect(() => {
+    // Check if the user is already logged in
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    }
+  });
 
+  useEffect(() => {
+    const fetchUserFirstName = async () => {
+      if (userId) {
+        const user = await fetchUser(userId);
+        if (user) {
+          setUserFirstName(user.first_name);
+          setIsLoggedIn(true);
+        } else {
+          setUserFirstName('');
+        }
+      } else {
+        setUserFirstName('');
+      }
+    };
+
+    fetchUserFirstName();
+  }, [userId]);
+  
   return (
     <>
       <Dropdown show={dropdownOpen} onToggle={toggleDropdown}>
@@ -51,7 +85,7 @@ const LoginButton = () => {
         >
           <Stack direction="horizontal" gap={2} className="w-100 justify-content-center">
             <span className="text-truncate" style={{ maxWidth: '100px' }}>
-              {isLoggedIn ? userName : 'Σύνδεση'}
+              {isLoggedIn ? userFirstName : 'Σύνδεση'}
             </span>
           </Stack>
         </Dropdown.Toggle>
@@ -63,13 +97,7 @@ const LoginButton = () => {
         showLoginModal={showLoginModal}
         setShowLoginModal={setShowLoginModal}
         setIsLoggedIn={setIsLoggedIn}
-        setShowSignUpModal={setShowSignupModal}
         setUserId={setUserId}
-      />
-      <SignupModal
-        showModal={showSignupModal}
-        setShowModal={setShowSignupModal}
-        setShowLoginModal={setShowLoginModal}
       />
     </>
   );

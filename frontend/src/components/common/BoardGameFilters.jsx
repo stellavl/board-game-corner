@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import {Dropdown, Form, Card, Row, Col } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import {Dropdown, Form, Card, Row, Col, Spinner } from "react-bootstrap";
 import OrangeButton from "./OrangeButton";
+import axiosInstance from '../../config/axiosConfig';
+import { toast } from "react-toastify"; 
 
-const categories = ["Περιπέτειας", "Στρατηγικής", "Οικογενειακά"];
 const playerOptions = ["Όλοι", 1, 2, 3, 4, 5, 6, 7, 8, 9, "10+"];
 
-const BoardGameFilters = ({ onApplyFilters }) => {
+const BoardGameFilters = ({ onApplyFilters, searchText }) => {
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [minPlayers, setMinPlayers] = useState("Όλοι");
   const [maxPlayers, setMaxPlayers] = useState("Όλοι");
@@ -45,20 +48,18 @@ const BoardGameFilters = ({ onApplyFilters }) => {
   };
 
   const handleApplyFilters = () => {
-    onApplyFilters({
+    const filters = {
       categories: selectedCategories,
       minPlayers,
       maxPlayers,
       duration,
       age,
-    });
-
-    // After applying filters, set filtersApplied to true
+    };
+    onApplyFilters(filters);
     setFiltersApplied(true);
   };
-
+  
   const handleClearFilters = () => {
-    // Reset all filters to their initial values
     setSelectedCategories([]);
     setMinPlayers("Όλοι");
     setMaxPlayers("Όλοι");
@@ -71,8 +72,26 @@ const BoardGameFilters = ({ onApplyFilters }) => {
       maxPlayers: "Όλοι",
       duration: "Όλες",
       age: "Όλες",
-    });
+    }, true);
   };
+
+  const fetchBoardGameCategories = async (searchText) => {
+    setCategoriesLoading(true); 
+    try {
+      const response = await axiosInstance.get(`api/board-game/categories?searchText=${searchText}`);
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
+    } finally {
+      setCategoriesLoading(false); 
+    }
+  }
+
+  useEffect(() => {
+    setCategories([]);
+    fetchBoardGameCategories(searchText)
+      .then(( boardGameCategories ) => setCategories(boardGameCategories))
+  }, [searchText]);
 
   return (
     <Card className="p-3 rounded border-2 " style={{ borderColor: "var(--color-orange)" }}>
@@ -95,43 +114,6 @@ const BoardGameFilters = ({ onApplyFilters }) => {
         )}
 
         <Form style={{ color: 'var(--color-gray-purple)' }}>
-          {/* Κατηγορία (Category) */}
-          <Form.Group className="mb-2">
-            <Form.Label>
-              <strong>Κατηγορία</strong>
-            </Form.Label>
-
-            <Dropdown>
-                <Dropdown.Toggle
-                    variant="light"
-                    className="w-100 text-start d-flex flex-wrap align-items-center"
-                    style={{ minHeight: "38px" }} // Ensures proper alignment
-                >
-                    <span className="flex-grow-1">
-                    {selectedCategories.length > 0 ? (
-                        selectedCategories.map((category, index) => (
-                        <div key={index}>{category}</div>
-                        ))
-                    ) : (
-                        "Όλες"
-                    )}
-                    </span>
-                </Dropdown.Toggle>
-                <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
-                    {categories.map((category) => (
-                    <Form.Check
-                        key={category}
-                        type="checkbox"
-                        label={category}
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => handleCategoryChange(category)}
-                        className="ms-3"
-                    />
-                    ))}
-                </Dropdown.Menu>
-                </Dropdown>
-
-          </Form.Group>
 
           {/* Διάρκεια (Duration) */}
           <Form.Group className="mb-3">
@@ -193,13 +175,12 @@ const BoardGameFilters = ({ onApplyFilters }) => {
           </Form.Group>
 
           {/* Ηλικία (Age) */}
-          <Form.Group className="mb-3">
+          <Form.Group className="mb-2">
             <Form.Label>
               <strong>Ηλικία</strong>
             </Form.Label>
             <Form.Control as="select" value={age} onChange={(e) => setAge(e.target.value)}>
               <option>Όλες</option>
-              <option>0-3</option>
               <option>3+</option>
               <option>6+</option>
               <option>12+</option>
@@ -207,9 +188,52 @@ const BoardGameFilters = ({ onApplyFilters }) => {
             </Form.Control>
           </Form.Group>
 
+          {/* Κατηγορία (Category) */}
+          <Form.Group className="mb-3">
+            <Form.Label>
+              <strong>Κατηγορία</strong>
+            </Form.Label>
+            <Dropdown>
+                <Dropdown.Toggle
+                    variant="light"
+                    className="w-100 text-start d-flex flex-wrap align-items-center"
+                    style={{ minHeight: "38px" }} // Ensures proper alignment
+                >
+                    <span className="flex-grow-1">
+                    {selectedCategories.length > 0 ? (
+                        selectedCategories.map((category, index) => (
+                        <div key={index}>{category}</div>
+                        ))
+                    ) : (
+                        "Όλες"
+                    )}
+                    </span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu style={{ maxHeight: "200px", overflowY: "auto" }}>
+                  {categoriesLoading ? (
+                    <div className="d-flex justify-content-center align-items-center py-2">
+                      <Spinner animation="border" size="sm" />
+                    </div>
+                  ) : (
+                    categories &&
+                      categories.map((category) => (
+                        <Form.Check
+                          key={category}
+                          type="checkbox"
+                          label={category}
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => handleCategoryChange(category)}
+                          className="ms-3"
+                        />
+                    )))}
+                </Dropdown.Menu>
+                </Dropdown>
+          </Form.Group>
+
           <div className="d-flex justify-content-center">
             <OrangeButton text="Εφαρμογή" size="btn-md" onClick={handleApplyFilters} />
           </div>
+
         </Form>
       </Card.Body>
     </Card>

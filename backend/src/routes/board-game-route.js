@@ -17,4 +17,6 @@ router.post('/board-game/filter', filterBoardGamesController);
 router.get ('/board-game/:boardGameName', getBoardGameByNameController);
 router.post('/board-game', searchPaginatedBoardGames);
 
+console.log("Loaded board game routes");
+
 export default router;

@@ -8,4 +8,6 @@ const router = express.Router();
 router.get("/basic-users/:id", authenticateToken, getUserByIdController);
 router.post("/basic-users", createUserController);
 
+console.log("Loaded user routes");
+
 export default router;

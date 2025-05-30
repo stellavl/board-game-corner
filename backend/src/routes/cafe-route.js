@@ -8,4 +8,6 @@ router.get("/board-game-cafes/city/:city", getCafesByCityController);
 router.get("/board-game-cafes/id/:id", getCafeByIdController);
 router.get("/board-game-cafes/id/:id/board-games", getBoardGamesByCafeIdController);
 
+console.log("Loaded cafe routes");
+
 export default router;

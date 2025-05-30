@@ -13,5 +13,6 @@ router.post("/reservations", createReservationController);
 router.get("/reservations/basic-user/:userId", authenticateToken, getReservationsByUserController);
 router.get("/reservations/admin/:userId", authenticateToken, getReservationsByCafeController);
 router.put("/reservations/:reservationId/status", authenticateToken, updateReservationStatusController);
+console.log("Loaded reservation routes");
 
 export default router;

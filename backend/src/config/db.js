@@ -2,7 +2,7 @@ import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 import url from 'url';
 
-dotenv.config({ path: '../.env' });
+dotenv.config();
 
 export const connectToDatabase = async () => {
   if (process.env.JAWSDB_URL) {

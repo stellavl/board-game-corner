@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cd backend && node src/server.js",
-    "heroku-postbuild": "cd frontend && npm install && npm run build"
+    "heroku-postbuild": "cd frontend && npm install && npm run build && cd ../backend && npm install"
   },
   "repository": {
     "type": "git",
@@ -14,7 +14,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/stellavl/board-game-corner/issues"
   },

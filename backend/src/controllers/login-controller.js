@@ -3,7 +3,7 @@ import { loginAdminUser } from "../services/login-admin-service.js";
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 
-dotenv.config({ path: '../.env' });
+dotenv.config();
 
 export const login = async (req, res) => {
   const { email, password, role } = req.body;

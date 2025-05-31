@@ -24,7 +24,7 @@ export function buildCustomerNewReservationEmailHtml(reservation) {
           <td style="padding: 12px 16px;">${reservation.board_game_name - reservation.city || "Θα επιλεχθεί στο κατάστημα"}</td>
         </tr>
         <tr>
-          <td style="padding: 12px 16px; font-weight: bold; color: #E95C2F; background: #fff3ee;">Καφέ:</td>
+          <td style="padding: 12px 16px; font-weight: bold; color: #E95C2F; background: #fff3ee;">Παιχνιδοκαφέ:</td>
           <td style="padding: 12px 16px; background: #fff3ee;">${reservation.board_game_cafe_name}</td>
         </tr>
         <tr>

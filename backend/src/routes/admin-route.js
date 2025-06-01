@@ -7,6 +7,4 @@ const router = express.Router();
 router.get("/admins/:id", authenticateToken, getAdminByIdController);
 router.post("/admins", createAdminController);
 
-console.log("Loaded admin routes");
-
 export default router;

@@ -181,7 +181,7 @@ const BoardGamesContent = () => {
     setLoading(true);
     try {
       // Fetch all board games for the cafe (no pagination params)
-      const response = await axiosInstance.post(
+      const response = await axiosInstance.get(
         `/api/board-game-cafes/id/${cafeId}/board-games`
       );
       const allGames = response.data.boardGames;

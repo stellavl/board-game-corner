@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import path from 'path';
+import path from 'path'; 
 import { fileURLToPath } from 'url';
 import router from './routes/router.js';
 
@@ -24,9 +24,6 @@ app.use('/api', router);
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../frontend/build')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/build', 'index.html'));
-  });
 }
 
 export default app;

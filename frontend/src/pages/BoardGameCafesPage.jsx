@@ -11,7 +11,7 @@ const BoardGameCafesPage = () => {
     useEffect(() => {
         const fetchAllCafes = async () => {
             try {
-                const res = await axiosInstance.get('api/board-game-cafes/all');
+                const res = await axiosInstance.get('/api/board-game-cafes/all');
                 setCafes(res.data);
             } catch (err) {
                 setCafes([]);

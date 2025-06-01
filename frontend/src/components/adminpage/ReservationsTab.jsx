@@ -33,7 +33,7 @@ const ReservationsTab = () => {
             const userId = localStorage.getItem("userId");
             const authToken = localStorage.getItem("authToken");
             const response = await axiosInstance.get(
-                `api/reservations/admin/${userId}`,
+                `/api/reservations/admin/${userId}`,
                 {
                     headers: {
                         Authorization: `Bearer ${authToken}`,

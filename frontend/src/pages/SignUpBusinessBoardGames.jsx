@@ -36,7 +36,7 @@ const SignUpBusinessBoardGames = () => {
     setLoading(true);
     try {
       const response = await axiosInstance.get(
-        `api/hot-games?currentPage=${page}&pageSize=${size}`
+        `/api/hot-games?currentPage=${page}&pageSize=${size}`
       );
       setDisplayedBoardGames(response.data.boardGames);
       setTotalElements(response.data.totalElements);

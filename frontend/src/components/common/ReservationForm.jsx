@@ -28,7 +28,7 @@ const ReservationForm = ({ cafeFromCafePage, gameFromGamePage }) => {
 
   const fetchCafes = async () => {
     try {
-      const res = await axiosInstance.get("api/board-game-cafes/all");
+      const res = await axiosInstance.get("/api/board-game-cafes/all");
       setGameCafes(res.data);
     } catch (err) {
       setGameCafes([]);

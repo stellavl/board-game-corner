@@ -22,7 +22,7 @@ const Admin = () => {
                 setLoading(true);
                 setError(null);
                 const token = localStorage.getItem("authToken");
-                const response = await axiosInstance.get(`api/admins/${id}`, {
+                const response = await axiosInstance.get(`/api/admins/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

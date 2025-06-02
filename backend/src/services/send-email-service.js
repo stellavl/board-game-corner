@@ -1,6 +1,6 @@
 import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
-import { buildCustomerNewReservationEmailHtml } from "../utils/reservation-email-html.js";
+import { buildCustomerReservationEmailHtml } from "../utils/reservation-email-html.js";
 
 dotenv.config({ path: '../.env' });
 
@@ -20,7 +20,15 @@ export function buildCustomerNewReservationEmail(reservation) {
   return {
     to: reservation.customer_email,
     subject: "Νέα Κράτηση στο Board Game Corner!",
-    html: buildCustomerNewReservationEmailHtml(reservation)
+    html: buildCustomerReservationEmailHtml(reservation, "Σε επεξεργασία")
+  };
+}
+
+export function buildCustomerReservationUpdatedStatusEmail(reservation, status) {
+  return {
+    to: reservation.customer_email,
+    subject: "Ενημέρωση κατάστασης κράτησης στο Board Game Corner",
+    html: buildCustomerReservationEmailHtml(reservation, status)
   };
 }
 

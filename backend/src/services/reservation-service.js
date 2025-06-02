@@ -5,7 +5,7 @@ import {
   updateReservationStatusRepo,
   getReservationDataByIdRepo 
 } from "../repositories/reservation-repo.js";
-import { buildCustomerNewReservationEmail } from "./send-email-service.js";
+import { buildCustomerNewReservationEmail, buildCustomerReservationUpdatedStatusEmail } from "./send-email-service.js";
 import sendEmail from "../services/send-email-service.js";
 
 function validateReservationData(reservationData) {
@@ -56,7 +56,7 @@ export const createReservationService = async (reservationDataFromRequest) => {
   const reservationWithStatus = { ...reservationDataFromRequest, status: "Αναμονή για επιβεβαίωση" };
   const reservationId = await createReservationRepo(reservationWithStatus);
   const reservationData = await getReservationDataByIdRepo(reservationId);
-  const email = buildCustomerNewReservationEmail(reservationData, reservationId)
+  const email = buildCustomerNewReservationEmail(reservationData)
   await sendEmail(email);
   return reservationId;
 };
@@ -80,7 +80,11 @@ export const updateReservationStatusService = async (reservationId, status) => {
   if (!allowedStatuses.includes(status)) {
     throw new Error("Μη έγκυρη κατάσταση κράτησης.");
   }
-  return await updateReservationStatusRepo(reservationId, status);
+  const result = await updateReservationStatusRepo(reservationId, status);
+  const reservationData = await getReservationDataByIdRepo(reservationId);
+  const email = buildCustomerReservationUpdatedStatusEmail(reservationData, status);
+  await sendEmail(email);
+  return result;
 };
 
 export const getReservationDataByIdService = async (reservationId) => {

@@ -2,7 +2,7 @@ import sgMail from '@sendgrid/mail';
 import dotenv from 'dotenv';
 import { buildCustomerNewReservationEmailHtml } from "../utils/reservation-email-html.js";
 
-dotenv.config();
+dotenv.config({ path: '../.env' });
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 

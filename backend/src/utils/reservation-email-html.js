@@ -1,6 +1,5 @@
 export function buildCustomerReservationEmailHtml(reservation) {
   const statusText = reservation.status || "Αναμονή για επιβεβαίωση";
-  console.log("Status Text:", statusText);
   // Status-specific heading
   let headingHtml = `
     <h2 style="margin: 0; font-size: 1.5em;">Η κράτησή σας δημιουργήθηκε επιτυχώς!</h2>

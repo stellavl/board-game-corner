@@ -4,13 +4,11 @@ import {
   getReservationsByCafeService,
   updateReservationStatusService 
 } from "../services/reservation-service.js";
-import sendEmail from "../services/send-email-service.js";
 
 export const createReservationController = async (req, res) => {
   try {
     const reservationData = req.body;
     const { reservationId, email } = await createReservationService(reservationData);
-    await sendEmail(email);
     res.status(201).json({ reservationId });
   } catch (err) {
     res.status(400).json({ error: err.message });

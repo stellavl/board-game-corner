@@ -6,6 +6,7 @@ import {
   getReservationDataByIdRepo 
 } from "../repositories/reservation-repo.js";
 import { buildCustomerNewReservationEmail } from "./send-email-service.js";
+import sendEmail from "../services/send-email-service.js";
 
 function validateReservationData(reservationData) {
   const requiredFields = [
@@ -55,11 +56,9 @@ export const createReservationService = async (reservationDataFromRequest) => {
   const reservationWithStatus = { ...reservationDataFromRequest, status: "Αναμονή για επιβεβαίωση" };
   const reservationId = await createReservationRepo(reservationWithStatus);
   const reservationData = await getReservationDataByIdRepo(reservationId);
-
-  return {
-    reservationId,
-    email: buildCustomerNewReservationEmail(reservationData, reservationId)
-  };
+  const email = buildCustomerNewReservationEmail(reservationData, reservationId)
+  await sendEmail(email);
+  return reservationId;
 };
 
 export const getReservationsByUserService = async (userId) => {

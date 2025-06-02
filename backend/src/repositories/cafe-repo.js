@@ -5,7 +5,8 @@ export const findAllCafes = async () => {
   const [rows] = await connection.execute(
     `SELECT c.id, c.name, c.city, c.address, c.phone_number AS phoneNumber, c.photo, u.email
      FROM board_game_cafe c
-     JOIN user u ON c.user_id = u.id`
+     JOIN user u ON c.user_id = u.id
+     ORDER BY c.name ASC`
   );
   await connection.end();
   return rows;
@@ -27,7 +28,8 @@ export const findCafesByCity = async (city) => {
      JOIN user u ON c.user_id = u.id
      LEFT JOIN board_game_catalog bgc ON c.id = bgc.board_game_cafe_id
      WHERE c.city = ?
-     GROUP BY c.id, c.name, c.city, c.address, c.phone_number, c.photo, u.email`,
+     GROUP BY c.id, c.name, c.city, c.address, c.phone_number, c.photo, u.email
+     ORDER BY c.name ASC`,
     [city]
   );
   await connection.end();
@@ -53,7 +55,8 @@ export const findAllBoardGamesByCafeId = async (cafeId) => {
     `SELECT bg.id, bg.bgg_id, bg.name, bg.category, bg.min_players, bg.max_players, bg.playing_time, bg.age, bg.description, bg.image, bg.is_hot
       FROM board_game_catalog bgc
       JOIN board_game bg ON bgc.board_game_id = bg.id
-      WHERE bgc.board_game_cafe_id = ?`,
+      WHERE bgc.board_game_cafe_id = ?
+      ORDER BY bg.name ASC`,
     [cafeId]
   );
   await connection.end();

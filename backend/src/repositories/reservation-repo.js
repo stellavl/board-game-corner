@@ -115,3 +115,28 @@ export const updateReservationStatusRepo = async (reservationId, status) => {
     await connection.end();
   }
 };
+
+export const getReservationDataByIdRepo = async (reservationId) => {
+  const connection = await connectToDatabase();
+  try {
+    const [rows] = await connection.execute(
+      `SELECT 
+         r.*,
+         DATE_FORMAT(r.date, '%d/%m/%Y') AS date,
+         DATE_FORMAT(r.time, '%H:%i') AS time,
+         bg.name AS board_game_name,
+         bgc.name AS board_game_cafe_name,
+         bgc.address AS board_game_cafe_address,
+         bgc.phone_number AS board_game_cafe_phone,
+         bgc.city AS board_game_cafe_city
+       FROM reservation r
+       LEFT JOIN board_game bg ON r.board_game_id = bg.id
+       JOIN board_game_cafe bgc ON r.board_game_cafe_id = bgc.id
+       WHERE r.id = ?`,
+      [reservationId]
+    );
+    return rows[0];
+  } finally {
+    await connection.end();
+  }
+};

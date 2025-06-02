@@ -2,10 +2,13 @@ import {
   createReservationRepo, 
   getReservationsByUserRepo,
   getReservationsByCafeRepo,
-  updateReservationStatusRepo 
+  updateReservationStatusRepo,
+  getReservationDataByIdRepo 
 } from "../repositories/reservation-repo.js";
+import { buildCustomerNewReservationEmail, buildCustomerReservationUpdatedStatusEmail } from "./send-email-service.js";
+import sendEmail from "../services/send-email-service.js";
 
-export const createReservationService = async (reservationData) => {
+function validateReservationData(reservationData) {
   const requiredFields = [
     "date",
     "time",
@@ -35,7 +38,6 @@ export const createReservationService = async (reservationData) => {
       reservationData[field] === ""
     ) {
       throw new Error(`Λείπει το απαιτούμενο πεδίο: ${fieldNames[field] || field}`);
-    
     }
   }
 
@@ -46,9 +48,17 @@ export const createReservationService = async (reservationData) => {
   if (!/^\d{10}$/.test(reservationData.customer_phone)) {
     throw new Error("Μη έγκυρη μορφή αριθμού τηλεφώνου");
   }
+}
 
-  const reservationWithStatus = { ...reservationData, status: "Αναμονή για επιβεβαίωση" };
-  return await createReservationRepo(reservationWithStatus);
+export const createReservationService = async (reservationDataFromRequest) => {
+  validateReservationData(reservationDataFromRequest);
+
+  const reservationWithStatus = { ...reservationDataFromRequest, status: "Αναμονή για επιβεβαίωση" };
+  const reservationId = await createReservationRepo(reservationWithStatus);
+  const reservationData = await getReservationDataByIdRepo(reservationId);
+  const email = buildCustomerNewReservationEmail(reservationData)
+  await sendEmail(email);
+  return reservationId;
 };
 
 export const getReservationsByUserService = async (userId) => {
@@ -70,5 +80,16 @@ export const updateReservationStatusService = async (reservationId, status) => {
   if (!allowedStatuses.includes(status)) {
     throw new Error("Μη έγκυρη κατάσταση κράτησης.");
   }
-  return await updateReservationStatusRepo(reservationId, status);
+  const result = await updateReservationStatusRepo(reservationId, status);
+  const reservationData = await getReservationDataByIdRepo(reservationId);
+  const email = buildCustomerReservationUpdatedStatusEmail(reservationData, status);
+  await sendEmail(email);
+  return result;
+};
+
+export const getReservationDataByIdService = async (reservationId) => {
+  if (!reservationId) {
+    throw new Error("Δεν βρέθηκε η κράτηση.");
+  }
+  return await getReservationDataByIdRepo(reservationId);
 };

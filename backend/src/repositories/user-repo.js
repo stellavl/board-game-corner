@@ -16,7 +16,7 @@ export const findUserByEmail = async (email) => {
      WHERE u.email = ?`,
     [email]
   );
-
+  await connection.end();
   return rows.length > 0 ? rows[0] : null;
 };
 
@@ -35,6 +35,7 @@ export const findUserById = async (id) => {
      WHERE u.id = ?`,
     [id]
   );
+  await connection.end();
   return rows.length > 0 ? rows[0] : null;
 };
 

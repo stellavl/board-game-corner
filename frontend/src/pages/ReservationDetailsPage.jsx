@@ -46,7 +46,7 @@ const ReservationDetailsPage = () => {
         const token = localStorage.getItem('authToken');
         if (userId && token) {
         try {
-            const res = await axiosInstance.get(`api/basic-users/${userId}`, {
+            const res = await axiosInstance.get(`/api/basic-users/${userId}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

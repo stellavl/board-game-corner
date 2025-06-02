@@ -3,11 +3,11 @@ import { connectToDatabase } from "../config/db.js";
 export const findBoardGameByBggId = async (bgg_id) => {
   const connection = await connectToDatabase();
   try {
-    const [rows] = await connection.execute(
-      'SELECT id, is_hot FROM board_game WHERE bgg_id = ?',
-      [bgg_id]
-    );
-    return rows;
+  const [rows] = await connection.execute(
+    'SELECT id, is_hot FROM board_game WHERE bgg_id = ?',
+    [bgg_id]
+  );
+  return rows;
   } finally {
     await connection.end(); 
   }
@@ -30,28 +30,28 @@ export const insertBoardGame = async (gameDetails) => {
   const connection = await connectToDatabase();
 
   try {
-    // If a game with the same ID exists, return its ID and skip insertion
-    const existingGameWithSameID = await findBoardGameByBggId(bgg_id);
-    if (existingGameWithSameID.length > 0) {
-      return existingGameWithSameID[0].id;
-    }
+  // If a game with the same ID exists, return its ID and skip insertion
+  const existingGameWithSameID = await findBoardGameByBggId(bgg_id);
+  if (existingGameWithSameID.length > 0) {
+    return existingGameWithSameID[0].id;
+  }
 
-    // If a game with the same name exists, return its ID and skip insertion
-    const [existingGameWithSameName] = await connection.execute(
-      'SELECT id FROM board_game WHERE name = ?',
-      [name]
-    );
-    if (existingGameWithSameName.length > 0) {
-      return existingGameWithSameName[0].id;
-    }
+  // If a game with the same name exists, return its ID and skip insertion
+  const [existingGameWithSameName] = await connection.execute(
+    'SELECT id FROM board_game WHERE name = ?',
+    [name]
+  );
+  if (existingGameWithSameName.length > 0) {
+    return existingGameWithSameName[0].id;
+  }
 
-    const [result] = await connection.execute(
-      `INSERT INTO board_game 
-      (bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot]
-    );
-    return result.insertId;
+  const [result] = await connection.execute(
+    `INSERT INTO board_game 
+    (bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [bgg_id, name, category, min_players, max_players, playing_time, age, description, image, is_hot]
+  );
+  return result.insertId;
   } finally {
     await connection.end();
   }
@@ -64,27 +64,31 @@ export const markGameAsNotHot = async (bggIdsToMarkNotHot) => {
     SET is_hot = false 
     WHERE bgg_id IN (?)`,
     [bggIdsToMarkNotHot]
-  );
+  ); 
+  await connection.end();
 };
 
 export const markGameAsHot = async (bgg_id) => {
-    const connection = await connectToDatabase();
-    await connection.execute(
-        `UPDATE board_game 
-        SET is_hot = true 
-        WHERE bgg_id = ?`,
-        [bgg_id]
-    );
+  const connection = await connectToDatabase();
+  await connection.execute(
+      `UPDATE board_game 
+      SET is_hot = true 
+      WHERE bgg_id = ?`,
+      [bgg_id]
+  );
+  await connection.end();
 }
 
 export const getHotBoardGames = async () => {
-  try {
+ try {
     const connection = await connectToDatabase();
     const [rows] = await connection.execute(
       'SELECT id, bgg_id, name, min_players, max_players, age, category, image, playing_time, description FROM board_game WHERE is_hot = true'
     );
+    await connection.end();
     return rows;
   } catch (error) {
+    await connection.end();
     throw new Error('Σφάλμα κατά την ανάκτηση των παιχνιδιών από τη βάση δεδομένων.');
   }
 };
@@ -96,8 +100,10 @@ export const getBoardGameByName = async (name) => {
       'SELECT id, bgg_id, name, min_players, max_players, age, category, image, playing_time, description FROM board_game WHERE name = ?',
       [name]
     );
+    await connection.end();
     return rows[0];
   } catch (error) {
+    await connection.end();
     throw new Error('Σφάλμα κατά την ανάκτηση του παιχνιδιού από τη βάση δεδομένων.');
   }
 }
@@ -108,8 +114,10 @@ export const getHotBoardGameCategories = async () => {
     const [rows] = await connection.execute(
       'SELECT DISTINCT category FROM board_game WHERE is_hot = true'
     );
+    await connection.end();
     return rows.map(row => row.category);
   } catch (error) {
+    await connection.end();
     throw new Error('Σφάλμα κατά την ανάκτηση των κατηγοριών από τη βάση δεδομένων.');
   }
 };
@@ -167,15 +175,15 @@ export const getFilteredHotBoardGamesRepo = async (filters) => {
 export const getCafesWithBoardGame = async (name) => {
   const connection = await connectToDatabase();
   try {
-    const [rows] = await connection.execute(
-      `SELECT DISTINCT c.*
-       FROM board_game bg
-       JOIN board_game_catalog bgc ON bg.id = bgc.board_game_id
-       JOIN board_game_cafe c ON bgc.board_game_cafe_id = c.id
-       WHERE bg.name = ?`,
-      [name]
-    );
-    return rows;
+  const [rows] = await connection.execute(
+    `SELECT DISTINCT c.*
+      FROM board_game bg
+      JOIN board_game_catalog bgc ON bg.id = bgc.board_game_id
+      JOIN board_game_cafe c ON bgc.board_game_cafe_id = c.id
+      WHERE bg.name = ?`,
+    [name]
+  );
+  return rows;
   } finally {
     await connection.end();
   }

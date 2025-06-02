@@ -11,7 +11,7 @@ export const findAdminByEmail = async (email) => {
      WHERE u.email = ? AND u.role = 'ADMIN'`,
     [email]
   );
-
+  await connection.end();
   return rows.length > 0 ? rows[0] : null;
 };
 
@@ -25,6 +25,7 @@ export const findAdminById = async (id) => {
      WHERE u.id = ? AND u.role = 'ADMIN'`,
     [id]
   );
+  await connection.end();
   return rows.length > 0 ? rows[0] : null;
 };
 

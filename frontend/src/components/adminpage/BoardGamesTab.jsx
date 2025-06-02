@@ -42,7 +42,7 @@ const BoardGamesTab = ({ cafeId }) => {
       setLoading(true);
       const token = localStorage.getItem("authToken");
       const response = await axiosInstance.get(
-        `api/board-game-cafes/id/${cafeId}/board-games`,
+        `/api/board-game-cafes/id/${cafeId}/board-games`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

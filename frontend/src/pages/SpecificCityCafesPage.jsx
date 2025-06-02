@@ -18,7 +18,7 @@ const SpecificCityCafesPage = () => {
         const fetchCityCafes = async () => {
             setLoading(true);
             try {
-                const res = await axiosInstance.get(`api/board-game-cafes/city/${cityName}`);
+                const res = await axiosInstance.get(`/api/board-game-cafes/city/${cityName}`);
                 setCityCafes(res.data);
             } catch (error) {
                 setCityCafes([]);
@@ -30,7 +30,7 @@ const SpecificCityCafesPage = () => {
 
         const fetchAllCafes = async () => {
             try {
-                const res = await axiosInstance.get('api/board-game-cafes/all');
+                const res = await axiosInstance.get('/api/board-game-cafes/all');
                 setAllCafes(res.data);
             } catch (error) {
                 setAllCafes([]);

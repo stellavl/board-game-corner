@@ -11,7 +11,7 @@ export const fetchUser = async (userId) => {
   }
 
   try {
-    const response = await axiosInstance.get(`api/basic-users/${userId}`, {
+    const response = await axiosInstance.get(`/api/basic-users/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

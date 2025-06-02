@@ -78,7 +78,7 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
   const fetchBoardGameCategories = async (searchText) => {
     setCategoriesLoading(true); 
     try {
-      const response = await axiosInstance.get(`api/board-game/categories?searchText=${searchText}`);
+      const response = await axiosInstance.get(`/api/board-game/categories?searchText=${searchText}`);
       return response.data;
     } catch (error) {
       toast.error(error.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });

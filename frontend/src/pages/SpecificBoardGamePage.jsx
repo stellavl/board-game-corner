@@ -27,7 +27,7 @@ const SpecificBoardGamePage = () => {
     useEffect(() => {
         const fetchBoardGame = async () => {
             try {
-                const response = await axiosInstance.get(`api/board-game/${boardGameName}`);
+                const response = await axiosInstance.get(`/api/board-game/${boardGameName}`);
                 setBoardGame(response.data);
             } catch (error) {
                 toast.error(error,{ position: 'top-center' });
@@ -44,7 +44,7 @@ const SpecificBoardGamePage = () => {
             setSuggestedLoading(true);
             try {
                 const response = await axiosInstance.get(
-                    `api/hot-games?currentPage=${suggestedPage}&pageSize=${suggestedPageSize}`
+                    `/api/hot-games?currentPage=${suggestedPage}&pageSize=${suggestedPageSize}`
                 );
                 // Filter out the current game
                 const filtered = response.data.boardGames.filter(

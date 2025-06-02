@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Container, Card, Row, Col } from "react-bootstrap";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import OrangeButton from "../components/common/OrangeButton";
 import BackButton from "../components/common/BackButton";
 import ConfirmationModal from "../components/common/ConfirmationModal";
@@ -62,7 +62,13 @@ const SignUpBusinessBoardGames = () => {
     }
   };
 
-  
+    const getHeaderText = () => {
+        if (!searchText) {
+        return `Δημοφιλή επιτραπέζια (${totalElements}):`;
+        }
+        return `Αποτελέσματα (${totalElements}):`; 
+    };
+
     const handlePageChange = async (page) => {
         setCurrentPage(page);
 
@@ -175,7 +181,7 @@ const SignUpBusinessBoardGames = () => {
                 </div>
             ) : (
                 <BoardGameCards 
-                    headerText={"Προσθέστε τα επιτραπέζια που διαθέτετε:"} 
+                    headerText={getHeaderText()} 
                     boardGames={displayedBoardGames} 
                     totalElements={totalElements}
                     currentPage={currentPage}

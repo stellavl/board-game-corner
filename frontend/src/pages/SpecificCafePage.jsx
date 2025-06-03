@@ -65,13 +65,17 @@ const SpecificCafePage = () => {
                             </div>
                         </div>
                     </Col>
-                    { cafe.image && 
+                    {cafe.photo && 
                     <Col xs={12} md={6} className="text-center">
                         {!imageLoaded && <Skeleton height={150} width={150} />}
                         <Image 
-                            src={`/${cafe.image}`} 
-                            alt={cafe.name} 
-                            fluid 
+                            src={
+                                process.env.NODE_ENV != 'production'
+                                    ? `http://localhost:5000/uploads/${cafe.photo}`
+                                    : `/uploads/${cafe.photo}`
+                            }
+                            alt={cafe.name}
+                            fluid
                             onLoad={() => setImageLoaded(true)}
                             style={{ display: imageLoaded ? 'block' : 'none' }}
                         />

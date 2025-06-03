@@ -10,6 +10,7 @@ import { Spinner } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { searchBoardGames } from '../components/utils/searchBoardGames';
 import BoardGameCards from "../components/common/BoardGameCards";
+import axios from 'axios';
 
 const SignUpBusinessBoardGames = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const SignUpBusinessBoardGames = () => {
     const [searchText, setSearchText] = useState('');
     const [addedGames, setAddedGames] = useState([]);    
     const [showModal, setShowModal] = useState(false);
-
+    
     const isAdded = (boardGame) => addedGames.some(g => g.bgg_id === boardGame.bgg_id);
 
     const handleActionClick = (boardGame) => {
@@ -88,18 +89,24 @@ const SignUpBusinessBoardGames = () => {
     const handleConfirm = async () => {
         setShowModal(false);
 
-        // Retrieve basic info and photo from sessionStorage
-        const basicInfo = JSON.parse(sessionStorage.getItem("adminBasicInfo") || "{}");
-        const photoBase64 = sessionStorage.getItem("adminPhoto");
+        // 1. Get basic info from sessionStorage
+        const adminBasicInfo = JSON.parse(sessionStorage.getItem("adminBasicInfo") || "{}");
+        // 2. Get photo (base64 string) from sessionStorage
+        const adminPhotoBase64 = sessionStorage.getItem("adminPhoto");
 
-        // Prepare FormData for file upload
+        // 3. Prepare FormData
         const formData = new FormData();
-        Object.entries(basicInfo).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
+        formData.append("name", adminBasicInfo.name || "");
+        formData.append("city", adminBasicInfo.city || "");
+        formData.append("address", adminBasicInfo.address || "");
+        formData.append("phone", adminBasicInfo.phone || "");
+        formData.append("email", adminBasicInfo.email || "");
+        formData.append("password", adminBasicInfo.password || "");
 
-        if (photoBase64) {
-            const arr = photoBase64.split(',');
+        // 4. Handle photo (convert base64 to File if present)
+        if (adminPhotoBase64) {
+            // Convert base64 to Blob/File
+            const arr = adminPhotoBase64.split(',');
             const mime = arr[0].match(/:(.*?);/)[1];
             const bstr = atob(arr[1]);
             let n = bstr.length;
@@ -107,13 +114,17 @@ const SignUpBusinessBoardGames = () => {
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            const blob = new Blob([u8arr], { type: mime });
-            formData.append("photo", blob, "photo.jpg");
+            const photoFile = new File([u8arr], "photo.jpg", { type: mime });
+            formData.append("photo", photoFile);
         }
-        formData.append("bggIds", JSON.stringify(addedGames.map(g => g.bgg_id)));
+
+        // 5. Add board games (bggIds as JSON string)
+        const bggIds = addedGames.map(g => g.bgg_id);
+        formData.append("bggIds", JSON.stringify(bggIds));
 
         try {
-            const response = await axiosInstance.post("/api/admins", formData);
+            const baseURL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000';
+            const response = await axios.post(`${baseURL}/api/admins`,formData);
             const userId = response.data.userId;
             const loginRes = await axiosInstance.post("/api/login", {
                 email: formData.get("email"),

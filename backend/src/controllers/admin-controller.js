@@ -16,16 +16,8 @@ export const createAdminController = [
   async (req, res) => {
     try {
       const adminData = req.body;
-      const photoPath = req.file ? req.file.path : null;
-      let bggIds = adminData.bggIds;
-      if (typeof bggIds === "string") {
-        try {
-          bggIds = JSON.parse(bggIds);
-        } catch {
-          bggIds = [];
-        }
-      }
-      const newAdmin = await createAdmin({ ...adminData, photo: photoPath, bggIds });
+      const photoFilename = req.file ? req.file.filename : null;
+      const newAdmin = await createAdmin({ ...adminData, photo: photoFilename });
       res.status(201).json({
         message: "Επιτυχής εγγραφή παιχνιδοκαφέ.",
         userId: newAdmin.userId, 

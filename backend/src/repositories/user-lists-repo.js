@@ -66,3 +66,27 @@ export const insertUserBoardGameListEntry = async (userId, boardGameId, listType
     await connection.end();
   }
 };
+
+export const getSpecificBoardGameListForUser = async (userId, boardGameId) => {
+  const connection = await connectToDatabase();
+  try {
+    const [rows] = await connection.execute(
+      `
+        SELECT 
+            ubgl.is_favorite, 
+            ubgl.is_have_played, 
+            ubgl.is_want_to_play
+        FROM user_board_game_list ubgl
+        JOIN basic_user bu ON ubgl.basic_user_id = bu.id
+        JOIN user u ON bu.user_id = u.id
+        WHERE u.id = ? AND ubgl.board_game_id = ?
+      `,
+      [userId, boardGameId]
+    );
+    return rows[0];
+  } catch(error){
+    throw new Error("Υπήρξε σφάλμα κατά την εύρεση της λίστας παιχνιδιών.");
+  } finally {
+    await connection.end();
+  }
+};

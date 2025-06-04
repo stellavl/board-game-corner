@@ -2,6 +2,7 @@ import {
   findUserBoardGameListEntry,
   updateUserBoardGameListBoolean,
   insertUserBoardGameListEntry,
+  getSpecificBoardGameListForUser,
 } from "../repositories/user-lists-repo.js";
 
 export const addBoardGameInUserListService = async (userId, boardGameId, listType, value) => {
@@ -18,4 +19,9 @@ export const addBoardGameInUserListService = async (userId, boardGameId, listTyp
   } else {
     await insertUserBoardGameListEntry(userId, boardGameId, listType, value);
   }
+};
+
+export const getSpecificBoardGameListForUserService = async (userId, boardGameId) => {
+  const entry = await getSpecificBoardGameListForUser(userId, boardGameId);
+  return entry;
 };

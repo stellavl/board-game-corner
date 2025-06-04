@@ -1,4 +1,4 @@
-import { addBoardGameInUserListService } from "../services/user-lists-service.js";
+import { addBoardGameInUserListService, getSpecificBoardGameListForUserService } from "../services/user-lists-service.js";
 
 export const addBoardGameInUserListController = async (req, res) => {
   try {
@@ -10,3 +10,13 @@ export const addBoardGameInUserListController = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
+export const getSpecificBoardGameListForUserController = async (req, res) => {
+  try {
+    const { userId, boardGameId } = req.params;
+    const entry = await getSpecificBoardGameListForUserService(userId, boardGameId);
+    res.status(200).json(entry);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}

@@ -15,14 +15,10 @@ const BoardGameSelectBar = ({
     const location = useLocation();
     const [temporaryText, setTemporaryText] = useState(searchText || '');
     
-    const navigateToBoardGames = (searchText) => {
-        navigate('/boardgames', { state: { searchText } });
-    };
-
     const handleSearchClick = async () => {
         try {
             if (location.pathname == '/home') {
-                navigateToBoardGames(temporaryText);
+                navigate(`/boardgames?searchText=${encodeURIComponent(temporaryText)}`);
             } else {
                 setSearchText(temporaryText); 
             }

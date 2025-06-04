@@ -62,11 +62,24 @@ const BoardGamesContent = () => {
   const [filteredBoardGames, setFilteredBoardGames] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchText, setSearchText] = useState('');
+  const params = new URLSearchParams(window.location.search);
+  const initialSearchText = params.get('searchText') || '';
+  const [searchText, setSearchText] = useState(initialSearchText);
   const pageSize = 8;
   const [allFilteredBoardGames, setAllFilteredBoardGames] = useState([]);
   const [allCafeBoardGames, setAllCafeBoardGames] = useState([]);
   const { id: cafeId } = useParams();
+
+  // Sync searchText to URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (searchText) {
+      params.set('searchText', searchText);
+    } else {
+      params.delete('searchText');
+    }
+    navigate({ search: params.toString() }, { replace: true });
+  }, [searchText]);
 
   const handleApplyFilters = async (newFilters, _filteredGames, isClear = false) => {
     setFilters(newFilters);
@@ -97,7 +110,7 @@ const BoardGamesContent = () => {
       return;
     }
 
-      if (cafeId) {
+    if (cafeId) {
       const startIdx = (page - 1) * pageSize;
       const endIdx = startIdx + pageSize;
       setFilteredBoardGames(allCafeBoardGames.slice(startIdx, endIdx));
@@ -215,20 +228,14 @@ const BoardGamesContent = () => {
   }, [searchText, currentPage, pageSize]);
 
   useEffect(() => {
-    if (location.state?.searchText) {
-      setSearchText(location.state.searchText);
-    }
-  }, [location.state?.searchText]);
-
-  useEffect(() => {
     if (cafeId) {
       fetchCafeBoardGames(cafeId, currentPage, pageSize);
     } else if (isFiltersActive()) {
       fetchFilteredBoardGames(filters, currentPage, pageSize, searchText);
-    } else if (!searchText && !location.state?.searchText){
+    } else if (!searchText){
       fetchHotBoardGames(currentPage, pageSize);
     } 
-  }, [searchText, currentPage, pageSize, location.state, cafeId]);
+  }, [searchText, currentPage, pageSize, cafeId]);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);

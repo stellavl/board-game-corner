@@ -19,9 +19,6 @@ const BoardGameOverview = ({ boardGame }) => {
         const token = localStorage.getItem("authToken");
         
         if (!userId || !token) {
-            toast.error('Πρέπει να συνδεθείτε για να πραγματοποιήσετε αυτήν την ενέργεια.', {
-                position: 'top-center'
-            });
             return;
         }
 

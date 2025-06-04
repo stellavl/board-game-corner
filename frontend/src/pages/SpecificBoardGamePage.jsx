@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import { Container, Row, Col, Offcanvas } from "react-bootstrap";  
 import BackButton from "../components/common/BackButton";
 import BoardGameOverview from "../components/boardgamepage/BoardGameOverview";  
-import { BoardGameProvider } from "../components/context/BoardGameContext";  
 import BoardGameDescription from "../components/boardgamepage/BoardGameDescription";
 import BoardGameImageAndDetails from "../components/boardgamepage/BoardGameImageAndDetails";  
 import Reviews from "../components/boardgamepage/Reviews";
@@ -87,101 +86,90 @@ const SpecificBoardGamePage = () => {
             <div className="ms-5 mt-3">
                 <BackButton/>
             </div>
+            {/* Layout for medium (md) and smaller screens */}
+            <Container className="d-flex d-md-none flex-column justify-content-center align-items-center">
+                <Row>
+                    {/* BoardGameOverview comes first */}
+                    <Col xs={12} className="order-1 mt-5">
+                        <BoardGameOverview boardGame={boardGame} />
+                    </Col>
 
-            <BoardGameProvider>
-                {/* Layout for medium (md) and smaller screens */}
-                <Container className="d-flex d-md-none flex-column justify-content-center align-items-center">
-                    <Row>
-                        {/* BoardGameOverview comes first */}
-                        <Col xs={12} className="order-1 mt-5">
-                            <BoardGameOverview boardGame={boardGame} />
-                        </Col>
+                    {/* BoardGameImageAndDetails comes second */}
+                    <Col xs={12} className="order-2">
+                        <BoardGameImageAndDetails boardGame={boardGame} />
+                    </Col>
 
-                        {/* BoardGameImageAndDetails comes second */}
-                        <Col xs={12} className="order-2">
-                            <BoardGameImageAndDetails boardGame={boardGame} />
-                        </Col>
+                    {/* BoardGameDescription comes third */}
+                    <Col xs={12} className="order-3">
+                        <BoardGameDescription boardGame={boardGame} />
+                    </Col>
 
-                        {/* BoardGameDescription comes third */}
-                        <Col xs={12} className="order-3">
-                            <BoardGameDescription boardGame={boardGame} />
-                        </Col>
+                    {/* Reviews Button for small/medium screens */}
+                    <Col xs={12} className="order-4">
+                        <button onClick={handleShowReviews} className="btn w-100" style={{ backgroundColor: "var(--color-orange)", color: "var(--color-soft-yellow)" }}>
+                            Show Reviews
+                        </button>
+                    </Col>
+                </Row>
+            </Container>
 
-                        {/* Reviews Button for small/medium screens */}
-                        <Col xs={12} className="order-4">
-                            <button onClick={handleShowReviews} className="btn w-100" style={{ backgroundColor: "var(--color-orange)", color: "var(--color-soft-yellow)" }}>
-                                Show Reviews
-                            </button>
-                        </Col>
-                    </Row>
-                </Container>
+            {/* Offcanvas for Reviews on small/medium screens */}
+            <Offcanvas show={showReviews} onHide={handleHideReviews} placement="end">
+                <Offcanvas.Header closeButton>
+                </Offcanvas.Header>
+                <Offcanvas.Body>
+                    <Reviews />
+                </Offcanvas.Body>
+            </Offcanvas>
 
-                {/* Offcanvas for Reviews on small/medium screens */}
-                <Offcanvas show={showReviews} onHide={handleHideReviews} placement="end">
-                    <Offcanvas.Header closeButton>
-                    </Offcanvas.Header>
-                    <Offcanvas.Body>
-                        <Reviews />
-                    </Offcanvas.Body>
-                </Offcanvas>
-
-                {/* Layout for large screens (md and above) */}
-                <Container className="d-none d-md-flex flex-column justify-content-center align-items-center">
-                    <Row>
+            {/* Layout for large screens (md and above) */}
+           <Container className="d-none d-md-block mt-5">
+            <Row>
                         <Col md={4} xs={6} className="mt-5">
-                            <BoardGameImageAndDetails boardGame={boardGame} />
-                        </Col>
-                        <Col md={4} xs={6}>
-                            <Row>
-                                <Col>
-                                    <BoardGameOverview boardGame={boardGame} />
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <BoardGameDescription boardGame={boardGame} />
-                                </Col>
-                            </Row>
-                        </Col>
-                        <Col md={4} xs={12}>
-                            <Reviews />
-                        </Col>
-                    </Row>
-                </Container>
+                    <BoardGameImageAndDetails boardGame={boardGame} />
+                </Col>
+                <Col md={4} xs={6} className="position-relative">
+                    <BoardGameOverview boardGame={boardGame} />
+                        <div className="my-3" />
+                    <BoardGameDescription boardGame={boardGame} />
+                </Col>
+                <Col md={4} xs={12}>
+                    <Reviews />
+                </Col> 
+            </Row>
+        </Container>
 
-                <Container>
-                    {/* Reservation Form */}
-                    <Row>
-                        <Container className="p-3 text-center">
-                            <ReservationForm gameFromGamePage={boardGame} />
-                        </Container>
-                    </Row>
+            <Container>
+                {/* Reservation Form */}
+                <Row>
+                    <Container className="p-3 text-center">
+                        <ReservationForm gameFromGamePage={boardGame} />
+                    </Container>
+                </Row>
 
-                    {/* Suggested Board Games */}
-                    <Row className="mt-4" >
-                        <Col className="col-9 mx-auto">    
-                            {suggestedLoading ? (
-                                <div className="text-center">
-                                    <Spinner animation="border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                    </Spinner>
-                                </div>
-                            ) : (
-                                <BoardGameCards
-                                    maxHeight="350px"
-                                    headerText="Εξερεύνησε άλλα επιτραπέζια:"
-                                    boardGames={suggestedGames}
-                                    totalElements={suggestedTotal}
-                                    currentPage={suggestedPage}
-                                    handlePageChange={setSuggestedPage}
-                                    itemsPerPage={suggestedPageSize}
-                                />
-                            )}
-                        </Col>
-                    </Row>
-                </Container>
-
-            </BoardGameProvider>
+                {/* Suggested Board Games */}
+                <Row className="mt-4" >
+                    <Col className="col-9 mx-auto">    
+                        {suggestedLoading ? (
+                            <div className="text-center">
+                                <Spinner animation="border" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                            </div>
+                        ) : (
+                            <BoardGameCards
+                                maxHeight="350px"
+                                headerText="Εξερεύνησε άλλα επιτραπέζια:"
+                                boardGames={suggestedGames}
+                                totalElements={suggestedTotal}
+                                currentPage={suggestedPage}
+                                handlePageChange={setSuggestedPage}
+                                itemsPerPage={suggestedPageSize}
+                            />
+                        )}
+                    </Col>
+                </Row>
+            </Container>
         </>
     );
 };

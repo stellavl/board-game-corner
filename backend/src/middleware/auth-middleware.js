@@ -12,6 +12,6 @@ export const authenticateToken = (req, res, next) => {
     req.user = decoded; 
     next();
   } catch (err) {
-    return res.status(403).json({ message: 'Invalid Token' });
+    return res.status(403).json({ message: 'Η σύνδεση έληξε. Συνδεθείτε ξανά' });
   }
 };

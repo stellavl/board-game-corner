@@ -1,7 +1,7 @@
 import axiosInstance from '../../config/axiosConfig';
 import { toast } from 'react-toastify';
 
-const updateBoardGameList = async (listType, boardGameId, wasInList) => {
+const updateBoardGameList = async (listType, boardGameId, isBoardGameInList, setIsBoardGameInList) => {
 
     const userId = localStorage.getItem('userId');
     const token = localStorage.getItem("authToken");
@@ -14,7 +14,7 @@ const updateBoardGameList = async (listType, boardGameId, wasInList) => {
     }
     
     try {
-        const newValue = !wasInList;
+        const newValue = !isBoardGameInList;
 
         // Send POST request to backend
         await axiosInstance.post(`/api/user-lists/${userId}`, {
@@ -33,6 +33,7 @@ const updateBoardGameList = async (listType, boardGameId, wasInList) => {
                 : 'Το επιτραπέζιο αφαιρέθηκε!',
             { position: 'top-center' }
         );
+        setIsBoardGameInList(newValue);
 
     } catch (error) {
         const errorMessage = error.response?.data?.error || 'Αποτυχία ενημέρωσης λίστας παιχνιδιών.';

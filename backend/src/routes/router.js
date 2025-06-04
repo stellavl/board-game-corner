@@ -5,6 +5,7 @@ import adminRoute from "./admin-route.js";
 import boardGameRoute from './board-game-route.js';
 import cafeRoutes from "./cafe-route.js";
 import reservationRoute from './reservation-route.js';
+import userListsRoute from './user-lists-route.js';
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use('/', adminRoute);
 router.use('/', boardGameRoute);
 router.use('/', cafeRoutes);
 router.use('/', reservationRoute);
+router.use('/', userListsRoute);
 
 export default router;

@@ -1,10 +1,15 @@
 import { Row, Col } from "react-bootstrap";
-import { useBoardGame } from "../context/BoardGameContext";
 import BoardGameCheckBox from "./BoardGameCheckBox";
+import updateBoardGameList from "../utils/handleLists"; 
 import { FaStar, FaRegStar } from "react-icons/fa"; 
 
 const BoardGameOverview = ({ boardGame }) => {
-    const { boardGameState, handleCheckboxChange, toggleFavorite } = useBoardGame();  
+
+    //TODO: Replace with actual state management for favorite and score
+    const isBoardGameFavorite = false; 
+    const isBoardGameWantToPlay = false;
+    const isBoardGameHavePlayed = false;
+
     const score = 4.5; // Default score
 
     return (
@@ -39,8 +44,8 @@ const BoardGameOverview = ({ boardGame }) => {
                     </h2>
 
                     {/* FavoriteStar component */}
-                    <div onClick={toggleFavorite} className="ms-4 me-5" style={{ cursor: "pointer" }}>
-                        {boardGameState.isFavorite ? (
+                    <div onClick={() => updateBoardGameList('is_favorite', boardGame.id, isBoardGameFavorite)} className="ms-4 me-5" style={{ cursor: "pointer" }}>
+                        {isBoardGameFavorite ? (
                             <FaStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
                         ) : (
                             <FaRegStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
@@ -54,14 +59,14 @@ const BoardGameOverview = ({ boardGame }) => {
                 <Col className="d-flex justify-content-center align-items-center flex-column flex-sm-row">
                     <BoardGameCheckBox 
                         checkboxText="Θέλω να παίξω"
-                        checked={boardGameState.wantToPlay}
-                        onChange={() => handleCheckboxChange('wantToPlay')}
+                        checked={isBoardGameWantToPlay}
+                        onChange={() => updateBoardGameList('is_want_to_play', boardGame.id, isBoardGameWantToPlay)}
                         className="me-4 text-nowrap"
                     />
                     <BoardGameCheckBox 
                         checkboxText="Έχω παίξει"
-                        checked={boardGameState.hasPlayed}
-                        onChange={() => handleCheckboxChange('hasPlayed')}
+                        checked={isBoardGameHavePlayed}
+                        onChange={() => updateBoardGameList('is_have_played', boardGame.id, isBoardGameHavePlayed)}
                         className="text-nowrap"
                     />
                 </Col>

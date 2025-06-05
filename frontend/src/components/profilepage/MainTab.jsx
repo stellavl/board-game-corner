@@ -1,30 +1,58 @@
+import { useEffect, useState } from "react";
+import axiosInstance from "../../config/axiosConfig";
 import BoardGameGroup from "./BoardGameGroup";
 import OrangeButton from "../common/OrangeButton";
-import EditableField from "../common/EditableField"; 
-
-const favorites = [
-    { id: 1, name: "Catan", image: '/boardgamephotos/catan.png' },
-    { id: 2, name: "Ticket to ride", image: "/images/ticket-to-ride.jpg" },
-    { id: 3, name: "Jungle Speed", image: "/images/jungle-speed.jpg" },
-    { id: 4, name: "Dixit", image: "/images/dixit.jpg" }
-];
-
-const played = [
-    { id: 1, name: "Catan", image: "/images/catan.jpg" },
-    { id: 2, name: "Ticket to ride", image: "/images/ticket-to-ride.jpg" },
-    { id: 3, name: "Jungle Speed", image: "/images/jungle-speed.jpg" },
-    { id: 4, name: "Dixit", image: "/images/dixit.jpg" }
-];
-
-const wantToPlay = [
-    { id: 1, name: "Catan", image: "/images/catan.jpg" },
-    { id: 2, name: "Ticket to ride", image: "/images/ticket-to-ride.jpg" },
-    { id: 3, name: "Jungle Speed", image: "/images/jungle-speed.jpg" },
-    { id: 4, name: "Dixit", image: "/images/dixit.jpg" }
-];
+import EditableField from "../common/EditableField";
+import { toast } from "react-toastify";
 
 const MainTab = ({ user, setUser }) => {
-    return (
+    const [favorites, setFavorites] = useState([]);
+    const [played, setPlayed] = useState([]);
+    const [wantToPlay, setWantToPlay] = useState([]);
+
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem("authToken");
+        
+        if (!userId || !token) {
+            return;
+        }
+
+        const fetchUserBoardGamesLists = async () => {
+            try {
+                const response = await axiosInstance.get(`/api/user-lists/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                const allGames = response.data;
+                const favoritesList = [];
+                const playedList = [];
+                const wantToPlayList = [];
+
+                allGames.forEach(game => {
+                    const gameData = {
+                        id: game.board_game_id,
+                        name: game.board_game_name,
+                        image: game.board_game_image
+                    };
+                    if (game.is_favorite) favoritesList.push(gameData);
+                    if (game.is_have_played) playedList.push(gameData);
+                    if (game.is_want_to_play) wantToPlayList.push(gameData);
+                });
+                setFavorites(favoritesList);
+                setPlayed(playedList);
+                setWantToPlay(wantToPlayList);
+            } catch (error) {
+                const errorMessage = error.response?.data?.error || 'Αποτυχία εύρεσης λίστας παιχνιδιών.';
+                toast.error(errorMessage, { position: 'top-center' });
+            }
+    }
+    fetchUserBoardGamesLists();
+  }, []);
+
+   return (
         <>
             <div className="border-1 p-4 rounded-3" style={{ borderColor: "var(--color-orange)" }}>
                 <div className="row g-4 mx-auto" style={{ maxWidth: "50rem" }}>

@@ -3,7 +3,7 @@ import { Container, Card, Form, Row, Col } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
 import { validatePersonalData } from "../components/utils/validations";
-import axiosInstance from "../config/axiosConfig"; 
+import axiosInstance from "../config/axiosConfig";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loginPersonal } from "../components/utils/handleLogin";
@@ -27,11 +27,11 @@ const SignUpPersonal = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validatePersonalData(formData);  
+        const validationErrors = validatePersonalData(formData);
         setErrors(validationErrors);
         if (Object.keys(validationErrors).length === 0) {
             try {
-                await axiosInstance.post("/api/basic-users", formData); 
+                await axiosInstance.post("/api/basic-users", formData);
                 // Log the user in after successful signup
                 const loginResponse = await loginPersonal({ email: formData.email, password: formData.password });
                 if (loginResponse.success) {
@@ -63,12 +63,25 @@ const SignUpPersonal = () => {
                 </h3>
             </Row>
             <Container className="d-flex justify-content-center">
-                <Card className="p-4 border-2" style={{ borderColor: "var(--color-orange)", backgroundColor: "var(--color-soft-yellow)", width: "40rem" }}>
-                    <Form onSubmit={handleSubmit}>
-                        {fields.reduce((rows, { label, name, type }, index) => {
-                            if (index % 2 === 0) {
-                                rows.push([]);
+                <Card
+                    className="p-4 border-2"
+                    style={{
+                        borderColor: "var(--color-orange)",
+                        backgroundColor: "var(--color-soft-yellow)",
+                        width: "40rem"
+                    }}
+                >
+                    <Form
+                        onSubmit={handleSubmit}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleSubmit(e);
                             }
+                        }}
+                    >
+                        {fields.reduce((rows, { label, name, type }, index) => {
+                            if (index % 2 === 0) rows.push([]);
                             rows[rows.length - 1].push({ label, name, type });
                             return rows;
                         }, []).map((rowFields, rowIndex) => (
@@ -86,7 +99,7 @@ const SignUpPersonal = () => {
                                                     style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}
                                                     isInvalid={!!errors[name]}
                                                 />
-                                                <Form.Control.Feedback 
+                                                <Form.Control.Feedback
                                                     type="invalid"
                                                     className="position-absolute mb-1"
                                                     style={{ bottom: "-1.5rem" }}
@@ -100,15 +113,15 @@ const SignUpPersonal = () => {
                             </Row>
                         ))}
 
-                    <Row className="d-flex justify-content-center">
-                        <Col md={6} className="d-flex justify-content-center">
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6} className="d-flex justify-content-center">
                             <OrangeButton text="Δημιουργία" onClick={handleSubmit} />
-                        </Col>
-                    </Row>
-                </Form>
-            </Card>
-        </Container>
-    </>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Card>
+            </Container>
+        </>
     );
 };
 

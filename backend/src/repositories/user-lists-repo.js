@@ -90,3 +90,31 @@ export const getSpecificBoardGameListForUser = async (userId, boardGameId) => {
     await connection.end();
   }
 };
+
+export const getAllBoardGamesListForUser = async (userId) => {
+  const connection = await connectToDatabase();
+  try {
+    const [rows] = await connection.execute(
+      `
+        SELECT DISTINCT
+            ubgl.board_game_id,
+            bg.name AS board_game_name,
+            bg.image AS board_game_image,
+            ubgl.is_favorite, 
+            ubgl.is_have_played, 
+            ubgl.is_want_to_play
+        FROM user_board_game_list ubgl
+        JOIN basic_user bu ON ubgl.basic_user_id = bu.id
+        JOIN user u ON bu.user_id = u.id
+        JOIN board_game bg ON ubgl.board_game_id = bg.id
+        WHERE u.id = ?;
+      `,
+      [userId]
+    );
+    return rows;
+  } catch(error){
+    throw new Error("Υπήρξε σφάλμα κατά την εύρεση της λίστας παιχνιδιών.");
+  } finally {
+    await connection.end();
+  }
+};

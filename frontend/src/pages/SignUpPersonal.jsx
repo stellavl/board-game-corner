@@ -7,6 +7,8 @@ import axiosInstance from "../config/axiosConfig";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loginPersonal } from "../components/utils/handleLogin";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -19,10 +21,19 @@ const SignUpPersonal = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+        confirmPassword: false,
+    });
+
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const togglePasswordVisibility = (field) => {
+        setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
     };
 
     const handleSubmit = async (e) => {
@@ -80,11 +91,13 @@ const SignUpPersonal = () => {
                             }
                         }}
                     >
-                        {fields.reduce((rows, { label, name, type }, index) => {
+                    {fields
+                        .reduce((rows, field, index) => {
                             if (index % 2 === 0) rows.push([]);
-                            rows[rows.length - 1].push({ label, name, type });
+                            rows[rows.length - 1].push(field);
                             return rows;
-                        }, []).map((rowFields, rowIndex) => (
+                        }, [])
+                        .map((rowFields, rowIndex) => (
                             <Row className="mb-4" key={rowIndex}>
                                 {rowFields.map(({ label, name, type }) => (
                                     <Col md={6} key={name}>
@@ -92,13 +105,42 @@ const SignUpPersonal = () => {
                                             <Form.Label>{label}</Form.Label>
                                             <div style={{ position: "relative" }}>
                                                 <Form.Control
-                                                    type={type}
+                                                    type={
+                                                        type === "password"
+                                                            ? showPasswords[name]
+                                                                ? "text"
+                                                                : "password"
+                                                            : type
+                                                    }
                                                     name={name}
                                                     value={formData[name]}
                                                     onChange={handleChange}
-                                                    style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}
+                                                    style={{
+                                                        backgroundColor: "transparent",
+                                                        borderColor: "var(--color-orange)",
+                                                    }}
                                                     isInvalid={!!errors[name]}
                                                 />
+                                                {type === "password" && (
+                                                    <FontAwesomeIcon
+                                                        icon={
+                                                            showPasswords[name]
+                                                                ? faEyeSlash
+                                                                : faEye
+                                                        }
+                                                        onClick={() =>
+                                                            togglePasswordVisibility(name)
+                                                        }
+                                                        style={{
+                                                            position: "absolute",
+                                                            top: "50%",
+                                                            right: "10px",
+                                                            transform: "translateY(-50%)",
+                                                            cursor: "pointer",
+                                                            color: "var(--color-orange)",
+                                                        }}
+                                                    />
+                                                )}
                                                 <Form.Control.Feedback
                                                     type="invalid"
                                                     className="position-absolute mb-1"

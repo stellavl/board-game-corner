@@ -68,7 +68,7 @@ const SignUpPersonal = () => {
                     style={{
                         borderColor: "var(--color-orange)",
                         backgroundColor: "var(--color-soft-yellow)",
-                        width: "40rem"
+                        width: "50rem"
                     }}
                 >
                     <Form

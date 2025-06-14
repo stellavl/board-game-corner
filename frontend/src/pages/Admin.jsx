@@ -5,7 +5,7 @@ import OrangeButton from "../components/common/OrangeButton";
 import ReservationsTab from "../components/adminpage/ReservationsTab";
 import InfoTab from "../components/adminpage/InfoTab";
 import BoardGamesTab from "../components/adminpage/BoardGamesTab";
-import StatisticsTab from "../components/adminpage/StatisticsTab";
+import HistoryTab from "../components/adminpage/HistoryTab";
 import axiosInstance from '../config/axiosConfig';
 
 const Admin = () => {
@@ -80,7 +80,7 @@ const Admin = () => {
                     </Row>
                     {/* Tabs */}
                     <div className="text-center mt-5 mb-2">
-                        {["reservations", "info", "boardGames", "statistics"].map((tab) => (
+                        {["reservations", "info", "boardGames", "history"].map((tab) => (
                             <a
                                 key={tab}
                                 href="#"
@@ -99,7 +99,7 @@ const Admin = () => {
                                     ? "Πληροφορίες"
                                     : tab === "boardGames"
                                     ? "Επιτραπέζια"
-                                    : "Στατιστικά"}
+                                    : "Ιστορικό"}
                             </a>
                         ))}
                     </div>
@@ -108,7 +108,7 @@ const Admin = () => {
                         {activeTab === "reservations" && <ReservationsTab />}
                         {activeTab === "info" && <InfoTab cafeData={cafe} />}
                         {activeTab === "boardGames" && <BoardGamesTab cafeId={cafe.cafe_id} />}
-                    {activeTab === "statistics" && <StatisticsTab />}
+                    {activeTab === "history" && <HistoryTab />}
                 </>
             ) : (
                 <p>Cafe not found</p>

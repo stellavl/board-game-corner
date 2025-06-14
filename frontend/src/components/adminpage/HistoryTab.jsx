@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import { BsChevronUp, BsChevronDown } from "react-icons/bs";
 import { handleUpArrowClick, handleDownArrowClick } from "../utils/handleTableSorting";
 
-const StatisticsTab = () => {
+const HistoryTab = () => {
     const today = new Date();
 
     const [reservationsFilter, setReservationsFilter] = useState("all");
@@ -215,7 +215,7 @@ const StatisticsTab = () => {
     return (
         <Container className="text-center mt-4">
             <h5 className="mb-3 text-decoration-underline" style={{ color: 'var(--color-orange)' }}>
-                Στατιστικά Κρατήσεων
+                Ιστορικό Κρατήσεων
             </h5>
 
             <div className="mb-3">
@@ -277,7 +277,7 @@ const StatisticsTab = () => {
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
                                 <td style={textStyle}>{reservation.players_no}</td>
-                                <td style={textStyle}>{reservation.board_game_name}</td>
+                                <td style={textStyle}>{reservation.board_game_name ?? "-"}</td>
                                 <td style={textStyle}>{reservation.customer_full_name}</td>
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                             </tr>
@@ -287,7 +287,7 @@ const StatisticsTab = () => {
             )}
 
             <h5 className="mb-3 mt-5 text-decoration-underline" style={{ color: 'var(--color-orange)' }}>
-                Στατιστικά Επιτραπέζιων
+                Ιστορικό Επιτραπέζιων
             </h5>
 
             <div className="mb-3">
@@ -355,4 +355,4 @@ const StatisticsTab = () => {
     );
 };
 
-export default StatisticsTab;
+export default HistoryTab;

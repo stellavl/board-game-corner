@@ -215,7 +215,7 @@ const ReservationsTab = () => {
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
                                 <td style={textStyle}>{reservation.players_no}</td>
-                                <td style={textStyle}>{reservation.board_game_name}</td>
+                                <td style={textStyle}>{reservation.board_game_name ?? "-"}</td>
                                 <td style={textStyle}>{reservation.customer_full_name}</td>
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>
@@ -314,7 +314,7 @@ const ReservationsTab = () => {
                                 <td style={textStyle}>{reservation.date}</td>
                                 <td style={textStyle}>{reservation.time}</td>
                                 <td style={textStyle}>{reservation.players_no}</td>
-                                <td style={textStyle}>{reservation.board_game_name}</td>
+                                <td style={textStyle}>{reservation.board_game_name ?? "-"}</td>
                                 <td style={textStyle}>{reservation.customer_full_name}</td>
                                 <td style={{ ...textStyle, borderRight: '2px solid var(--color-orange)' }}>{reservation.customer_phone}</td>
                                 <td style={{ ...textStyle, borderLeft: '2px solid var(--color-orange)' }}>

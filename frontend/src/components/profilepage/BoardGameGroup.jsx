@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Row, Col, Container, Pagination } from 'react-bootstrap';
 import BoardGameSelectBar from "../common/BoardGameSelectBar";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 6;
 
 const BoardGameGroup = ({ title, widthSize="100%", boardGames }) => {
     const [searchText, setSearchText] = useState('');

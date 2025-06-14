@@ -184,17 +184,15 @@ const SignUpBusinessBasicInfo = () => {
                             </Form.Group>
                         </Col>
                     </Row>
-                    <Row className="mb-3 align-items-stretch">
-                      <Col md={6} className="d-flex flex-column">
-                            <Form.Group className="d-flex flex-column justify-content-between flex-grow-1">
-                                <Form.Label>Επανάληψη Κωδικού Πρόσβασης: <span style={{ color: "red" }}>*</span></Form.Label>
+                    <Row className="mb-3">
+                        <Col md={6}>
+                            <Form.Group className="h-100 d-flex flex-column">
+                                <Form.Label>
+                                    Επανάληψη Κωδικού Πρόσβασης: <span style={{ color: "red" }}>*</span>
+                                </Form.Label>
                                 <div style={{ position: "relative" }}>
                                     <Form.Control
-                                        type={
-                                            showPasswords.confirmPassword
-                                                ? "text"
-                                                : "password"
-                                        }
+                                        type={showPasswords.confirmPassword ? "text" : "password"}
                                         name="confirmPassword"
                                         value={formData.confirmPassword}
                                         onChange={handleChange}
@@ -204,14 +202,8 @@ const SignUpBusinessBasicInfo = () => {
                                         }}
                                     />
                                     <FontAwesomeIcon
-                                        icon={
-                                            showPasswords.confirmPassword
-                                                ? faEyeSlash
-                                                : faEye
-                                        }
-                                        onClick={() =>
-                                            togglePasswordVisibility("confirmPassword")
-                                        }
+                                        icon={showPasswords.confirmPassword ? faEyeSlash : faEye}
+                                        onClick={() => togglePasswordVisibility("confirmPassword")}
                                         style={{
                                             position: "absolute",
                                             top: "50%",
@@ -222,38 +214,39 @@ const SignUpBusinessBasicInfo = () => {
                                         }}
                                     />
                                 </div>
-                                {errors.confirmPassword && (
-                                    <div className="text-danger">{errors.confirmPassword}</div>
-                                )}
+                                <div style={{ minHeight: "1.25rem" }}>
+                                    {errors.confirmPassword ? (
+                                        <div className="text-danger">{errors.confirmPassword}</div>
+                                    ) : (
+                                        <div style={{ visibility: "hidden" }}>&nbsp;</div>
+                                    )}
+                                </div>
                             </Form.Group>
                         </Col>
-                        <Col md={6} className="d-flex flex-column justify-content-end">
-                           <Form.Group>
-                            <Form.Label>Ανέβασμα Φωτογραφίας:</Form.Label>
-                            <Form.Control
-                                type="file"
-                                name="photo"
-                                accept="image/*"
-                                onChange={handleChange}
-                                style={{
-                                    backgroundColor: "transparent",
-                                    borderColor: "var(--color-orange)",
-                                }}
-                            />
-                            {/* Invisible placeholder to keep height */}
-                            <div style={{ minHeight: "1.25rem" /* adjust to error height */, visibility: "hidden" }}>
-                                &nbsp;
-                            </div>
-                            {photoPreview && (
-                                <div className="mt-4 d-flex justify-content-center">
-                                    <Image
-                                        src={photoPreview}
-                                        alt="Uploaded"
-                                        fluid
-                                        style={{ maxHeight: "15rem" }}
-                                    />
-                                </div>
-                            )}
+                        <Col md={6}>
+                            <Form.Group className="h-100 d-flex flex-column">
+                                <Form.Label>Ανέβασμα Φωτογραφίας:</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    name="photo"
+                                    accept="image/*"
+                                    onChange={handleChange}
+                                    style={{
+                                        backgroundColor: "transparent",
+                                        borderColor: "var(--color-orange)",
+                                    }}
+                                />
+                                <div style={{ minHeight: "1.25rem", visibility: "hidden" }}>&nbsp;</div>
+                                {photoPreview && (
+                                    <div className="mt-4 d-flex justify-content-center">
+                                        <Image
+                                            src={photoPreview}
+                                            alt="Uploaded"
+                                            fluid
+                                            style={{ maxHeight: "15rem" }}
+                                        />
+                                    </div>
+                                )}
                             </Form.Group>
                         </Col>
                     </Row>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Card, Form, Row, Col, Image } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
@@ -94,6 +94,29 @@ const SignUpBusinessBasicInfo = () => {
             }
         }
     };
+
+    useEffect(() => {
+        // Load saved admin info from sessionStorage (if any)
+        const savedAdminInfo = sessionStorage.getItem("adminBasicInfo");
+        console.log("Loading savedAdminInfo", savedAdminInfo);
+        if (savedAdminInfo) {
+            const parsed = JSON.parse(savedAdminInfo);
+            setFormData(prev => ({
+                ...prev,
+                cafeName: parsed.name || "",
+                city: parsed.city || "",
+                address: parsed.address || "",
+                email: parsed.email || "",
+                phone: parsed.phone || "",
+                password: parsed.password || "",
+                confirmPassword: parsed.password || "", 
+            }));
+        }
+        const savedPhoto = sessionStorage.getItem("adminPhoto");
+        if (savedPhoto) {
+            setPhotoPreview(savedPhoto);
+        }
+    }, []);
     
     return (
         <>

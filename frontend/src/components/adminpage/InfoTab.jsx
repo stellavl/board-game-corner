@@ -27,16 +27,6 @@ const InfoTab = ({ cafeData }) => {
         }
     }, []);
 
-    function getPhotoSrc(photo) {
-    if (!photo) return "";
-    if (typeof photo === "string") {
-        return process.env.NODE_ENV !== 'production'
-            ? `http://localhost:5000/uploads/${photo}`
-            : `/uploads/${photo}`;
-    }
-    return URL.createObjectURL(photo);
-}
-
     const validateForm = () => {
         let newErrors = {};
 

@@ -111,14 +111,14 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3">
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Όνομα Καταστήματος:</Form.Label>
+                                <Form.Label>Όνομα Καταστήματος: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="cafeName" value={formData.cafeName} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.cafeName && <div className="text-danger">{errors.cafeName}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Πόλη:</Form.Label>
+                                <Form.Label>Πόλη: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="city" value={formData.city} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.city && <div className="text-danger">{errors.city}</div>}
                             </Form.Group>
@@ -128,14 +128,14 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3">
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Διεύθυνση:</Form.Label>
+                                <Form.Label>Διεύθυνση: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.address && <div className="text-danger">{errors.address}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Τηλέφωνο Επικοινωνίας:</Form.Label>
+                                <Form.Label>Τηλέφωνο Επικοινωνίας: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.phone && <div className="text-danger">{errors.phone}</div>}
                             </Form.Group>
@@ -144,14 +144,14 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3">
                        <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Email:</Form.Label>
+                                <Form.Label>Email: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.email && <div className="text-danger">{errors.email}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Κωδικός Πρόσβασης:</Form.Label>
+                                <Form.Label>Κωδικός Πρόσβασης: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <div style={{ position: "relative" }}>
                                     <Form.Control
                                         type={
@@ -187,7 +187,7 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3 align-items-stretch">
                       <Col md={6} className="d-flex flex-column">
                             <Form.Group className="d-flex flex-column justify-content-between flex-grow-1">
-                                <Form.Label>Επανάληψη Κωδικού Πρόσβασης:</Form.Label>
+                                <Form.Label>Επανάληψη Κωδικού Πρόσβασης: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <div style={{ position: "relative" }}>
                                     <Form.Control
                                         type={

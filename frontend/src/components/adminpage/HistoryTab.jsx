@@ -129,6 +129,7 @@ const HistoryTab = () => {
         const counts = {};
         gameStatsReservations.forEach(res => {
             const game = res.board_game_name;
+            if (!game) return; 
             if (!counts[game]) counts[game] = [];
             const existingDateEntry = counts[game].find(entry => entry.date === res.date);
             if (existingDateEntry) {

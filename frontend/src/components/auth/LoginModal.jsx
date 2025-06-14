@@ -91,33 +91,53 @@ const LoginModal = ({ showLoginModal, setShowLoginModal, setIsLoggedIn, setUserI
           <Modal.Title>Σύνδεση</Modal.Title>
         </Modal.Header>
         <Modal.Body style={{ backgroundColor: 'var(--color-soft-yellow)' }}>
-          
-          <div className="d-flex justify-content-center mb-4">
-            <div 
+          <div className="d-flex justify-content-center mb-4" style={{ gap: '1rem' }}>
+            <div
+              role="button"
               onClick={() => setActiveTab('personal')}
+              className={`px-4 py-2 rounded-pill text-center user-select-none ${
+                activeTab === 'personal' ? 'fw-semibold text-white shadow-sm' : 'fw-medium'
+              }`}
               style={{
-                color: 'var(--color-orange)',
                 cursor: 'pointer',
-                textDecoration: activeTab === 'personal' ? 'underline' : 'none',
-                marginRight: '10px'
+                minWidth: '140px',
+                backgroundColor: activeTab === 'personal' ? 'var(--color-orange)' : 'transparent',
+                color: activeTab === 'personal' ? 'white' : 'var(--color-orange)',
+                transition: 'background-color 0.3s ease',
+              }}
+              onMouseEnter={e => {
+                if (activeTab !== 'personal') e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
+              }}
+              onMouseLeave={e => {
+                if (activeTab !== 'personal') e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
               Προσωπικό Προφίλ
             </div>
-            <div style={{ color: 'var(--color-orange)', margin: '0 10px' }}>|</div>
-            <div 
+
+            <div
+              role="button"
               onClick={() => setActiveTab('professional')}
+              className={`px-4 py-2 rounded-pill text-center user-select-none ${
+                activeTab === 'professional' ? 'fw-semibold text-white shadow-sm' : 'fw-medium'
+              }`}
               style={{
-                color: 'var(--color-orange)',
                 cursor: 'pointer',
-                textDecoration: activeTab === 'professional' ? 'underline' : 'none',
-                marginLeft: '10px'
+                minWidth: '140px',
+                backgroundColor: activeTab === 'professional' ? 'var(--color-orange)' : 'transparent',
+                color: activeTab === 'professional' ? 'white' : 'var(--color-orange)',
+                transition: 'background-color 0.3s ease',
+              }}
+              onMouseEnter={e => {
+                if (activeTab !== 'professional') e.currentTarget.style.backgroundColor = 'rgba(255, 165, 0, 0.1)';
+              }}
+              onMouseLeave={e => {
+                if (activeTab !== 'professional') e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
               Επαγγελματικό Προφίλ
             </div>
           </div>
-
           {backendError && <Alert variant="danger" onClose={() => setBackendError(null)} dismissible>{backendError}</Alert>}
           {validationErrors.form && <Alert variant="danger">{validationErrors.form}</Alert>}
 

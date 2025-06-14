@@ -81,9 +81,9 @@ const InfoTab = ({ cafeData }) => {
 
     return (
         <>
-            <Container className="d-flex justify-content-center wide-container">    
+            <Container className="d-flex justify-content-center wide-container col-md-6">    
                 <Form onSubmit={handleSubmit}>
-                    <Row className="mb-3">
+                    <Row className="mb-3 align-content-center">
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Όνομα Καταστήματος:</Form.Label>
@@ -168,13 +168,16 @@ const InfoTab = ({ cafeData }) => {
 
                     {formData.photo && (
                         <Row className="d-flex justify-content-center mt-3">
-                            <Col md={12} className="d-flex justify-content-center">
-                                <Image 
-                                    src={getPhotoSrc(formData.photo)}
-                                    alt="Board Game Cafe Photo" 
-                                    fluid 
-                                    style={{ maxHeight: "200px", objectFit: "cover" }} 
+                            <Col md={6} className="d-flex justify-content-center">
+                             <Image 
+                                    src={formData.photo}
+                                    alt={formData.name}
+                                    fluid
+                                    style={ {display: 'block'} }
+                                    // onLoad={() => setImageLoaded(true)}
+                                    // style={{ display: imageLoaded ? 'block' : 'none' }}
                                 />
+                          
                             </Col>
                         </Row>
                     )}

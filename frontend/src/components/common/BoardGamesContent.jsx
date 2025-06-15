@@ -50,6 +50,10 @@ const transformFiltersForBackend = (filters) => {
 const BoardGamesContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const initialSearchText = params.get('searchText') || '';
+  const initialPage = parseInt(params.get('page')) || 1;
+
   const [loading, setLoading] = useState(true); 
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
@@ -61,69 +65,67 @@ const BoardGamesContent = () => {
   });
   const [filteredBoardGames, setFilteredBoardGames] = useState([]);
   const [totalElements, setTotalElements] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const params = new URLSearchParams(window.location.search);
-  const initialSearchText = params.get('searchText') || '';
+  const [currentPage, setCurrentPage] = useState(initialPage);
   const [searchText, setSearchText] = useState(initialSearchText);
   const pageSize = 8;
   const [allFilteredBoardGames, setAllFilteredBoardGames] = useState([]);
   const [allCafeBoardGames, setAllCafeBoardGames] = useState([]);
   const { id: cafeId } = useParams();
 
-  // Sync searchText to URL
+  // Sync URL with searchText and currentPage
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (searchText) {
-      params.set('searchText', searchText);
-    } else {
-      params.delete('searchText');
-    }
-    navigate({ search: params.toString() }, { replace: true });
-  }, [searchText]);
-
+    const queryParams = new URLSearchParams();
+    if (searchText) queryParams.set('searchText', searchText);
+    queryParams.set('page', currentPage);
+    navigate({ search: queryParams.toString() }, { replace: true });
+  }, [searchText, currentPage]);
+  
   const handleApplyFilters = async (newFilters, _filteredGames, isClear = false) => {
     setFilters(newFilters);
     setCurrentPage(1);
+    const queryParams = new URLSearchParams();
+    queryParams.set('page', '1');
 
     if (isClear) {
       setSearchText('');
       fetchHotBoardGames(1, pageSize);
-      navigate(location.pathname);
+      navigate({ search: 'page=1' }, { replace: true });
       return;
     }
 
     await fetchFilteredBoardGames(newFilters, 1, pageSize, searchText);
 
-    const queryParams = new URLSearchParams();
     for (const key in newFilters) {
       queryParams.set(key, newFilters[key]);
     }
     navigate(`?${queryParams.toString()}`);
   };
 
-  // Handle pagination change
+  const handleSearchInputChange = (newText) => {
+    setSearchText(newText);
+    setCurrentPage(1);
+  };
+
   const handlePageChange = async (page) => {
     setCurrentPage(page);
+    const params = new URLSearchParams();
+    params.set('page', page);
 
     if (searchText) {
+      params.set('searchText', searchText);
       fetchBoardGames(searchText, page, pageSize);
-      return;
-    }
-
-    if (cafeId) {
+    } else if (cafeId) {
       const startIdx = (page - 1) * pageSize;
       const endIdx = startIdx + pageSize;
       setFilteredBoardGames(allCafeBoardGames.slice(startIdx, endIdx));
-      return;
-    }
-
-    if (isFiltersActive()) {
+    } else if (isFiltersActive()) {
       const startIdx = (page - 1) * pageSize;
       const endIdx = startIdx + pageSize;
       setFilteredBoardGames(allFilteredBoardGames.slice(startIdx, endIdx));
-      return;
+    } else {
+      fetchHotBoardGames(page, pageSize);
     }
-    fetchHotBoardGames(page, pageSize);
+    navigate({ search: params.toString() }, { replace: true });
   };
 
   // Helper to check if filters are active
@@ -219,24 +221,26 @@ const BoardGamesContent = () => {
     setCurrentPage(1); 
     setAllFilteredBoardGames([]);
     fetchHotBoardGames(1, pageSize);
-  };  
+    const params = new URLSearchParams(location.search);
+    params.delete('searchText');
+    params.set('page', 1);
+    navigate({ search: params.toString() }, { replace: true });
+  };
 
   useEffect(() => {
     if (searchText) {
       fetchBoardGames(searchText, currentPage, pageSize);
-    }
-  }, [searchText, currentPage, pageSize]);
-
-  useEffect(() => {
-    if (cafeId) {
+    } else if (cafeId) {
       fetchCafeBoardGames(cafeId, currentPage, pageSize);
     } else if (isFiltersActive()) {
       fetchFilteredBoardGames(filters, currentPage, pageSize, searchText);
-    } else if (!searchText){
+    } else {
       fetchHotBoardGames(currentPage, pageSize);
-    } 
+    }
   }, [searchText, currentPage, pageSize, cafeId]);
 
+
+  // When URL search params change, update filters state accordingly
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const updatedFilters = {
@@ -271,7 +275,7 @@ const BoardGamesContent = () => {
         <Col md={12} xs={12}>
           <BoardGameSelectBar   
             searchText={searchText}
-            setSearchText={setSearchText}
+            setSearchText={handleSearchInputChange}
             onClearSearch={handleClearSearch}
           />
         </Col>    

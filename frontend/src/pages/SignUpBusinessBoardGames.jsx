@@ -157,6 +157,11 @@ const SignUpBusinessBoardGames = () => {
     }
   }, [searchText, currentPage, pageSize]);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [searchText]);
+
+
   return (
     <>
     <Row className="align-items-center">

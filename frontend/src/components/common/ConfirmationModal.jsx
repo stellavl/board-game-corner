@@ -1,11 +1,13 @@
 import { Modal, Card, Button } from 'react-bootstrap';
 
 const ConfirmationModal = ({ show, handleClose, handleConfirm, message, addedGames = [] }) => {
+  // New message when no games added
+const emptyGamesMessage = "Δεν έχετε προσθέσει επιτραπέζια. Θέλετε σίγουρα να ολοκληρώσετε τη δημιουργία λογαριασμού;";
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Card className="border-5 rounded-3 p-4" style={{ backgroundColor: 'var(--color-soft-yellow)', border: '5px solid var(--color-orange)' }}>
         <h5 className="text-center mt-3" style={{ color: 'var(--color-gray-purple)' }}>
-          {message}
+          {addedGames.length === 0 ? emptyGamesMessage : message}
         </h5>
         {addedGames.length > 0 && (
           <ul style={{ maxHeight: 200, overflowY: 'auto', fontSize: '0.95rem', color: 'var(--color-gray-purple)' }}>

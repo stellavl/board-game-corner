@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Card, Form, Row, Col, Image } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignUpBusinessBasicInfo = () => {
     const [formData, setFormData] = useState({
@@ -16,6 +18,11 @@ const SignUpBusinessBasicInfo = () => {
 
     const [errors, setErrors] = useState({});
     const [photoPreview, setPhotoPreview] = useState(null);
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+        confirmPassword: false,
+    });
+
     const navigate = useNavigate();
 
     const validateForm = () => {
@@ -23,7 +30,7 @@ const SignUpBusinessBasicInfo = () => {
 
         if (!formData.cafeName) newErrors.cafeName = "Το όνομα του παιχνιδοκαφέ σας είναι υποχρεωτικό.";
         if (!formData.city) newErrors.city = "Η πόλη είναι υποχρεωτική.";
-        if (!formData.address) newErrors.address = "Το τηλέφωνο είναι υποχρεωτικό.";
+        if (!formData.address) newErrors.address = "Η διεύθυνση είναι υποχρεωτική.";
 
         if (!formData.email) {
             newErrors.email = "Το email είναι υποχρεωτικό.";
@@ -64,6 +71,10 @@ const SignUpBusinessBasicInfo = () => {
         }
     };
 
+    const togglePasswordVisibility = (field) => {
+        setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
@@ -83,6 +94,29 @@ const SignUpBusinessBasicInfo = () => {
             }
         }
     };
+
+    useEffect(() => {
+        // Load saved admin info from sessionStorage (if any)
+        const savedAdminInfo = sessionStorage.getItem("adminBasicInfo");
+        console.log("Loading savedAdminInfo", savedAdminInfo);
+        if (savedAdminInfo) {
+            const parsed = JSON.parse(savedAdminInfo);
+            setFormData(prev => ({
+                ...prev,
+                cafeName: parsed.name || "",
+                city: parsed.city || "",
+                address: parsed.address || "",
+                email: parsed.email || "",
+                phone: parsed.phone || "",
+                password: parsed.password || "",
+                confirmPassword: parsed.password || "", 
+            }));
+        }
+        const savedPhoto = sessionStorage.getItem("adminPhoto");
+        if (savedPhoto) {
+            setPhotoPreview(savedPhoto);
+        }
+    }, []);
     
     return (
         <>
@@ -100,14 +134,14 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3">
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Όνομα Καταστήματος:</Form.Label>
+                                <Form.Label>Όνομα Καταστήματος: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="cafeName" value={formData.cafeName} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.cafeName && <div className="text-danger">{errors.cafeName}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Πόλη:</Form.Label>
+                                <Form.Label>Πόλη: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="city" value={formData.city} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.city && <div className="text-danger">{errors.city}</div>}
                             </Form.Group>
@@ -117,14 +151,14 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3">
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Διεύθυνση:</Form.Label>
+                                <Form.Label>Διεύθυνση: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="address" value={formData.address} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }} />
                                 {errors.address && <div className="text-danger">{errors.address}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Τηλέφωνο Επικοινωνίας:</Form.Label>
+                                <Form.Label>Τηλέφωνο Επικοινωνίας: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.phone && <div className="text-danger">{errors.phone}</div>}
                             </Form.Group>
@@ -133,34 +167,107 @@ const SignUpBusinessBasicInfo = () => {
                     <Row className="mb-3">
                        <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Email:</Form.Label>
+                                <Form.Label>Email: <span style={{ color: "red" }}>*</span></Form.Label>
                                 <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
                                 {errors.email && <div className="text-danger">{errors.email}</div>}
                             </Form.Group>
                         </Col>
                         <Col md={6}>
                             <Form.Group>
-                                <Form.Label>Κωδικός Πρόσβασης:</Form.Label>
-                                <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
-                                {errors.password && <div className="text-danger">{errors.password}</div>}
+                                <Form.Label>Κωδικός Πρόσβασης: <span style={{ color: "red" }}>*</span></Form.Label>
+                                <div style={{ position: "relative" }}>
+                                    <Form.Control
+                                        type={
+                                            showPasswords.password ? "text" : "password"
+                                        }
+                                        name="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        style={{
+                                            backgroundColor: "transparent",
+                                            borderColor: "var(--color-orange)",
+                                        }}
+                                    />
+                                    <FontAwesomeIcon
+                                        icon={showPasswords.password ? faEyeSlash : faEye}
+                                        onClick={() => togglePasswordVisibility("password")}
+                                        style={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            right: "10px",
+                                            transform: "translateY(-50%)",
+                                            cursor: "pointer",
+                                            color: "var(--color-orange)",
+                                        }}
+                                    />
+                                </div>
+                                {errors.password && (
+                                    <div className="text-danger">{errors.password}</div>
+                                )}
                             </Form.Group>
                         </Col>
                     </Row>
                     <Row className="mb-3">
-                      <Col md={6}>
-                            <Form.Group>
-                                <Form.Label>Επανάληψη Κωδικού Πρόσβασης:</Form.Label>
-                                <Form.Control type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
-                                {errors.confirmPassword && <div className="text-danger">{errors.confirmPassword}</div>}
+                        <Col md={6}>
+                            <Form.Group className="h-100 d-flex flex-column">
+                                <Form.Label>
+                                    Επανάληψη Κωδικού Πρόσβασης: <span style={{ color: "red" }}>*</span>
+                                </Form.Label>
+                                <div style={{ position: "relative" }}>
+                                    <Form.Control
+                                        type={showPasswords.confirmPassword ? "text" : "password"}
+                                        name="confirmPassword"
+                                        value={formData.confirmPassword}
+                                        onChange={handleChange}
+                                        style={{
+                                            backgroundColor: "transparent",
+                                            borderColor: "var(--color-orange)",
+                                        }}
+                                    />
+                                    <FontAwesomeIcon
+                                        icon={showPasswords.confirmPassword ? faEyeSlash : faEye}
+                                        onClick={() => togglePasswordVisibility("confirmPassword")}
+                                        style={{
+                                            position: "absolute",
+                                            top: "50%",
+                                            right: "10px",
+                                            transform: "translateY(-50%)",
+                                            cursor: "pointer",
+                                            color: "var(--color-orange)",
+                                        }}
+                                    />
+                                </div>
+                                <div style={{ minHeight: "1.25rem" }}>
+                                    {errors.confirmPassword ? (
+                                        <div className="text-danger">{errors.confirmPassword}</div>
+                                    ) : (
+                                        <div style={{ visibility: "hidden" }}>&nbsp;</div>
+                                    )}
+                                </div>
                             </Form.Group>
                         </Col>
-                        <Col md={6} className="d-flex align-items-end">
-                            <Form.Group>
+                        <Col md={6}>
+                            <Form.Group className="h-100 d-flex flex-column">
                                 <Form.Label>Ανέβασμα Φωτογραφίας:</Form.Label>
-                                <Form.Control type="file" name="photo" accept="image/*" onChange={handleChange} style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}/>
+                                <Form.Control
+                                    type="file"
+                                    name="photo"
+                                    accept="image/*"
+                                    onChange={handleChange}
+                                    style={{
+                                        backgroundColor: "transparent",
+                                        borderColor: "var(--color-orange)",
+                                    }}
+                                />
+                                <div style={{ minHeight: "1.25rem", visibility: "hidden" }}>&nbsp;</div>
                                 {photoPreview && (
                                     <div className="mt-4 d-flex justify-content-center">
-                                        <Image src={photoPreview} alt="Uploaded" fluid style={{ maxHeight: "15rem" }} />
+                                        <Image
+                                            src={photoPreview}
+                                            alt="Uploaded"
+                                            fluid
+                                            style={{ maxHeight: "15rem" }}
+                                        />
                                     </div>
                                 )}
                             </Form.Group>

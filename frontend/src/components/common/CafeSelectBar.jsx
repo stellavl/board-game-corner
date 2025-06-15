@@ -41,12 +41,13 @@ const CafeSelectBar = ({ boardGameCafes = [], loading = false }) => {
 
     return (
         <div className="d-flex justify-content-center mb-3">
-            <Select
+           <Select
                 options={searchText.length >= 2 ? cafeOptions : []} 
                 placeholder="Αναζήτηση παιχνιδοκαφέ"
                 onChange={handleCafeSelect}
                 onInputChange={handleInputChange}
                 isSearchable
+                isClearable
                 menuIsOpen={searchText.length >= 2}
                 isLoading={loading}
                 loadingMessage={() => (
@@ -83,6 +84,21 @@ const CafeSelectBar = ({ boardGameCafes = [], loading = false }) => {
                         ...provided,
                         backgroundColor: searchText.length < 2 ? "var(--color-soft-yellow)" : 'var(--color-orange)',
                     }),
+                    valueContainer: (provided) => ({
+                        ...provided,
+                        paddingRight: '40px',
+                    }),
+
+                    clearIndicator: (provided) => ({
+                        ...provided,
+                        color: "var(--color-orange)",
+                        position: 'absolute', 
+                        right: '1rem',         
+                        zIndex: 1,
+                        "&:hover": {
+                            color: "var(--color-gray-purple)"
+                        }
+                    }),
                     menu: (provided) => ({
                         ...provided,
                         backgroundColor: "var(--color-soft-yellow)",
@@ -99,8 +115,7 @@ const CafeSelectBar = ({ boardGameCafes = [], loading = false }) => {
                         }
                     })
                 }}
-                isDisabled={false}
-                 onKeyDown={(e) => {
+                onKeyDown={(e) => {
                     if (e.key === 'Enter' && selectedCafe) {
                         handleSearchClick();
                     }

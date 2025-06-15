@@ -9,10 +9,10 @@ const InfoTab = ({ cafeData }) => {
         address: "",
         email: "",
         phone: "",
+        photo: null,
     });
 
     const [errors, setErrors] = useState({});
-    const [photoPreview, setPhotoPreview] = useState(null);
 
     useEffect(() => {
         if (cafeData) {
@@ -22,9 +22,8 @@ const InfoTab = ({ cafeData }) => {
                 address: cafeData.address || "",
                 email: cafeData.email || "", 
                 phone: cafeData.phone_number || "",
+                photo: cafeData.photo || null,
             });
-            const imageUrl = `/${cafeData.image}`;
-            setPhotoPreview(imageUrl);
         }
     }, []);
 
@@ -57,7 +56,6 @@ const InfoTab = ({ cafeData }) => {
             const file = files[0];
             if (file) {
                 setFormData({ ...formData, photo: file });
-                setPhotoPreview(URL.createObjectURL(file));
             }
         } else {
             setFormData({ ...formData, [name]: value });
@@ -73,9 +71,9 @@ const InfoTab = ({ cafeData }) => {
 
     return (
         <>
-            <Container className="d-flex justify-content-center wide-container">    
+            <Container className="d-flex justify-content-center wide-container col-md-6">    
                 <Form onSubmit={handleSubmit}>
-                    <Row className="mb-3">
+                    <Row className="mb-3 align-content-center">
                         <Col md={6}>
                             <Form.Group>
                                 <Form.Label>Όνομα Καταστήματος:</Form.Label>
@@ -152,11 +150,6 @@ const InfoTab = ({ cafeData }) => {
                             </Form.Group>
                         </Col>
                     </Row>
-                    <Row className="d-flex justify-content-center">
-                        <Col md={6} className="d-flex justify-content-center">
-                            <OrangeButton text="Αποθήκευση Αλλαγών" onClick={handleSubmit} />
-                        </Col>
-                    </Row>
                     <Row className="d-flex justify-content-center mt-1">
                         <Col md={6} className="d-flex justify-content-center">
                             <p style={{ color: "var(--color-orange)", textDecoration: "underline" }}>Αλλαγή κωδικού</p>
@@ -166,7 +159,15 @@ const InfoTab = ({ cafeData }) => {
                     {formData.photo && (
                         <Row className="d-flex justify-content-center mt-3">
                             <Col md={6} className="d-flex justify-content-center">
-                                <Image src={photoPreview} alt="Board Game Cafe Photo" fluid style={{ maxHeight: "200px", objectFit: "cover" }} />
+                             <Image 
+                                    src={formData.photo}
+                                    alt={formData.name}
+                                    fluid
+                                    style={ {display: 'block'} }
+                                    // onLoad={() => setImageLoaded(true)}
+                                    // style={{ display: imageLoaded ? 'block' : 'none' }}
+                                />
+                          
                             </Col>
                         </Row>
                     )}
@@ -188,6 +189,13 @@ const InfoTab = ({ cafeData }) => {
                         onChange={handleChange}
                     />
 
+                    <Row className="d-flex mt-3 justify-content-center">
+                        <Col md={6} className="d-flex justify-content-center">
+                            <button type="submit" className="btn btn-success">
+                                Αποθήκευση Αλλαγών
+                            </button>   
+                        </Col>
+                    </Row>
                 </Form>
         </Container>
     </>

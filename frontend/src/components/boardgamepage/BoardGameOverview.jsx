@@ -1,11 +1,48 @@
 import { Row, Col } from "react-bootstrap";
-import { useBoardGame } from "../context/BoardGameContext";
 import BoardGameCheckBox from "./BoardGameCheckBox";
+import updateBoardGameList from "../utils/handleLists"; 
 import { FaStar, FaRegStar } from "react-icons/fa"; 
+import { useState, useEffect } from "react";
+import axiosInstance from '../../config/axiosConfig';
+import { toast } from "react-toastify";
 
 const BoardGameOverview = ({ boardGame }) => {
-    const { boardGameState, handleCheckboxChange, toggleFavorite } = useBoardGame();  
+
+    const [isBoardGameFavorite, setIsBoardGameFavorite] = useState(false);
+    const [isBoardGameWantToPlay, setIsBoardGameWantToPlay] = useState(false);
+    const [isBoardGameHavePlayed, setIsBoardGameHavePlayed] = useState(false);
+
     const score = 4.5; // Default score
+
+    useEffect(() => {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem("authToken");
+        
+        if (!userId || !token) {
+            return;
+        }
+
+        const fetchUserBoardGameStatus = async () => {
+            try {
+                const response = await axiosInstance.get(`/api/user-lists/${userId}/${boardGame.id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    }
+                );
+                const data = response.data;
+                setIsBoardGameFavorite(Boolean(data.is_favorite));
+                setIsBoardGameWantToPlay(Boolean(data.is_want_to_play));
+                setIsBoardGameHavePlayed(Boolean(data.is_have_played));
+            } catch (error) {
+                const errorMessage = error.response?.data?.error || 'Αποτυχία εύρεσης λίστας παιχνιδιών.';
+                toast.error(errorMessage, { position: 'top-center' });
+            }
+    };
+
+    fetchUserBoardGameStatus();
+  }, [boardGame]);
 
     return (
         <>
@@ -39,8 +76,8 @@ const BoardGameOverview = ({ boardGame }) => {
                     </h2>
 
                     {/* FavoriteStar component */}
-                    <div onClick={toggleFavorite} className="ms-4 me-5" style={{ cursor: "pointer" }}>
-                        {boardGameState.isFavorite ? (
+                    <div onClick={() => updateBoardGameList('is_favorite', boardGame.id, isBoardGameFavorite, setIsBoardGameFavorite)} className="ms-4 me-5" style={{ cursor: "pointer" }}>
+                        {isBoardGameFavorite ? (
                             <FaStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
                         ) : (
                             <FaRegStar style={{ fontSize: "1.8rem", color: "var(--color-orange)" }} />
@@ -54,14 +91,14 @@ const BoardGameOverview = ({ boardGame }) => {
                 <Col className="d-flex justify-content-center align-items-center flex-column flex-sm-row">
                     <BoardGameCheckBox 
                         checkboxText="Θέλω να παίξω"
-                        checked={boardGameState.wantToPlay}
-                        onChange={() => handleCheckboxChange('wantToPlay')}
+                        checked={isBoardGameWantToPlay}
+                        onChange={() => updateBoardGameList('is_want_to_play', boardGame.id, isBoardGameWantToPlay, setIsBoardGameWantToPlay)}
                         className="me-4 text-nowrap"
                     />
                     <BoardGameCheckBox 
                         checkboxText="Έχω παίξει"
-                        checked={boardGameState.hasPlayed}
-                        onChange={() => handleCheckboxChange('hasPlayed')}
+                        checked={isBoardGameHavePlayed}
+                        onChange={() => updateBoardGameList('is_have_played', boardGame.id, isBoardGameHavePlayed, setIsBoardGameHavePlayed)}
                         className="text-nowrap"
                     />
                 </Col>

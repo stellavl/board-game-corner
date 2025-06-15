@@ -34,6 +34,16 @@ export const createAdmin = async (adminData) => {
     throw error;
   }
 
+  // Parse bggIds if it's a string
+  let parsedBggIds = adminData.bggIds;
+  if (typeof adminData.bggIds === "string") {
+    try {
+      parsedBggIds = JSON.parse(bggIds);
+    } catch {
+      parsedBggIds = [];
+    }
+  }
+
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newAdmin = await insertAdmin({
@@ -46,8 +56,8 @@ export const createAdmin = async (adminData) => {
     photo,
   });
 
-  if (Array.isArray(bggIds) && bggIds.length > 0) {
-    await addBoardGamesToCatalog(bggIds, newAdmin.cafeId);
+  if (Array.isArray(parsedBggIds) && parsedBggIds.length > 0) {
+    await addBoardGamesToCatalog(parsedBggIds, newAdmin.cafeId);
   }
 
   return newAdmin;

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Row, Col, Container, Pagination } from 'react-bootstrap';
 import BoardGameSelectBar from "../common/BoardGameSelectBar";
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 6;
 
 const BoardGameGroup = ({ title, widthSize="100%", boardGames }) => {
     const [searchText, setSearchText] = useState('');
@@ -37,24 +37,33 @@ const BoardGameGroup = ({ title, widthSize="100%", boardGames }) => {
         }}>
             <h4 className="text-[var(--color-orange)] font-semibold text-sm mb-3">{title}</h4>
             
-            <BoardGameSelectBar isSearchButtonVisible={false} onGameSelect={handleSearch} boardGames={boardGames}/>
-
-            <Row className="mt-4">
-                {visibleGames.map(game => (
-                    <Col key={game.id} xs={12} sm={6} md={4} lg={3} className="mb-2">
-                        <Card 
-                            className="h-100 shadow-sm" 
-                            style={{ borderColor: 'var(--color-orange)', width: '100%', cursor: 'pointer' }}
-                            onClick={() => handleCardClick(game.name)}
-                        >
+            { boardGames.length > 0 ? (
+            <>
+                <BoardGameSelectBar isSearchButtonVisible={false} onGameSelect={handleSearch} boardGames={boardGames}/>
+                <Row className="mt-4">
+                    {visibleGames.map(game => (
+                        <Col key={game.id} xs={12} sm={6} md={4} className="mb-2">
+                            <Card 
+                                className="h-100 shadow-sm" 
+                                style={{ borderColor: 'var(--color-orange)', width: '100%', cursor: 'pointer' }}
+                                onClick={() => handleCardClick(game.name)}
+                            >
                             <Card.Img variant="top" src={game.image} alt={game.name} style={{ height: '80px', objectFit: 'cover' }} />
-                            <Card.Body className="p-1">
-                                <Card.Title className="text-[var(--color-orange)] text-xs">{game.name}</Card.Title>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
+                                <Card.Body className="p-1 d-flex align-items-center justify-content-center">
+                                    <Card.Title className="text-[var(--color-orange)] text-xs mb-0 text-center">
+                                        {game.name}
+                                    </Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </>
+            )
+            : (
+                <p className="text-gray-500">Δεν υπάρχουν αποθηκευμένα παιχνίδια.</p>
+            )
+        }
 
             {/* Pagination */}
             {totalPages > 1 && (

@@ -21,6 +21,9 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.json());
 app.use('/api', router);
 
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../frontend/build')));

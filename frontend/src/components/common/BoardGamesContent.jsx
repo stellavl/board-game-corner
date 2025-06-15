@@ -104,6 +104,15 @@ const BoardGamesContent = () => {
   const handleSearchInputChange = (newText) => {
     setSearchText(newText);
     setCurrentPage(1);
+
+    if (cafeId) {
+      const lowerSearch = newText.toLowerCase();
+      const filtered = allCafeBoardGames.filter(game =>
+        game.name.toLowerCase().includes(lowerSearch)
+      );
+      setTotalElements(filtered.length);
+      setFilteredBoardGames(filtered.slice(0, pageSize));
+    }
   };
 
   const handlePageChange = async (page) => {
@@ -229,7 +238,19 @@ const BoardGamesContent = () => {
 
   useEffect(() => {
     if (searchText) {
-      fetchBoardGames(searchText, currentPage, pageSize);
+      if (cafeId) {
+        const lowerSearch = searchText.toLowerCase();
+        const filtered = allCafeBoardGames.filter(game =>
+          game.name.toLowerCase().includes(lowerSearch)
+        );
+        const startIdx = (currentPage - 1) * pageSize;
+        const endIdx = startIdx + pageSize;
+        setFilteredBoardGames(filtered.slice(startIdx, endIdx));
+        setTotalElements(filtered.length);
+        setLoading(false);
+      } else {
+        fetchBoardGames(searchText, currentPage, pageSize);
+      }
     } else if (cafeId) {
       fetchCafeBoardGames(cafeId, currentPage, pageSize);
     } else if (isFiltersActive()) {

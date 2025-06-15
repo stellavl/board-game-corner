@@ -25,6 +25,7 @@ const SpecificBoardGamePage = () => {
 
     useEffect(() => {
         const fetchBoardGame = async () => {
+            setLoading(true);
             try {
                 const response = await axiosInstance.get(`/api/board-game/${boardGameName}`);
                 setBoardGame(response.data);
@@ -66,7 +67,7 @@ const SpecificBoardGamePage = () => {
         if (boardGame) fetchSuggestedGames();
     }, [boardGame, suggestedPage]);
 
-    if (loading || !boardGame) {
+    if (loading || !boardGame || !boardGame.name) {
         return (
             <div className="text-center mt-5">
                 <Spinner animation="border" role="status">

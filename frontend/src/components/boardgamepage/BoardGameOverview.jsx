@@ -36,13 +36,21 @@ const BoardGameOverview = ({ boardGame }) => {
                 setIsBoardGameWantToPlay(Boolean(data.is_want_to_play));
                 setIsBoardGameHavePlayed(Boolean(data.is_have_played));
             } catch (error) {
-                const errorMessage = error.response?.data?.error || 'Αποτυχία εύρεσης λίστας παιχνιδιών.';
-                toast.error(errorMessage, { position: 'top-center' });
+                const status = error.response?.status;
+                const errorMessage = error.response?.data?.error || 'Σφάλμα κατά την εύρεση της λίστας παιχνιδιών.';
+                toast.error(errorMessage, {
+                    position: 'top-center',
+                    toastId: `boardgame-${boardGame.id}`,
+                    });
+                if (status === 403) {
+                    localStorage.removeItem("authToken");
+                    localStorage.removeItem("userId");
+                }
             }
     };
 
     fetchUserBoardGameStatus();
-  }, [boardGame]);
+  }, []);
 
     return (
         <>

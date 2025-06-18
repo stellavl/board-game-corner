@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import {Dropdown, Form, Card, Row, Col, Spinner } from "react-bootstrap";
-import OrangeButton from "./OrangeButton";
+import {Dropdown, Form, Card, Row, Col, Spinner, Button } from "react-bootstrap";
 import axiosInstance from '../../config/axiosConfig';
 import { toast } from "react-toastify"; 
 
@@ -75,10 +74,10 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
     }, true);
   };
 
-  const fetchBoardGameCategories = async (searchText) => {
+  const fetchBoardGameCategories = async () => {
     setCategoriesLoading(true); 
     try {
-      const response = await axiosInstance.get(`/api/board-game/categories?searchText=${searchText}`);
+      const response = await axiosInstance.get(`/api/board-game/categories`);
       return response.data;
     } catch (error) {
       toast.error(error.response?.data?.error || "Προέκυψε σφάλμα", { position: 'top-center' });
@@ -189,11 +188,12 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
           </Form.Group>
 
           {/* Κατηγορία (Category) */}
-          <Form.Group className="mb-3">
-            <Form.Label>
-              <strong>Κατηγορία</strong>
-            </Form.Label>
-            <Dropdown>
+          {!searchText && (
+            <Form.Group>
+              <Form.Label>
+                <strong>Κατηγορία</strong>
+              </Form.Label>
+              <Dropdown>
                 <Dropdown.Toggle
                     variant="light"
                     className="w-100 text-start d-flex flex-wrap align-items-center"
@@ -227,11 +227,24 @@ const BoardGameFilters = ({ onApplyFilters, searchText }) => {
                         />
                     )))}
                 </Dropdown.Menu>
-                </Dropdown>
-          </Form.Group>
+              </Dropdown>
+            </Form.Group>
+          )}
 
-          <div className="d-flex justify-content-center">
-            <OrangeButton text="Εφαρμογή" size="btn-md" onClick={handleApplyFilters} />
+          <div className="d-flex pt-3 justify-content-center">
+            <Button
+              className="btn btn-secondary"
+              onClick={handleApplyFilters}
+              disabled={
+                selectedCategories.length === 0 &&
+                minPlayers === "Όλοι" &&
+                maxPlayers === "Όλοι" &&
+                duration === "Όλες" &&
+                age === "Όλες"
+              }
+            >
+              Εφαρμογή
+            </Button>
           </div>
 
         </Form>

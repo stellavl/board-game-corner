@@ -51,8 +51,7 @@ export const searchPaginatedBoardGames = async (req, res) => {
 
 export const getBoardGamesCategoriesController = async (req, res) => {
   try {
-    const searchText = req.query.searchText;
-    const boardGameCategories = await (getBoardGamesCategoriesService(searchText));
+    const boardGameCategories = await (getBoardGamesCategoriesService());
     res.status(200).json(boardGameCategories);
   } catch (err) {
     res.status(404).json({ error: err.message });

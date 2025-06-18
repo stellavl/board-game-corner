@@ -4,7 +4,7 @@ export const authenticateToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1]; // Bearer token
   
   if (!token) {
-    return res.status(401).json({ message: 'Δεν επιτρέπεται η πρόσβαση. Απαιτείται σύνδεση.' });
+    res.status(401).json({ error: 'Δεν επιτρέπεται η πρόσβαση. Απαιτείται σύνδεση.' });
   }
 
   try {
@@ -12,6 +12,6 @@ export const authenticateToken = (req, res, next) => {
     req.user = decoded; 
     next();
   } catch (err) {
-    return res.status(403).json({ message: 'Η σύνδεση έληξε. Συνδεθείτε ξανά' });
+    res.status(403).json({ error: 'Η σύνδεση έληξε. Συνδεθείτε ξανά.' });
   }
 };

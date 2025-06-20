@@ -3,6 +3,12 @@ import { Container, Card, Form, Row, Col } from "react-bootstrap";
 import OrangeButton from "../components/common/OrangeButton";
 import { useNavigate } from "react-router-dom";
 import { validatePersonalData } from "../components/utils/validations";
+import axiosInstance from "../config/axiosConfig";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { loginPersonal } from "../components/utils/handleLogin";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const SignUpPersonal = () => {
     const [formData, setFormData] = useState({
@@ -15,19 +21,39 @@ const SignUpPersonal = () => {
     });
 
     const [errors, setErrors] = useState({});
+    const [showPasswords, setShowPasswords] = useState({
+        password: false,
+        confirmPassword: false,
+    });
+
     const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const togglePasswordVisibility = (field) => {
+        setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validatePersonalData(formData);  
+        const validationErrors = validatePersonalData(formData);
         setErrors(validationErrors);
         if (Object.keys(validationErrors).length === 0) {
-            console.log("Sign Up Data:", formData);
-            navigate('/home');
+            try {
+                await axiosInstance.post("/api/basic-users", formData);
+                // Log the user in after successful signup
+                const loginResponse = await loginPersonal({ email: formData.email, password: formData.password });
+                if (loginResponse.success) {
+                    navigate('/home');
+                } else {
+                    toast.error(loginResponse.error, { position: 'top-center' });
+                }
+            } catch (error) {
+                const errorMessage = error.response?.data?.error || "Σφάλμα κατά την εγγραφή. Προσπαθήστε ξανά.";
+                toast.error(errorMessage, { position: 'top-center' });
+            }
         }
     };
 
@@ -48,15 +74,30 @@ const SignUpPersonal = () => {
                 </h3>
             </Row>
             <Container className="d-flex justify-content-center">
-                <Card className="p-4 border-2" style={{ borderColor: "var(--color-orange)", backgroundColor: "var(--color-soft-yellow)", width: "40rem" }}>
-                    <Form onSubmit={handleSubmit}>
-                        {fields.reduce((rows, { label, name, type }, index) => {
-                            if (index % 2 === 0) {
-                                rows.push([]);
+                <Card
+                    className="p-4 border-2"
+                    style={{
+                        borderColor: "var(--color-orange)",
+                        backgroundColor: "var(--color-soft-yellow)",
+                        width: "50rem"
+                    }}
+                >
+                    <Form
+                        onSubmit={handleSubmit}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                handleSubmit(e);
                             }
-                            rows[rows.length - 1].push({ label, name, type });
+                        }}
+                    >
+                    {fields
+                        .reduce((rows, field, index) => {
+                            if (index % 2 === 0) rows.push([]);
+                            rows[rows.length - 1].push(field);
                             return rows;
-                        }, []).map((rowFields, rowIndex) => (
+                        }, [])
+                        .map((rowFields, rowIndex) => (
                             <Row className="mb-4" key={rowIndex}>
                                 {rowFields.map(({ label, name, type }) => (
                                     <Col md={6} key={name}>
@@ -64,14 +105,43 @@ const SignUpPersonal = () => {
                                             <Form.Label>{label}</Form.Label>
                                             <div style={{ position: "relative" }}>
                                                 <Form.Control
-                                                    type={type}
+                                                    type={
+                                                        type === "password"
+                                                            ? showPasswords[name]
+                                                                ? "text"
+                                                                : "password"
+                                                            : type
+                                                    }
                                                     name={name}
                                                     value={formData[name]}
                                                     onChange={handleChange}
-                                                    style={{ backgroundColor: "transparent", borderColor: "var(--color-orange)" }}
+                                                    style={{
+                                                        backgroundColor: "transparent",
+                                                        borderColor: "var(--color-orange)",
+                                                    }}
                                                     isInvalid={!!errors[name]}
                                                 />
-                                                <Form.Control.Feedback 
+                                                {type === "password" && (
+                                                    <FontAwesomeIcon
+                                                        icon={
+                                                            showPasswords[name]
+                                                                ? faEyeSlash
+                                                                : faEye
+                                                        }
+                                                        onClick={() =>
+                                                            togglePasswordVisibility(name)
+                                                        }
+                                                        style={{
+                                                            position: "absolute",
+                                                            top: "50%",
+                                                            right: "10px",
+                                                            transform: "translateY(-50%)",
+                                                            cursor: "pointer",
+                                                            color: "var(--color-orange)",
+                                                        }}
+                                                    />
+                                                )}
+                                                <Form.Control.Feedback
                                                     type="invalid"
                                                     className="position-absolute mb-1"
                                                     style={{ bottom: "-1.5rem" }}
@@ -85,15 +155,15 @@ const SignUpPersonal = () => {
                             </Row>
                         ))}
 
-                    <Row className="d-flex justify-content-center">
-                        <Col md={6} className="d-flex justify-content-center">
+                        <Row className="d-flex justify-content-center">
+                            <Col md={6} className="d-flex justify-content-center">
                             <OrangeButton text="Δημιουργία" onClick={handleSubmit} />
-                        </Col>
-                    </Row>
-                </Form>
-            </Card>
-        </Container>
-    </>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Card>
+            </Container>
+        </>
     );
 };
 

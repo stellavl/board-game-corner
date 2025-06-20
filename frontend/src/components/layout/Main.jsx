@@ -20,12 +20,12 @@ const validRoutePatterns = [
   "/boardgamecafes",
   "/boardgames/:boardGameName", // Dynamic route
   "/boardgamecafes/:cityName",  // Dynamic route for specific city cafes
-  "/boardgamecafes/:cityName/:cafeName",  // Dynamic route for specific board game cafes
+  "/boardgamecafe/:id",  // Dynamic route for specific board game cafes
   "/reservation-details",
   "/signup/personal",
   "/signup/business/basic-info",
   "/signup/business/board-games",
-  "/profile/:firstName/:lastName", // Dynamic route for user profile
+  "/profile/:userId", // Dynamic route for user profile
   "/admin/:id"
 ];
 
@@ -40,8 +40,6 @@ const Main = () => {
   useEffect(() => {
     if (!isValidRoute(location.pathname)) {
       navigate("/home", { replace: true }); // Redirect invalid routes
-    } else if (location.pathname === "/signup/business/board-games" && !sessionStorage.getItem("completedBasicInfo")) {
-      navigate("/signup/business/basic-info", { replace: true }); // Redirect to basic-info if board-games is accessed directly
     }
   }, [location.pathname, navigate]);
 
@@ -55,12 +53,12 @@ const Main = () => {
         <Route path="/boardgamecafes" element={<BoardGameCafesPage />} />
         <Route path="/boardgames/:boardGameName" element={<SpecificBoardGamePage />} />
         <Route path="/boardgamecafes/:cityName" element={<SpecificCityCafesPage />} />
-        <Route path="/boardgamecafes/:cityName/:cafeName" element={<SpecificCafePage/>} />
+        <Route path= "/boardgamecafe/:id" element={<SpecificCafePage/>} />
         <Route path="/reservation-details" element={<ReservationDetailsPage />} />
         <Route path= "/signup/personal" element={<SignUpPersonal />} />
         <Route path= "/signup/business/basic-info" element={<SignUpBusinessBasicInfo />} />
         <Route path= "/signup/business/board-games" element={<SignUpBusinessBoardGames />} />
-        <Route path="/profile/:firstName/:lastName" element={<Profile />} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/admin/:id" element={<Admin />} />
       </Routes>
     </div>

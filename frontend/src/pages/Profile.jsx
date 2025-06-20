@@ -1,28 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import users from "../data/users";
+import { fetchUser } from "../components/utils/fetchUser";
 import MainTab from "../components/profilepage/MainTab";
 import ReservationsTab from "../components/profilepage/ReservationsTab";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const { firstName, lastName } = useParams();
-  const user = users.find(
-    (user) =>
-      user.firstName.toLowerCase() === firstName.toLowerCase() &&
-      user.lastName.toLowerCase() === lastName.toLowerCase()
-  );
+  const navigate = useNavigate();
 
-  const [editedUser, setEditableUser] = useState(user);
+  const { userId } = useParams(); 
+  const [user, setUser] = useState(null);
+
   const [activeTab, setActiveTab] = useState("main");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      setLoading(true);
+      const userData = await fetchUser(userId);
+      if (userData) {
+        setUser(userData);
+      } else {
+        navigate("/home");
+      }
+      setLoading(false);
+    };
+
+    loadUser();
+  }, [userId]);
+
+  if (loading || !user) {
+    return null;
+  }
 
   return (
-    <>
-      {user ? (
-        <div className="container p-5">
+    <div className="container p-5">
           <h2 className="text-center fw-bold" style={{ color: "var(--color-orange)" }}>
-            {editedUser.firstName} {editedUser.lastName}
+            {user.first_name} {user.last_name}
           </h2>
-
           {/* Tabs */}
           <div className="text-center m-3">
             <a
@@ -49,19 +64,15 @@ const Profile = () => {
               Κρατήσεις
             </a>
           </div>
-          <hr className="mx-auto mt-2" style={{ width: "25%", border: "1px solid var(--color-orange)" }} />
+          <hr className="mx-auto mt-2" style={{ width: "25%", border: "1px solid var(--color-orange)" }} /> 
 
           {/* Render the appropriate tab */}
           {activeTab === "main" ? (
-            <MainTab editedUser={editedUser} setEditedUser={setEditableUser} />
+            <MainTab user={user} setUser={setUser} />
           ) : (
             <ReservationsTab />
           )}
-        </div>
-      ) : (
-        <p>User not found</p>
-      )}
-    </>
+    </div>
   );
 };
 

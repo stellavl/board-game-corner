@@ -1,18 +1,28 @@
-import React from 'react';
-import { Modal, Card } from 'react-bootstrap';
-import OrangeButton from './OrangeButton';
+import { Modal, Card, Button } from 'react-bootstrap';
 
-const ConfirmationModal = ({ show, handleClose, handleConfirm, message }) => {
+const ConfirmationModal = ({ show, handleClose, handleConfirm, message, addedGames = [] }) => {
+  // New message when no games added
+const emptyGamesMessage = "Δεν έχετε προσθέσει επιτραπέζια. Θέλετε σίγουρα να ολοκληρώσετε τη δημιουργία λογαριασμού;";
   return (
     <Modal show={show} onHide={handleClose} centered>
       <Card className="border-5 rounded-3 p-4" style={{ backgroundColor: 'var(--color-soft-yellow)', border: '5px solid var(--color-orange)' }}>
         <h5 className="text-center mt-3" style={{ color: 'var(--color-gray-purple)' }}>
-          Επιβεβαίωση
+          {addedGames.length === 0 ? emptyGamesMessage : message}
         </h5>
-        <p className="text-center mt-3">{message}</p>
-        <div className="d-flex justify-content-center gap-3 mt-4">
-          <OrangeButton text="Ακύρωση" onClick={handleClose} />
-          <OrangeButton text="Επιβεβαίωση" onClick={handleConfirm} />
+        {addedGames.length > 0 && (
+          <ul style={{ maxHeight: 200, overflowY: 'auto', fontSize: '0.95rem', color: 'var(--color-gray-purple)' }}>
+            {addedGames.map((game) => (
+              <li key={game.bgg_id}>{game.name}</li>
+            ))}
+          </ul>
+        )}
+        <div className="d-flex justify-content-center gap-3">
+          <Button className="btn btn-danger" onClick={handleClose}>
+            Ακύρωση
+          </Button>
+          <Button className="btn btn-success" onClick={handleConfirm}>
+            Ολοκλήρωση
+          </Button>
         </div>
       </Card>
     </Modal>

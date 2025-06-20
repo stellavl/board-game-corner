@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import OrangeButton from '../components/common/OrangeButton';
+import axiosInstance from '../config/axiosConfig';
+import { toast } from 'react-toastify';
 
 const ReservationDetailsPage = () => {
     const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const gameCafe = queryParams.get('gameCafe');
-    const boardGame = queryParams.get('boardGame');
-    const players = queryParams.get('players');
-    const date = queryParams.get('date');
-    const time = queryParams.get('time');
+    const navigate = useNavigate();
+    const reservation = location.state;
+    const { gameCafe, boardGame, players, date, time } = reservation;
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -29,6 +28,40 @@ const ReservationDetailsPage = () => {
         }));
         if (value.trim() !== "") {
             setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+        }
+    };
+
+    const formatDateToISO = (dateStr) => {
+        // expects 'DD-MM-YYYY', returns 'YYYY-MM-DD'
+        const [day, month, year] = dateStr.split('-');
+        return `${year}-${month}-${day}`;
+    };
+
+    useEffect(() => {
+        autofillUserData();
+    }, []);
+    
+    const autofillUserData = async () => {
+        const userId = localStorage.getItem('userId');
+        const token = localStorage.getItem('authToken');
+        if (userId && token) {
+        try {
+            const res = await axiosInstance.get(`/api/basic-users/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+            });
+            const user = res.data;
+            setFormData((prev) => ({
+            ...prev,
+            firstName: user.first_name || "",
+            lastName: user.last_name || "",
+            phone: user.phone_number || "",
+            email: user.email || ""
+            }));
+        } catch (err) {
+            // If request fails, do nothing (leave form empty)
+        }
         }
     };
 
@@ -52,22 +85,45 @@ const ReservationDetailsPage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleReservationClick = () => {
-        if (validateForm()) {
-            // TODO: SAVE RESERVATION DATA IN DATABASE
-            console.log("Reservation Data:", formData);
+const handleReservationClick = async () => {
+    if (validateForm()) {
+        const userId = localStorage.getItem('userId');
+        const reservationData = {
+            date: formatDateToISO(date),
+            time: time,
+            players_no: players,
+            customer_first_name: formData.firstName,
+            customer_last_name: formData.lastName,
+            customer_email: formData.email,
+            customer_phone: formData.phone,
+            board_game_id: boardGame?.id,
+            board_game_cafe_id: gameCafe?.id,
+            user_id: userId
+        };
+        try {
+            const response = await axiosInstance.post(`/api/reservations`, reservationData);
+            if (response.status === 201) {
+                toast.success("Η κράτηση καταχωρήθηκε με επιτυχία!",{ position: 'top-center' });
+                navigate("/"); // Redirect to home after successful reservation
+            } else {
+                toast.error(response.data.error || "Σφάλμα κατά την καταχώρηση της κράτησης.",{ position: 'top-center' });
+            }
+        } catch (error) {
+            toast.error("Σφάλμα δικτύου. Δοκιμάστε ξανά.",{ position: 'top-center' });
         }
-    };
-
+    }
+};
     return (
         <Container className="my-4">
             <Row className="justify-content-center">
                 <Col xs={12} md={6} lg={4}>
                     <Card className="text-center text-white p-2" style={{ backgroundColor: 'var(--color-orange)' }}>
                         <Card.Body>
-                            <Card.Title className="fw-bold mb-1">{gameCafe} | Αθήνα</Card.Title>
+                            <Card.Title className="fw-bold mb-1">
+                                {gameCafe?.name } | {gameCafe?.city}
+                            </Card.Title>
                             <Card.Text className="fst-italic">
-                                {boardGame === "Θα επιλέξω στο κατάστημα" ? "Δεν έχει επιλεγεί επιτραπέζιο" : boardGame}
+                                {boardGame?.name === "Θα επιλέξω στο κατάστημα" ? "Δεν έχει επιλεγεί επιτραπέζιο" : boardGame?.name }
                             </Card.Text>
                             <Row className="justify-content-center">
                                 <Col xs="auto">{date}</Col>
@@ -76,7 +132,7 @@ const ReservationDetailsPage = () => {
                             </Row>
                         </Card.Body>
                     </Card>
-                    <p className="mt-1 text-end" style={{ color: 'var(--color-orange)' }}> 
+                    <p className="mt-1 text-end" style={{ color: 'var(--color-orange)' }}>
                         Επεξεργασία
                     </p>
                 </Col>
@@ -96,12 +152,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Όνομα</Form.Label>
-                                                <Form.Control 
-                                                    type="text" 
-                                                    name="firstName" 
-                                                    value={formData.firstName} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.firstName} 
+                                                <Form.Control
+                                                    type="text"
+                                                    name="firstName"
+                                                    value={formData.firstName}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.firstName}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.firstName}
@@ -111,12 +167,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Επίθετο</Form.Label>
-                                                <Form.Control 
-                                                    type="text" 
-                                                    name="lastName" 
-                                                    value={formData.lastName} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.lastName} 
+                                                <Form.Control
+                                                    type="text"
+                                                    name="lastName"
+                                                    value={formData.lastName}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.lastName}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.lastName}
@@ -127,12 +183,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Τηλέφωνο Επικοινωνίας</Form.Label>
-                                                <Form.Control 
-                                                    type="text" 
-                                                    name="phone" 
-                                                    value={formData.phone} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.phone} 
+                                                <Form.Control
+                                                    type="text"
+                                                    name="phone"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.phone}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.phone}
@@ -142,12 +198,12 @@ const ReservationDetailsPage = () => {
                                         <Col md={6}>
                                             <Form.Group>
                                                 <Form.Label>Email</Form.Label>
-                                                <Form.Control 
-                                                    type="email" 
-                                                    name="email" 
-                                                    value={formData.email} 
-                                                    onChange={handleChange} 
-                                                    isInvalid={!!errors.email} 
+                                                <Form.Control
+                                                    type="email"
+                                                    name="email"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    isInvalid={!!errors.email}
                                                 />
                                                 <div className="invalid-feedback">
                                                     {errors.email}

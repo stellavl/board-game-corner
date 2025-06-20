@@ -1,7 +1,6 @@
 FROM mysql:latest
 
 COPY db/schema.sql /docker-entrypoint-initdb.d/
-COPY db/data.sql /docker-entrypoint-initdb.d/
 
 ENV MYSQL_ROOT_PASSWORD=rootpassword
 ENV MYSQL_DATABASE=board_game_corner

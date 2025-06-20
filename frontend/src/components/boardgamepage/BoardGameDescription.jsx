@@ -1,12 +1,46 @@
-import React from 'react';
+import { useState } from 'react';
 
-const descriptionText = "Τέσσερις φυλές έχουν εγκατασταθεί στο νησί του Κατάν. Εκμεταλλεύσου την περιοχή που έχεις στη διάθεσή σου αποκτώντας προϊόντα και κάνοντας εμπόριο με τoυς υπόλοιπους για να επεκταθείς και να κυριαρχήσεις εσύ στο νησί!<br />Οι Άποικοι του Κατάν είναι το παιχνίδι-must για κάθε 'σοβαρό' παίκτη, αφού παίζεται με μανία από εκατομμύρια ανθρώπους σε όλον τον κόσμο.";
+const BoardGameDescription = ({ boardGame }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const maxLength = 500;
 
-const BoardGameDescription = () => {
+  const toggleDescription = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const description = boardGame.description || '';
+  const isLongDescription = description.length > maxLength;
+
   return (
     <div>
-      <h6 style={{ color: 'var(--color-gray-purple)', textDecoration: 'underline' }}>Περιγραφή</h6>
-      <p style={{ fontSize: '14px', color: 'var(--color-gray-purple)' }} dangerouslySetInnerHTML={{ __html: descriptionText }} />
+      <h6 className="text-decoration-underline" style={{ color: 'var(--color-gray-purple)' }}>
+        Περιγραφή
+      </h6>
+      <p
+        className="text-muted"
+        style={{
+          fontSize: '14px',
+          color: 'var(--color-gray-purple)',
+        }}
+        dangerouslySetInnerHTML={{
+          __html: isExpanded || !isLongDescription
+            ? description
+            : `${description.substring(0, maxLength)}...`,
+        }}
+      />
+      {isLongDescription && (
+        <button
+          onClick={toggleDescription}
+          className="btn btn-link p-0 text-decoration-underline"
+          style={{
+            color: 'var(--color-orange)',
+            fontSize: '14px',
+            marginTop: '0', // Ensure no extra margin above the button
+          }}
+        >
+          {isExpanded ? 'Show Less' : 'Show More'}
+        </button>
+      )}
     </div>
   );
 };

@@ -1,4 +1,6 @@
   import React from "react";
+  import { ToastContainer } from 'react-toastify';
+  import 'react-toastify/dist/ReactToastify.css';
   import Main from "./components/layout/Main.jsx";
   import Header from "./components/layout/header/NavBar.jsx";
   import Footer from "./components/layout/footer/Footer.jsx";
@@ -12,14 +14,17 @@
 
   const App = () => {
     return (
-    <Router>
-      <div style={appStyles}>
-        <Header />
-        <Main />
-        <Footer/>
-      </div>
-    </Router>
-      
+      <>
+        <ToastContainer />
+          <Router>
+          <div style={appStyles}>
+            <Header />
+            <Main />
+            <Footer/>
+          </div>
+        </Router>
+      </>
+
     );
   };
 

@@ -69,7 +69,7 @@ const SpecificCityCafesPage = () => {
                         <CafeSelectBar boardGameCafes={cityCafes} loading={loading} />
                     </Col>      
                 </Row>
-                <Row className="my-5 d-flex  w-100">
+                <Row className="my-5 w-100">
                     {loading ? (
                         <Col className="text-center">
                             <Spinner animation="border" />
@@ -77,15 +77,46 @@ const SpecificCityCafesPage = () => {
                     ) : (
                         cityCafes.map(cafe => (    
                             <Col key={cafe.id} lg={3} md={4} sm={6} xs={12} className="mb-3 d-flex">
-                                <Card className="w-100 shadow-sm text-center"
-                                    style={{ borderColor: 'var(--color-orange)', minHeight: '100%' }}>
-                                    
+                                <Card
+                                    className="w-100 shadow-sm text-center d-flex flex-column"
+                                    style={{
+                                        borderColor: 'var(--color-orange)',
+                                        minHeight: '200px',
+                                    }}
+                                >
                                     <Card.Body className="d-flex flex-column">
-                                        <Card.Title className="fw-bold">{cafe.name}</Card.Title>
-                                        
-                                        <Card.Text className="text-muted small d-flex align-items-center justify-content-center">
-                                            {cafe.address}
-                                        </Card.Text>
+                                    <div
+                                        className="fw-bold text-dark d-flex align-items-center justify-content-center text-center"
+                                        style={{
+                                        fontSize: '1.1rem', 
+                                        height: '2.8em',
+                                        lineHeight: '1.4em',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: 'vertical'
+                                        }}
+                                        title={cafe.name}
+                                    >
+                                        {cafe.name}
+                                    </div>
+                                    {/* Address: 2 lines max */}
+                                    <div
+                                        className="text-muted small d-flex align-items-center justify-content-center text-center"
+                                        style={{
+                                        height: '2.8em', // ~2 lines
+                                        lineHeight: '1.4em',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: '-webkit-box',
+                                        WebkitLineClamp: 2,
+                                        WebkitBoxOrient: 'vertical'
+                                        }}
+                                        title={cafe.address}
+                                    >
+                                        {cafe.address}
+                                    </div>
 
                                         <Card.Text className="text-muted">{cafe.phoneNumber}</Card.Text>
 

@@ -149,6 +149,11 @@ const SignUpBusinessBoardGames = () => {
     fetchHotBoardGames(1, pageSize);
   };  
 
+  const handleSearchTextChange = (text) => {
+    setCurrentPage(1);
+    setSearchText(text);
+};
+
   useEffect(() => {
     if (searchText) {
       fetchBoardGames(searchText, currentPage, pageSize);
@@ -156,12 +161,6 @@ const SignUpBusinessBoardGames = () => {
          fetchHotBoardGames(currentPage, pageSize);
     }
   }, [searchText, currentPage, pageSize]);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [searchText]);
-
-
   return (
     <>
     <Row className="align-items-center">
@@ -183,7 +182,7 @@ const SignUpBusinessBoardGames = () => {
             <Col md={12} xs={12}>
             <BoardGameSelectBar   
                 searchText={searchText}
-                setSearchText={setSearchText}
+                setSearchText={handleSearchTextChange}
                 onClearSearch={handleClearSearch}
             />
             </Col>    
